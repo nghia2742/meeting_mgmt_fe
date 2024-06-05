@@ -76,7 +76,11 @@ function LoginPage() {
                   <FormItem className='grid gap-2 mb-2'>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder='Enter your email' {...field} />
+                      <Input
+                        type='email'
+                        placeholder='Enter your email'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,7 +93,11 @@ function LoginPage() {
                   <FormItem className='grid gap-2 mb-2'>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder='Enter your password' {...field} />
+                      <Input
+                        type='password'
+                        placeholder='Enter your password'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
