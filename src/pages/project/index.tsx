@@ -1,12 +1,12 @@
-import MainLayout from '@/components/main.layout'
-import React from 'react'
+import MainLayout from "@/components/main.layout";
+import withAuth from "@/hoc/withAuth";
 
 function Project() {
   return (
     <MainLayout>
-        <h1>Project</h1>
+      <h1>Project</h1>
     </MainLayout>
-  )
+  );
 }
 
-export default Project
+export default withAuth(Project);
