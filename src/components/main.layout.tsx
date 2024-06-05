@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Toaster } from "@/components/ui/toaster";
 import { ReactNode } from "react";
 import Image from "next/image";
 import { Inter } from "next/font/google";
@@ -65,7 +64,6 @@ export function MainLayout({ children }: { children: ReactNode }) {
         </header>
         <main className='flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6'>
           {children}
-          <Toaster />
         </main>
       </div>
     </div>

@@ -22,15 +22,12 @@ const useLogin = () => {
       const { accessToken, refreshToken } = data;
       authStore.setTokens(accessToken, refreshToken);
       console.log(data);
-      toast({
-        title: "Login successfully",
-        description: "Welcome to our app",
-      });
+      // redirect
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
         title: "Uh oh! Something went wrong",
-        description: error.toString(),
+        description: error.response.data.message,
       });
     },
   });
