@@ -19,11 +19,7 @@ const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken, refreshToken, isAuthenticated: true });
   },
   clearTokens: () => {
-    console.log("Clearing tokens");
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
     set({ accessToken: null, refreshToken: null, isAuthenticated: false });
-    console.log("Tokens cleared, isAuthenticated:", false);
   },
 }));
 
