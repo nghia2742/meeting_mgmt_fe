@@ -10,11 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReactNode, useState } from "react";
+
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
 import SettingsModal from './modal/settingModal';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +25,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
 
   return (
     <div
@@ -62,6 +65,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={openModal}>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Logout</DropdownMenuItem>
@@ -74,7 +78,6 @@ export function MainLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
             <SettingsModal isOpen={isModalOpen} onClose={closeModal}></SettingsModal>
-
     </div>
   );
 }
