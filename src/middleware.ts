@@ -28,7 +28,7 @@ export function middleware(req: NextRequest) {
   }
 
   // Allow the request to proceed
-  console.log("Access token found, proceeding with request");
+  console.log("Proceeding with request");
   return NextResponse.next();
 }
 
