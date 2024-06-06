@@ -3,21 +3,27 @@ import Cookies from "js-cookie";
 
 interface AuthState {
   accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
-  setAuthenticated: (value: boolean) => void;
-  clearAuth: () => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
+  clearTokens: () => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
   accessToken: Cookies.get("accessToken") || null,
+  refreshToken: Cookies.get("refreshToken") || null,
   isAuthenticated: !!Cookies.get("accessToken"),
-  setAuthenticated: (value: boolean) => {
-    set({ isAuthenticated: value });
+  setTokens: (accessToken: string, refreshToken: string) => {
+    Cookies.set("accessToken", accessToken);
+    Cookies.set("refreshToken", refreshToken);
+    set({ accessToken, refreshToken, isAuthenticated: true });
   },
-  clearAuth: () => {
+  clearTokens: () => {
+    console.log("Clearing tokens");
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
-    set({ accessToken: null, isAuthenticated: false });
+    set({ accessToken: null, refreshToken: null, isAuthenticated: false });
+    console.log("Tokens cleared, isAuthenticated:", false);
   },
 }));
 

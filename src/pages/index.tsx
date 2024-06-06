@@ -1,4 +1,3 @@
-import withAuth from "@/hoc/withAuth";
 import { Link as LinkIcon } from "lucide-react";
 import { Inter } from "next/font/google";
 import Link from "next/link";
@@ -21,4 +20,4 @@ function Home() {
   );
 }
 
-export default withAuth(Home);
+export default Home;

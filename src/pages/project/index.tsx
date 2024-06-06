@@ -1,5 +1,4 @@
 import MainLayout from "@/components/main.layout";
-import withAuth from "@/hoc/withAuth";
 
 function Project() {
   return (
@@ -9,4 +8,4 @@ function Project() {
   );
 }
 
-export default withAuth(Project);
+export default Project;

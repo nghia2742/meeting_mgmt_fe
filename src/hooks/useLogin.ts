@@ -15,7 +15,7 @@ const fetchLogin = async (credentials: LoginRequest) => {
 };
 
 const useLogin = () => {
-  const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+  const setTokens = useAuthStore((state) => state.setTokens);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -33,7 +33,7 @@ const useLogin = () => {
         secure: true,
         sameSite: "strict",
       });
-      setAuthenticated(true);
+      setTokens(accessToken, refreshToken);
       console.log(data);
       toast({
         title: "Login Successfully",

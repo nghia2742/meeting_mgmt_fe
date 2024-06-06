@@ -1,5 +1,4 @@
 import MainLayout from "@/components/main.layout";
-import withAuth from "@/hoc/withAuth";
 
 function Storage() {
   return (
@@ -9,4 +8,4 @@ function Storage() {
   );
 }
 
-export default withAuth(Storage);
+export default Storage;
