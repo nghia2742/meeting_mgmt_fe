@@ -16,16 +16,16 @@ import { Inter } from "next/font/google";
 import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
 import SettingsModal from './modal/settingModal';
-
+import useLogout from "@/hooks/useLogout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { mutate: logout } = useLogout();
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
-
 
   return (
     <div
@@ -68,7 +68,9 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
