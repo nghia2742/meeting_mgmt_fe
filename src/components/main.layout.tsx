@@ -9,15 +9,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
+import SettingsModal from './modal/settingModal';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
+
   return (
     <div
       className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${inter.className}`}
@@ -55,17 +64,20 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={openModal}>Settings</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
         </header>
         <main className='flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6'>
           {children}
         </main>
       </div>
+            <SettingsModal isOpen={isModalOpen} onClose={closeModal}></SettingsModal>
     </div>
   );
 }
