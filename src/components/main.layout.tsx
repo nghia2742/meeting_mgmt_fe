@@ -14,10 +14,13 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
+import useLogout from "@/hooks/useLogout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
+  const logout = useLogout();
+
   return (
     <div
       className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${inter.className}`}
@@ -58,7 +61,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>

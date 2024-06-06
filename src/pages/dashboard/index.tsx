@@ -2,7 +2,6 @@ import MainLayout from "@/components/main.layout";
 import React, { useEffect, useState } from "react";
 import { Users } from "@/types/user.type";
 import { getUsers } from "@/apis/user.api";
-import withAuth from "@/hoc/withAuth";
 
 function Dashboard() {
   // Example to fetch users
@@ -21,4 +20,4 @@ function Dashboard() {
   );
 }
 
-export default withAuth(Dashboard);
+export default Dashboard;

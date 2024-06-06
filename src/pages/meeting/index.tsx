@@ -4,7 +4,6 @@ import React from "react";
 import { columns } from "./column";
 import type { Meeting } from "./column";
 import { DataTable } from "./data-table";
-import withAuth from "@/hoc/withAuth";
 
 interface MeetingPageProps {
   meetings: Meeting[];
@@ -34,4 +33,4 @@ export async function getServerSideProps() {
   }
 }
 
-export default withAuth(Meeting);
+export default Meeting;
