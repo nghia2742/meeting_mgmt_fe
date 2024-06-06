@@ -65,7 +65,6 @@ export function MainLayout({ children }: { children: ReactNode }) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={openModal}>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => logout()}>

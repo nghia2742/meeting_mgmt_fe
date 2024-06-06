@@ -26,11 +26,11 @@ function Project() {
               />
             </div>
           </form>
-          <Button variant="outline" className="mr-[320px]"><FilterIcon /> Filter</Button>
+          <Button variant="outline" className="mr-[250px]"><FilterIcon /> Filter</Button>
           <div className="flex space-x-4">
-            <button><ListIcon /></button>
-            <button><LayoutGridIcon /></button>
-            <button><CalendarIcon /></button>
+            <button className="p-2 rounded hover:bg-gray-200"><ListIcon /></button>
+            <button className="p-2 rounded hover:bg-gray-200"><LayoutGridIcon /></button>
+            <button className="p-2 rounded hover:bg-gray-200"><CalendarIcon /></button>
           </div>
         </div>
       </div>
