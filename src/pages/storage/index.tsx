@@ -1,12 +1,11 @@
-import MainLayout from '@/components/main.layout'
-import React from 'react'
+import MainLayout from "@/components/main.layout";
 
 function Storage() {
   return (
     <MainLayout>
-        <h1>Storage</h1>
+      <h1>Storage</h1>
     </MainLayout>
-  )
+  );
 }
 
-export default Storage
+export default Storage;

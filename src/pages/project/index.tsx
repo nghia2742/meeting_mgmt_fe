@@ -38,7 +38,7 @@ function Project() {
         <DataTableDemo />
       </div>
     </MainLayout>
-  )
+  );
 }
 
 export default Project
