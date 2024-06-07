@@ -2,36 +2,33 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
+} from "@/components/ui/select";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
-import image from "next/image";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { UserProfile } from "@/types/userProfile.type";
+import { fetchUserProfile } from "@/lib/apiClient";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -39,15 +36,43 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-    const [date, setDate] = React.useState<Date>()
+    const [date, setDate] = useState<Date>();
     const [image, setImage] = useState("https://github.com/shadcn.png");
     const handleChangeImage = (newImage: React.SetStateAction<string>) => {
         setImage(newImage);
     };
 
+    const { register, handleSubmit,control, setValue, formState: { errors } } = useForm<UserProfile>();
+
+    useEffect(() => {
+        const getUserProfile = async () => {
+            try {
+                const userData = await fetchUserProfile();
+                console.log(userData);
+                setValue("fullName", userData.fullName);
+                setValue("email", userData.email);
+                setValue("dateOfBirth", new Date(userData.dateOfBirth));
+                setValue("address", userData.address);
+                setValue("gender", userData.gender);
+                setValue("phoneNumber", userData.phoneNumber);
+                setImage(userData.avatar);
+                setDate(new Date(userData.dateOfBirth));
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        };
+
+        getUserProfile();
+    }, [setValue]);
+
+    const gender = useWatch({
+        control,
+        name: "gender",
+    });
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
                     <DialogTitle className="mb-2">Edit profile</DialogTitle>
                     <Popover>
@@ -58,22 +83,19 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             </Avatar>
                         </PopoverTrigger>
                         <PopoverContent>
-                            {/* Add options for changing the image */}
-                            {/* For example, you can provide buttons or an input field for uploading a new image */}
                             <button onClick={() => handleChangeImage("new_image_url")}>Change Image</button>
-                            {/* This is where you'd handle the logic for changing the image */}
                         </PopoverContent>
                     </Popover>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
+                        <Label htmlFor="fullName" className="text-right">
                             FullName
                         </Label>
                         <Input
-                            id="name"
-                            defaultValue="Pedro Duarte"
+                            id="fullName"
+                            {...register("fullName")}
                             className="col-span-3"
                         />
                     </div>
@@ -94,27 +116,45 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         </Label>
                         <Input
                             id="email"
-                            defaultValue="example@example.com"
+                            {...register("email")}
                             className="col-span-3"
                         />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="Gender" className="text-right">
-                            Gender
+                        <Label htmlFor="phone" className="text-right">
+                            Phone
                         </Label>
-                        <Select>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Male">Male</SelectItem>
-                                <SelectItem value="Female">Female</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <Input
+                            id="phone"
+                            {...register("phoneNumber")}
+                            className="col-span-3"
+                        />
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="Date of Birth" className="text-right">
+                        <Label htmlFor="gender" className="text-right">
+                            Gender
+                        </Label>
+                        <Controller
+                            control={control}
+                            name="gender"
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Select gender">
+                                            {gender && gender.charAt(0).toUpperCase() + gender.slice(1)}
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="male">Male</SelectItem>
+                                        <SelectItem value="female">Female</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="dateOfBirth" className="text-right">
                             Date of Birth
                         </Label>
                         <Popover>
@@ -148,12 +188,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             Address
                         </Label>
                         <Input
-                            id="adress"
-                            placeholder="143 Tran Xuan Xoan, District 7"
+                            id="address"
+                            {...register("address")}
                             className="col-span-3"
                         />
                     </div>
-
                 </div>
                 <DialogFooter>
                     <Button type="submit">Save changes</Button>

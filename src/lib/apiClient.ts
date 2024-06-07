@@ -48,5 +48,14 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+export const fetchUserProfile = async () => {
+  const { accessToken } = useAuthStore.getState();
+  const response = await apiClient.get("/users/profile", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.data;
+};
 
 export default apiClient;
