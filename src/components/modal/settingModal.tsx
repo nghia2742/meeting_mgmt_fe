@@ -7,7 +7,9 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { UserProfile } from "@/types/userProfile.type";
 import { fetchUserProfile, updateUserProfile } from "@/lib/apiClient";
 import AvatarSection from "./components/AvatarSection";
@@ -18,12 +20,24 @@ interface SettingsModalProps {
     onClose: () => void;
 }
 
+const schema = z.object({
+    fullName: z.string().nonempty("Full name is required"),
+    email: z.string().email("Invalid email format").nonempty("Email is required"),
+    phoneNumber: z.string().nonempty("Phone number is required"),
+    address: z.string().nonempty("Address is required"),
+    gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }),
+    dateOfBirth: z.date().optional(),
+});
+
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<Date>();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const queryClient = useQueryClient();
-    const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>();
+
+    const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
+        resolver: zodResolver(schema),
+    });
 
     const { data: userData, isLoading, isError, error } = useQuery({
         queryKey: ['userProfile'],
@@ -64,7 +78,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         }
     });
 
-    const onSubmit = async (data: UserProfile) => {
+    const onSubmit: SubmitHandler<UserProfile> = async (data) => {
         if (date && date.getTime() !== new Date(userData.dateOfBirth).getTime()) {
             data.dateOfBirth = new Date(date.toISOString());
         }

@@ -72,5 +72,14 @@ export const updateUserProfile = async (email: string, userData: UserProfile) =>
     throw new Error("Error updating user profile");
   }
 };
+export const getUser = async () => {
+  const { accessToken } = useAuthStore.getState();
+  const response = await apiClient.get("/users", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return response.data;
+};
 
 export default apiClient;

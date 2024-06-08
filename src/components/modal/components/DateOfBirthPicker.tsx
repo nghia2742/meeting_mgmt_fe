@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 
 interface DateOfBirthPickerProps {
     date: Date | undefined;
-    setDate: (date: Date) => void;
+    setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 }
 
 const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({ date, setDate }) => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,17 +9,18 @@ import DateOfBirthPicker from "./DateOfBirthPicker";
 import { DialogFooter } from "@/components/ui/dialog";
 
 interface UserProfileFormProps {
-    onSubmit: (data: UserProfile) => void;
+    onSubmit: (event: FormEvent<HTMLFormElement>) => void;
     register: UseFormRegister<UserProfile>;
     control: Control<UserProfile>;
     setValue: (name: keyof UserProfile, value: any) => void;
     errors: FieldErrors<UserProfile>;
     date: Date | undefined;
-    setDate: (date: Date) => void;
+    setDate: Dispatch<SetStateAction<Date | undefined>>;
     avatarFile: File | null;
 }
 
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, control, setValue, errors, date, setDate, avatarFile }) => {
+    
     return (
         <form onSubmit={onSubmit} className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
