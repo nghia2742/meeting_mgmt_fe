@@ -6,5 +6,6 @@ export interface UserProfile {
     phoneNumber: string;
     address: string;
     avatar: string;
+    provider: string;
 }
 

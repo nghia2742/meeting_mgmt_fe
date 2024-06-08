@@ -1,5 +1,7 @@
 import axios from "axios";
 import useAuthStore from "@/stores/authStore";
+import { User } from "@/types/user.type";
+import { UserProfile } from "@/types/userProfile.type";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:8000",
@@ -56,6 +58,19 @@ export const fetchUserProfile = async () => {
     },
   });
   return response.data;
+};
+export const updateUserProfile = async (email: string, userData: UserProfile) => {
+  try {
+    const { accessToken } = useAuthStore.getState();
+    const response = await apiClient.patch(`/users/${email}`, userData, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error updating user profile");
+  }
 };
 
 export default apiClient;
