@@ -1,9 +1,10 @@
 import MainLayout from "@/components/main.layout";
 import React from "react";
 import { columns } from "./column";
-import type { Meeting } from "./column";
 import { DataTable } from "./data-table";
 import apiClient from "@/lib/apiClient";
+import type { Meeting } from "@/types/meeting.type";
+
 
 interface MeetingPageProps {
   meetings: Meeting[];
