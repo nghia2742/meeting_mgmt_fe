@@ -94,6 +94,14 @@ export const createUser = async (email: string, password: string, fullName: stri
     throw new Error("Error creating user");
   }
 };
+export const searchUsersByEmail = async (email: string) => {
+  try {
+    const response = await apiClient.get(`/users/filter?email=${email}`);
+    return response.data;
+  } catch (error) {
+    throw new Error("Error searching users");
+  }
+};
 
 
 export default apiClient;

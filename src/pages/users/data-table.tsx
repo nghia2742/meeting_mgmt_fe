@@ -226,7 +226,7 @@ export function DataTableDemo({ users }: DataTableDemoProps) {
           }}
           className="p-1 border rounded"
         >
-          {[5, 20, 30, 40, 50].map((pageSize) => (
+          {[10, 20, 30, 40, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
