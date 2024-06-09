@@ -6,27 +6,14 @@ const attendees: Attendee[] = [
     {
         id: "1",
         name: 'Dat Doan',
-        avatar: "https://github.com/shadcn.png"
+        avatar: "https://github.com/shadcn.png",
+        email: "dat.doan.clv@gmail.com",
     },
     {
         id: "2",
-        name: 'Dat Doan',
-        avatar: "https://github.com/shadcn.png"
-    },
-    {
-        id: "3",
-        name: 'Dat Doan',
-        avatar: "https://github.com/shadcn.png"
-    },
-    {
-        id: "4",
-        name: 'Dat Doan',
-        avatar: "https://github.com/shadcn.png"
-    },
-    {
-        id: "5",
-        name: 'Dat Doan',
-        avatar: "https://github.com/shadcn.png"
+        name: 'Nghia Ngo',
+        avatar: "https://github.com/shadcn.png",
+        email: "nghia.ngo.clv@gmail.com",
     },
 ]
 

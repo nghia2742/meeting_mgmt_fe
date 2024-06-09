@@ -3,7 +3,7 @@ export type Meeting = {
     title: string;
     type: string;
     description: string;
-    notes: string;
+    note: string;
     startTime: Date;
     endTime: Date;
     location: string;

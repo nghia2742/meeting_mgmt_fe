@@ -17,6 +17,7 @@ import { AttendeeList } from '@/components/meetingDetail/attendeelist/AttendeeLi
 import FileList from '@/components/meetingDetail/fileList/FileList'
 import AddNewAttendee from '@/components/modal/AddNewAttendee'
 import AddNewFile from '@/components/modal/AddNewFile'
+import PreviewMeetingMinute from '@/components/modal/PreviewMeetingMinute'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -28,6 +29,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
     const minutes = calcMinutes(meeting.startTime.toString(), meeting.endTime.toString());
     const [isOpenModalAddAttendee, setIsOpenModalAddAttendee] = useState(false);
     const [isOpenModalAddFile, setIsOpenModalAddFile] = useState(false);
+    const [isOpenPreviewMeeetingMinute, setIsOpenPreviewMeeetingMinute] = useState(false);
 
     return (
         <MainLayout>
@@ -64,8 +66,21 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
 
                             <p className="text-gray-700">{meeting.description}</p>
                             <div className="lg:flex lg:space-x-4 space-y-4 lg:space-y-0">
-                                <Button className='text-[13px] w-full lg-w-auto' variant={"secondary"}>View meeting minutes</Button>
-                                <Button className='text-[13px] w-full lg-w-auto'>Create meeting minutes</Button>
+                                <Button className='text-[13px] w-full lg-w-auto' variant={"secondary"}>
+                                    <a
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        href={"https://res.cloudinary.com/dblglqzca/image/upload/v1717946162/file_dygnod.pdf"}
+                                    >
+                                        View meeting minutes
+                                    </a>
+                                </Button>
+                                <Button
+                                    className='text-[13px] w-full lg-w-auto'
+                                    onClick={() => setIsOpenPreviewMeeetingMinute(true)}
+                                >
+                                    Create meeting minutes
+                                </Button>
                             </div>
                         </div>
                         <div className='w-[100%] lg:w-[50%] space-y-4'>
@@ -79,7 +94,12 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                     <div className='space-y-4'>
                         <div className="flex items-center justify-between">
                             <p className='font-bold text-xl'>Files</p>
-                            <Button className='text-[13px]' onClick={() => setIsOpenModalAddFile(true)}>Add new file</Button>
+                            <Button
+                                className='text-[13px]'
+                                onClick={() => setIsOpenModalAddFile(true)}
+                            >
+                                Add new file
+                            </Button>
                         </div>
                         <FileList />
                     </div>
@@ -90,10 +110,15 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                 onClose={() => setIsOpenModalAddAttendee(false)}
                 onAddAttendees={() => setIsOpenModalAddAttendee(false)}
             />
-            <AddNewFile 
+            <AddNewFile
                 isOpen={isOpenModalAddFile}
                 onClose={() => setIsOpenModalAddFile(false)}
                 onAddFile={() => setIsOpenModalAddFile(false)}
+            />
+            <PreviewMeetingMinute
+                isOpen={isOpenPreviewMeeetingMinute}
+                onClose={() => setIsOpenPreviewMeeetingMinute(false)}
+                meeting={meeting}
             />
         </MainLayout>
     )
