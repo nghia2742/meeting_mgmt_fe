@@ -81,5 +81,19 @@ export const getUser = async () => {
   });
   return response.data;
 };
+// apiClient.ts
+export const createUser = async (email: string, password: string, fullName: string) => {
+  try {
+    const response = await apiClient.post("/auth/register", {
+      email,
+      password,
+      fullName,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error creating user");
+  }
+};
+
 
 export default apiClient;
