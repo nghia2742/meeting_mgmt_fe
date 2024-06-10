@@ -102,6 +102,14 @@ export const searchUsersByEmail = async (email: string) => {
     throw new Error("Error searching users");
   }
 };
+export const softDeleteUser = async (userId: string) => {
+  try {
+    const response = await apiClient.delete(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error("Error deleting user");
+  }
+};
 
 
 export default apiClient;

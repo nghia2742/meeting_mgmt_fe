@@ -1,4 +1,5 @@
 export interface UserProfile {
+    id: string;
     fullName: string;
     email: string;
     gender: 'male' | 'female' | 'other';
@@ -7,5 +8,6 @@ export interface UserProfile {
     address: string;
     avatar: string;
     provider: string;
+
 }
 

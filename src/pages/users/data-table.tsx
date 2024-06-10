@@ -1,4 +1,3 @@
-// components/DataTableDemo.tsx
 import * as React from "react";
 import {
   ColumnDef,
@@ -34,77 +33,103 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { UserProfile } from "@/types/userProfile.type";
-
-export const columns: ColumnDef<UserProfile>[] = [
-  {
-    accessorKey: "fullName",
-    header: "Full Name",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "gender",
-    header: "Gender",
-  },
-  {
-    accessorKey: "dateOfBirth",
-    header: "Date of Birth",
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: "Phone Number",
-  },
-  {
-    accessorKey: "address",
-    header: "Address",
-  },
-  {
-    accessorKey: "avatar",
-    header: "Avatar",
-    cell: ({ row }) => (
-      <img
-        src={row.getValue("avatar")}
-        alt="Avatar"
-        style={{ borderRadius: "50%", width: "30px", height: "30px" }}
-      />
-    ),
-  },
-  {
-    accessorKey: "provider",
-    header: "Provider",
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
+import { getUser, softDeleteUser } from "@/lib/apiClient";
+import { Modal } from "./components/DeleteUserModal"; // Import the Modal component
+import { useEffect } from "react";
 
 interface DataTableDemoProps {
   users: UserProfile[];
+  setUsers: React.Dispatch<React.SetStateAction<UserProfile[]>>;
+
 }
 
-export function DataTableDemo({ users }: DataTableDemoProps) {
+export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
+  
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState<UserProfile[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState<UserProfile | null>(null);
+
+  const handleDeleteClick = (user: UserProfile) => {
+    setSelectedUser(user);
+    setIsDeleteModalOpen(true);
+  };
+  
+  const handleDeleteConfirm = async () => {
+    if (selectedUser) {
+      try {
+        await softDeleteUser(selectedUser.id);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      } finally {
+        setIsDeleteModalOpen(false);
+        setSelectedUser(null);
+      }
+    }
+  };
+
+  const columns: ColumnDef<UserProfile>[] = [
+    {
+      accessorKey: "fullName",
+      header: "Full Name",
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+    },
+    {
+      accessorKey: "gender",
+      header: "Gender",
+    },
+    {
+      accessorKey: "dateOfBirth",
+      header: "Date of Birth",
+    },
+    {
+      accessorKey: "phoneNumber",
+      header: "Phone Number",
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+    },
+    {
+      accessorKey: "avatar",
+      header: "Avatar",
+      cell: ({ row }) => (
+        <img
+          src={row.getValue("avatar")}
+          alt="Avatar"
+          style={{ borderRadius: "50%", width: "30px", height: "30px" }}
+        />
+      ),
+    },
+    {
+      accessorKey: "provider",
+      header: "Provider",
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDeleteClick(row.original)}>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data: users,
@@ -233,6 +258,16 @@ export function DataTableDemo({ users }: DataTableDemoProps) {
           ))}
         </select>
       </div>
+
+      {isDeleteModalOpen && (
+        <Modal
+          title="Confirm Delete"
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleDeleteConfirm}
+        >
+          Are you sure you want to delete {selectedUser?.fullName}?
+        </Modal>
+      )}
     </div>
   );
 }
