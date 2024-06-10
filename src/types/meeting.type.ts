@@ -1,6 +1,7 @@
 import { MeetingCategory } from "./enums/meeting.enum";
 
 export interface Meeting {
+  id: string;
   title: string;
   type: MeetingCategory;
   description: string;

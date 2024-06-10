@@ -37,14 +37,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading: boolean;
-  setSelectedUsers: (users: TData[]) => void;
+  setSelectedItems: (items: TData[]) => void;
 }
 
-export function DataTable<TData, TValue>({
+export function DashboardDataTable<TData, TValue>({
   columns,
   data,
   isLoading,
-  setSelectedUsers,
+  setSelectedItems,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -71,21 +71,19 @@ export function DataTable<TData, TValue>({
   });
 
   useEffect(() => {
-    setSelectedUsers(
+    setSelectedItems(
       table.getFilteredSelectedRowModel().rows.map((row) => row.original)
     );
-  }, [rowSelection]);
+  }, [rowSelection, setSelectedItems, table]);
 
   return (
     <div>
       <div className='flex items-center py-4'>
         <Input
-          placeholder='Filter full name...'
-          value={
-            (table.getColumn("fullname")?.getFilterValue() as string) ?? ""
-          }
+          placeholder='Filter meeting title...'
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("fullname")?.setFilterValue(event.target.value)
+            table.getColumn("title")?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />
