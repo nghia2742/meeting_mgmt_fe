@@ -1,7 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
-
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -11,73 +9,45 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Meeting } from "@/types/meeting.type"
+import { Attendee } from "@/types/attendee.type"
 
-export const columns: ColumnDef<Meeting>[] = [
+export const columns: ColumnDef<Attendee>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label  ="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-    },
-    {
-        accessorKey: "title",
+        accessorKey: "id",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Title
+                    Id
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
     {
-        accessorKey: "type",
+        accessorKey: "name",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Type
+                    Fullname
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
     {
-        accessorKey: "startTime",
-        header: "Start time",
-    },
-    {
-        accessorKey: "endTime",
-        header: "End time",
-    },
-    {
-        accessorKey: "location",
-        header: "Location",
+        accessorKey: "avatar",
+        header: "Avatar",
     },
     {
         id: "actions",
         cell: ({ row }) => {
-            const meeting = row.original;
+            const user = row.original;
 
             return (
                 <DropdownMenu>
@@ -90,7 +60,6 @@ export const columns: ColumnDef<Meeting>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Update</DropdownMenuItem>
                         <DropdownMenuItem><p className="text-red-500">Delete</p></DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
