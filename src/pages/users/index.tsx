@@ -1,4 +1,3 @@
-// pages/index.tsx
 import MainLayout from '@/components/main.layout';
 import React, { useState, useEffect } from 'react';
 import { DataTableDemo } from './data-table';
@@ -79,7 +78,7 @@ function User() {
           <div></div> {/* This empty div helps push the button to the right */}
           <Button className="w-[100px] h-[50px]" onClick={openModal}>Create User</Button>
         </div>
-        <DataTableDemo users={users} />
+        <DataTableDemo users={users} setUsers={setUsers} /> {/* Pass setUsers as a prop */}
       </div>
       <CreateUserModal isOpen={isModalOpen} onClose={closeModal} onUserCreated={fetchUsers} />
     </MainLayout>

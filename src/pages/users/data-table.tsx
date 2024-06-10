@@ -40,7 +40,6 @@ import { useEffect } from "react";
 interface DataTableDemoProps {
   users: UserProfile[];
   setUsers: React.Dispatch<React.SetStateAction<UserProfile[]>>;
-
 }
 
 export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
@@ -61,6 +60,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
     if (selectedUser) {
       try {
         await softDeleteUser(selectedUser.id);
+        setUsers((prevUsers) => prevUsers.filter(user => user.id !== selectedUser.id)); // Update the users state
       } catch (error) {
         console.error("Error deleting user:", error);
       } finally {
