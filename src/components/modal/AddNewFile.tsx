@@ -57,7 +57,7 @@ const AddNewFile = ({ isOpen, onClose }: Props) => {
                     setUploadedSize(prevSize => prevSize + progressEvent.loaded);
                 },
             });
-            if (response && response.status === 201) {
+            if (response && response.data) {
                 setFiles(prevFiles => [
                     ...prevFiles,
                     {

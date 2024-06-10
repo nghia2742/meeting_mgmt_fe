@@ -16,6 +16,7 @@ import MeetingPDF from '../templates/meeting-pdf-template'
 import { calcMinutes, formatDateTime } from '@/utils/datetime.util'
 import { useToast } from "@/components/ui/use-toast";
 import apiClient from '@/lib/apiClient'
+import useCreatedBy from '@/hooks/useCreatedBy'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -67,6 +68,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
     const { formattedDate, formattedTime } = formatDateTime(meeting.startTime.toString());
     const minutes = calcMinutes(meeting.startTime.toString(), meeting.endTime.toString());
     const { toast } = useToast();
+    const { user } = useCreatedBy(meeting.createdBy);
 
     const [attendee, setAttendee] = useState<Attendee>();
 
@@ -113,6 +115,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
             startTime={formattedTime}
             date={formattedDate}
             duration={minutes.toString()}
+            createdBy={user}
         />;
         const asPdf = pdf();
         asPdf.updateContainer(doc);
@@ -127,13 +130,14 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
-            toast({
-                title: "Successfully",
-                description: "Create file successfully",
-                variant: "success",
-            });
-            onCloseModal();
+            if(response && response.status === 201) {
+                toast({
+                    title: "Successfully",
+                    description: "Create file successfully",
+                    variant: "success",
+                });
+                onCloseModal();
+            }
         } catch (error) {
             console.error('Error uploading file:', error);
         }
@@ -211,6 +215,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
                                     startTime={formattedTime}
                                     date={formattedDate}
                                     duration={minutes.toString()}
+                                    createdBy={user}
                                 />
                             </PDFViewer>
                         </div>

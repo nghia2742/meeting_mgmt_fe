@@ -13,10 +13,10 @@ interface Props {
     removeAttendee: (index: number) => void;
 }
 
-const formatOptionLabel = ({ name, avatar }: Attendee) => (
+const formatOptionLabel = ({ fullName, avatar }: Attendee) => (
     <div className='flex items-center'>
-        <img src={avatar} alt={name} style={{ width: 30, height: 30, marginRight: 10, borderRadius: '50%' }} />
-        <span className='text-sm'>{name}</span>
+        <img src={avatar} alt={fullName} style={{ width: 30, height: 30, marginRight: 10, borderRadius: '50%' }} />
+        <span className='text-sm'>{fullName}</span>
     </div>
 );
 
@@ -24,7 +24,7 @@ const filterOptions = (option: any, input: string) => {
     if (!input) {
         return false;
     }
-    return option.data.name.toLowerCase().includes(input.toLowerCase());
+    return option.data.fullName.toLowerCase().includes(input.toLowerCase());
 };
 
 const customStyles = {
@@ -51,7 +51,7 @@ const AddAttendee = ({ options, attendees, addNewAttendee, handleAttendeeChange,
                 <div className="lg:flex lg:space-x-3 space-x-0 space-y-3 lg:space-y-0">
                     <Select
                         options={options}
-                        getOptionLabel={(option: Attendee) => option.name}
+                        getOptionLabel={(option: Attendee) => option.fullName}
                         getOptionValue={(option: Attendee) => option.id}
                         formatOptionLabel={formatOptionLabel}
                         onChange={handleAttendeeChange}
@@ -79,7 +79,7 @@ const AddAttendee = ({ options, attendees, addNewAttendee, handleAttendeeChange,
                                 <AvatarImage src={attendee.avatar} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            <p className='max-w-[80px] truncate'>{attendee.name}</p>
+                            <p className='max-w-[80px] truncate'>{attendee.fullName}</p>
                         </div>
                         <div onClick={() => removeAttendee(index)} className='cursor-pointer text-sm'>x</div>
                     </div>
