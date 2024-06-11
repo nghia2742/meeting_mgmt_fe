@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { UserProfile } from "@/types/userProfile.type";
-import { softDeleteUser, updateUserProfile } from "@/lib/apiClient";
+import { getUser, softDeleteUser, updateUserProfile } from "@/lib/apiClient";
 import { Modal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 
@@ -31,7 +31,7 @@ interface DataTableDemoProps {
   setUsers: React.Dispatch<React.SetStateAction<UserProfile[]>>;
 }
 
-export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
+export function DataTableDemo({ users, setUsers  }: DataTableDemoProps) {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -69,13 +69,15 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
     console.log("Updated User:", updatedUser); // Debug log
     try {
       await updateUserProfile(updatedUser.email, updatedUser);
-      setUsers((prevUsers) =>
-        prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
-      );
+      const updatedUserData = await getUser();
+      setUsers(updatedUserData);
+
+
     } catch (error) {
       console.error("Error updating user:", error);
     }
   };
+
 
   const columns: ColumnDef<UserProfile>[] = [
     {

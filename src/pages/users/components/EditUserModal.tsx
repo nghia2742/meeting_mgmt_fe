@@ -32,6 +32,7 @@ const schema = z.object({
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave }) => {
     const [date, setDate] = useState<Date>();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    
 
     const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
         resolver: zodResolver(schema),
@@ -70,7 +71,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
             }
         }
 
-        console.log("Final Data to Save:", data); // Debug log
         onSave(data);
         onClose();
     };
