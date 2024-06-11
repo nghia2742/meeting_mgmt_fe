@@ -8,7 +8,7 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-export const Modal: FC<ModalProps> = ({ isOpen, onClose, onConfirm, children }) => {
+export const DeleteUserModal: FC<ModalProps> = ({ isOpen, onClose, onConfirm, children }) => {
   if (!isOpen) return null;
 
   return (
