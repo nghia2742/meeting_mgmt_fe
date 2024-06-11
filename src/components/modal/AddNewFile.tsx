@@ -2,28 +2,32 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from '
 import { Button } from '@/components/ui/button'
 import { useDropzone } from 'react-dropzone'
 import { Inter } from "next/font/google";
-import { FileIcon, Files } from 'lucide-react';
+import { FileIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useCallback, useState } from 'react';
 import apiClient from '@/lib/apiClient';
 import { isImage } from '@/utils/image.util';
 import { Progress } from '@/components/ui/progress';
 import { AxiosProgressEvent } from 'axios';
+import { toast } from '../ui/use-toast';
+import { getExtension } from '@/utils/get-extension.util';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export interface FilePreview {
     preview: string;
     name: string;
+    type: string;
 }
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
     onAddFile: () => void;
+    meetingId: string;
 }
 
-const AddNewFile = ({ isOpen, onClose }: Props) => {
+const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
 
     const [files, setFiles] = useState<FilePreview[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -57,12 +61,13 @@ const AddNewFile = ({ isOpen, onClose }: Props) => {
                     setUploadedSize(prevSize => prevSize + progressEvent.loaded);
                 },
             });
-            if (response && response.status === 201) {
+            if (response && response.data) {
                 setFiles(prevFiles => [
                     ...prevFiles,
                     {
                         preview: response.data.secure_url,
-                        name: file.name
+                        name: file.name,
+                        type: getExtension(response.data.secure_url)
                     },
                 ]);
             }
@@ -75,7 +80,45 @@ const AddNewFile = ({ isOpen, onClose }: Props) => {
 
     const onCloseModal = () => {
         onClose();
-        setFiles([])
+        setFiles([]);
+    }
+
+    const onAddNewFile = async () => {
+        let countUpload = 0;
+        if (files.length === 0) {
+            alert("Please upload at least one file!");
+        } else {
+            try {
+                for (let file of files) {
+                    const response = await apiClient.post('/files', {
+                        name: file.name,
+                        type: file.type,
+                        link: file.preview,
+                        meetingId
+                    })
+                    if (response && response.data) {
+                        countUpload++;
+                    }
+                }
+                if (countUpload === files.length) {
+                    toast({
+                        title: "Successfully",
+                        description: "Create files successfully",
+                        variant: "success",
+                    });
+                    onCloseModal();
+                    onAddFile();
+                }
+            } catch (error: any) {
+                console.error('Error uploading file:', error.response.data.message);
+                toast({
+                    title: "Uh oh! Something went wrong",
+                    description: error.response.data.message,
+                    variant: "destructive",
+                });
+                onCloseModal();
+            }
+        }
     }
 
     const progressPercentage = totalSize !== 0 ? (uploadedSize / totalSize) * 100 : 0;
@@ -114,7 +157,7 @@ const AddNewFile = ({ isOpen, onClose }: Props) => {
 
                 <DialogFooter className="sm:justify-end">
                     <div className="flex space-x-4 justify-end">
-                        <Button onClick={onCloseModal}>Save</Button>
+                        <Button onClick={onAddNewFile}>Save</Button>
                         <Button onClick={onCloseModal} type="button" variant="secondary">
                             Close
                         </Button>

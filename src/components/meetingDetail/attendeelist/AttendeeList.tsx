@@ -2,23 +2,14 @@ import { DataTable } from "@/components/data-table"
 import { columns } from "./column"
 import { Attendee } from "@/types/attendee.type"
 
-const attendees: Attendee[] = [
-    {
-        id: "1",
-        name: 'Dat Doan',
-        avatar: "https://github.com/shadcn.png",
-        email: "dat.doan.clv@gmail.com",
-    },
-    {
-        id: "2",
-        name: 'Nghia Ngo',
-        avatar: "https://github.com/shadcn.png",
-        email: "nghia.ngo.clv@gmail.com",
-    },
-]
+interface AttendeesProps {
+    attendees: Attendee[];
+    meetingId: string;
+    refreshData: () => void;
+}
 
-export const AttendeeList = () => {
+export const AttendeeList: React.FC<AttendeesProps> = ({refreshData, meetingId, attendees: initialAttendees }) => {
     return (
-        <DataTable columns={columns} data={attendees}/>
+        <DataTable columns={columns(meetingId, refreshData)} data={initialAttendees ? initialAttendees : []}/>
     )
 }
