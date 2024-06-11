@@ -117,6 +117,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                     date={date} 
                     setDate={setDate}
                     avatarFile={avatarFile}
+                    onClose={onClose}
                 />
             </DialogContent>
         </Dialog>

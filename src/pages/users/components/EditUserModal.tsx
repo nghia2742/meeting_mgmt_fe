@@ -25,8 +25,10 @@ const schema = z.object({
     email: z.string().email("Invalid email format").nonempty("Email is required"),
     phoneNumber: z.string().nonempty("Phone number is required"),
     address: z.string().nonempty("Address is required"),
-    gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }),
-    dateOfBirth: z.date().optional(),
+    gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }).optional(),
+    dateOfBirth: z.date().optional().refine(value => {
+        return value !== undefined; 
+    }, { message: 'Invalid date of birth' }),
 });
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave }) => {
@@ -57,7 +59,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     }, [user, setValue]);
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        console.log("Form Data:", data); // Debug log
         if (date && user && date.getTime()!== new Date(user.dateOfBirth).getTime()) {
             data.dateOfBirth = new Date(date.toISOString());        
         }
@@ -91,6 +92,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                     date={date} 
                     setDate={setDate}
                     avatarFile={avatarFile}
+                    onClose={onClose}
                 />
             </DialogContent>
         </Dialog>

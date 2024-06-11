@@ -17,9 +17,10 @@ interface UserProfileFormProps {
     date: Date | undefined;
     setDate: Dispatch<SetStateAction<Date | undefined>>;
     avatarFile: File | null;
+    onClose: () => void;
 }
 
-const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, control, setValue, errors, date, setDate, avatarFile }) => {
+const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, control, setValue, errors, date, setDate, avatarFile, onClose }) => {
     
     return (
         <form onSubmit={onSubmit} className="grid gap-4 py-4">
@@ -77,8 +78,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                     className="col-span-3"
                 />
             </div>
-            <GenderSelect control={control} />
-            <DateOfBirthPicker date={date} setDate={setDate} />
+            <GenderSelect control={control} error={errors.gender?.message} />
+            <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message}/>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="address" className="text-right">
                     Address
@@ -92,7 +93,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
             </div>
             <DialogFooter>
                 <Button type="submit">Save changes</Button>
-                <Button type="button" variant="secondary" onClick={() => console.log("Canceled")}>Cancel</Button>
+                <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
             </DialogFooter>
         </form>
     );

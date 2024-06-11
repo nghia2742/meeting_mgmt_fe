@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 interface DateOfBirthPickerProps {
     date: Date | undefined;
     setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+    error?: string; // Make error prop optional
 }
 
-const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({ date, setDate }) => {
+const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({ date, setDate, error }) => {
     return (
         <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dateOfBirth" className="text-right">
@@ -43,7 +44,10 @@ const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({ date, setDate }) 
                     />
                 </PopoverContent>
             </Popover>
+            {error && <p className="col-span-3 col-start-2 text-red-500">{error}</p>}
+
         </div>
+
     );
 };
 
