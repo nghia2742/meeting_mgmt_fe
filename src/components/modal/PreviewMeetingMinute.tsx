@@ -7,7 +7,6 @@ import { Meeting } from '@/types/meeting.type'
 import { Input } from '@/components/ui/input'
 import { DateTimePickerForm } from '../timePicker/DateTimePickerForm'
 import { Textarea } from "@/components/ui/textarea"
-import AddAttendee from '../attendee/AddAttendee'
 import { Attendee } from '@/types/attendee.type'
 import { PDFViewer, pdf } from '@react-pdf/renderer'
 import MeetingPDF from '../templates/meeting-pdf-template'
@@ -86,29 +85,29 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
         }
     };
 
-    const removeAttendee = (index: number) => {
-        const newAttendess = [...formData.attendees];
-        newAttendess.splice(index, 1);
-        setFormData(prevState => ({
-            ...prevState,
-            attendees: newAttendess
-        }));
-    }
+    // const removeAttendee = (index: number) => {
+    //     const newAttendess = [...formData.attendees];
+    //     newAttendess.splice(index, 1);
+    //     setFormData(prevState => ({
+    //         ...prevState,
+    //         attendees: newAttendess
+    //     }));
+    // }
 
-    const addNewAttendee = () => {
-        if (attendee) {
-            setFormData(prevState => ({
-                ...prevState,
-                attendees: [...formData.attendees, attendee]
-            }));
-        }
-    };
+    // const addNewAttendee = () => {
+    //     if (attendee) {
+    //         setFormData(prevState => ({
+    //             ...prevState,
+    //             attendees: [...formData.attendees, attendee]
+    //         }));
+    //     }
+    // };
 
-    const handleAttendeeChange = (selectedOption: Attendee | null) => {
-        if (selectedOption) {
-            setAttendee(selectedOption);
-        }
-    };
+    // const handleAttendeeChange = (selectedOption: Attendee | null) => {
+    //     if (selectedOption) {
+    //         setAttendee(selectedOption);
+    //     }
+    // };
 
     const onSaveMeetingMinutes = async () => {
         const doc = <MeetingPDF
@@ -123,7 +122,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
         const blob = await asPdf.toBlob();
 
         const formDataUpload = new FormData();
-        formDataUpload.append('file', new Blob([blob], { type: 'application/pdf' }), 'meeting_minutes.pdf');
+        formDataUpload.append('file', new Blob([blob], { type: 'application/pdf' }), `${formData.title}_meeting_minutes.pdf`);
 
         try {
             const response = await apiClient.post('/cloudinary/upload', formDataUpload, {
@@ -132,15 +131,27 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
                 }
             });
             if(response && response.status === 201) {
-                toast({
-                    title: "Successfully",
-                    description: "Create file successfully",
-                    variant: "success",
+                let responseCreateMeetingMinutes = await apiClient.post('/meetingminutes', {
+                    name: `${formData.title}_meeting_minutes.pdf`,
+                    link: response.data.secure_url,
+                    meetingId: meeting.id
                 });
-                onCloseModal();
+                if(responseCreateMeetingMinutes && responseCreateMeetingMinutes.status === 201) {
+                    toast({
+                        title: "Successfully",
+                        description: "Create meeting minutes successfully",
+                        variant: "success",
+                    });
+                    onCloseModal();
+                }
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error uploading file:', error);
+            toast({
+                title: "Ohh! Something went wrong",
+                description: error.response.data.message,
+                variant: "destructive",
+            });
         }
     }
 
@@ -196,16 +207,6 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
                                 placeholder="Enter note"
                                 value={formData.note}
                                 onChange={handleChange}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <AddAttendee
-                                attendees={formData.attendees}
-                                options={attendees}
-                                removeAttendee={removeAttendee}
-                                addNewAttendee={addNewAttendee}
-                                handleAttendeeChange={handleAttendeeChange}
-                                maxWidth={50}
                             />
                         </div>
                     </div>

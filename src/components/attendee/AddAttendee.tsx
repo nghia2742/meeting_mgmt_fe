@@ -80,7 +80,7 @@ const AddAttendee = ({ options, attendees, addNewAttendee, handleAttendeeChange,
                                 <AvatarImage src={attendee.avatar} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            <p className={`max-w-[${maxWidth}px] truncate`}>{attendee.fullName}</p>
+                            <p className={`max-w-[50px] truncate`}>{attendee.fullName}</p>
                         </div>
                         <div onClick={() => removeAttendee(index)} className='cursor-pointer text-sm'>x</div>
                     </div>

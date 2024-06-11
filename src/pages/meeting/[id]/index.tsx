@@ -21,6 +21,7 @@ import AddNewFile from '@/components/modal/AddNewFile'
 import PreviewMeetingMinute from '@/components/modal/PreviewMeetingMinute'
 import { Attendee } from '@/types/attendee.type'
 import { MeetingFile } from '@/types/meeting.file.type'
+import { MeetingMinutes } from '@/types/meeting-minutes.type'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -36,6 +37,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
     const [attendees, setAttendees] = useState<Attendee[]>();
     const [files, setFiles] = useState<MeetingFile[]>();
     const [users, setUsers] = useState<Attendee[]>();
+    const [latestMeetingMinutes, setLatestMeetingMinutes] = useState<MeetingMinutes>();
 
     const fetchAttendees = useCallback(async () => {
         const res = await apiClient.get(`/usermeetings/attendees/${meeting.id}`);
@@ -54,8 +56,14 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
     const fetchFiles = useCallback(async() => {
         const res = await apiClient.get(`/files/${meeting.id}`);
         if (res && res.data) {
-            console.log("File list: ", res.data);
             setFiles(res.data);
+        }
+    }, []);
+
+    const fetchLatestMeetingMinutes = useCallback(async () => {
+        const res = await apiClient.get(`/meetingminutes/latest/${meeting.id}`);
+        if(res && res.data) {
+            setLatestMeetingMinutes(res.data);
         }
     }, []);
 
@@ -63,6 +71,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
         fetchAttendees();
         fetchAllUser();
         fetchFiles();
+        fetchLatestMeetingMinutes();
     }, []);
 
     return (
@@ -108,7 +117,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                                     <a
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        href={"https://res.cloudinary.com/dblglqzca/image/upload/v1717946162/file_dygnod.pdf"}
+                                        href={latestMeetingMinutes?.link}
                                     >
                                         View meeting minutes
                                     </a>
@@ -166,7 +175,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
             />
             <PreviewMeetingMinute
                 isOpen={isOpenPreviewMeeetingMinute}
-                onClose={() => setIsOpenPreviewMeeetingMinute(false)}
+                onClose={() => { setIsOpenPreviewMeeetingMinute(false); fetchLatestMeetingMinutes() }}
                 meeting={meeting}
                 attendees={attendees || []}
                 files={files || []}
