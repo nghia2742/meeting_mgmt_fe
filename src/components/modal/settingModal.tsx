@@ -11,7 +11,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile, updateUserProfile } from "@/lib/apiClient";
+import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiClient";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
 
@@ -85,74 +85,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
         if (avatarFile) {
             try {
-                const resizedImageBlob = await resizeImage(avatarFile);
-                const base64String = await convertBlobToBase64(resizedImageBlob);
-
+                const avatarUrl = await uploadToCloudinary(avatarFile);
                 mutation.mutate({
                     ...data,
-                    avatar: base64String,
+                    avatar: avatarUrl,
                 });
             } catch (error) {
-                console.error("Error resizing or compressing image:", error);
+                console.error("Error uploading image to Cloudinary:", error);
             }
         } else {
             mutation.mutate(data);
         }
-    };
-
-    const resizeImage = (file: File): Promise<Blob> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 600;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    const ctx = canvas.getContext("2d");
-                    ctx?.drawImage(img, 0, 0, width, height);
-
-                    canvas.toBlob((blob) => {
-                        if (blob) {
-                            resolve(blob);
-                        } else {
-                            reject(new Error("Failed to resize image"));
-                        }
-                    }, file.type);
-                };
-                img.src = event.target?.result as string;
-            };
-            reader.readAsDataURL(file);
-        });
-    };
-
-    const convertBlobToBase64 = (blob: Blob): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                resolve(reader.result as string);
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
     };
 
     if (isLoading) return <div>Loading...</div>;

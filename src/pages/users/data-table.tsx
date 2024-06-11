@@ -1,8 +1,8 @@
 import * as React from "react";
 import {
   ColumnDef,
-  ColumnFiltersState,
   SortingState,
+  ColumnFiltersState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -13,29 +13,18 @@ import {
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { UserProfile } from "@/types/userProfile.type";
-import { getUser, softDeleteUser } from "@/lib/apiClient";
-import { Modal } from "./components/DeleteUserModal"; // Import the Modal component
-import { useEffect } from "react";
+import { softDeleteUser, updateUserProfile } from "@/lib/apiClient";
+import { Modal } from "./components/DeleteUserModal";
+import EditUserModal from "./components/EditUserModal";
 
 interface DataTableDemoProps {
   users: UserProfile[];
@@ -43,30 +32,48 @@ interface DataTableDemoProps {
 }
 
 export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
-  
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState<UserProfile[]>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<UserProfile | null>(null);
 
   const handleDeleteClick = (user: UserProfile) => {
     setSelectedUser(user);
     setIsDeleteModalOpen(true);
   };
-  
+
   const handleDeleteConfirm = async () => {
     if (selectedUser) {
       try {
         await softDeleteUser(selectedUser.id);
-        setUsers((prevUsers) => prevUsers.filter(user => user.id !== selectedUser.id)); // Update the users state
+        setUsers((prevUsers) => prevUsers.filter(user => user.id !== selectedUser.id));
       } catch (error) {
         console.error("Error deleting user:", error);
       } finally {
         setIsDeleteModalOpen(false);
         setSelectedUser(null);
       }
+    }
+  };
+
+  const handleEditClick = (user: UserProfile) => {
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSave = async (updatedUser: UserProfile) => {
+    console.log("Updated User:", updatedUser); // Debug log
+    try {
+      await updateUserProfile(updatedUser.email, updatedUser);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      );
+    } catch (error) {
+      console.error("Error updating user:", error);
     }
   };
 
@@ -123,7 +130,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleEditClick(row.original)}>Edit</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDeleteClick(row.original)}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -267,6 +274,14 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
         >
           Are you sure you want to delete {selectedUser?.fullName}?
         </Modal>
+      )}
+      {isEditModalOpen && (
+        <EditUserModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          user={selectedUser}
+          onSave={handleEditSave}
+        />
       )}
     </div>
   );

@@ -110,6 +110,22 @@ export const softDeleteUser = async (userId: string) => {
     throw new Error("Error deleting user");
   }
 };
+export const uploadToCloudinary = async (file: File): Promise<string> => {
+  try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await apiClient.post('/cloudinary/upload', formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+          },
+      });
+      return response.data.url; // Assuming the API returns the URL in response.data.url
+  } catch (error) {
+      throw new Error("Error uploading file");
+  }
+}
+
 
 
 export default apiClient;
