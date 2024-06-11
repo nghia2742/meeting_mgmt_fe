@@ -11,6 +11,7 @@ interface Props {
     addNewAttendee: () => void;
     handleAttendeeChange: (selectedOption: Attendee | null) => void;
     removeAttendee: (index: number) => void;
+    maxWidth: number;
 }
 
 const formatOptionLabel = ({ fullName, avatar }: Attendee) => (
@@ -43,7 +44,7 @@ const customStyles = {
 
 };
 
-const AddAttendee = ({ options, attendees, addNewAttendee, handleAttendeeChange, removeAttendee }: Props) => {
+const AddAttendee = ({ options, attendees, addNewAttendee, handleAttendeeChange, removeAttendee, maxWidth }: Props) => {
     return (
         <div className='space-y-5'>
             <div className="space-y-5">
@@ -79,7 +80,7 @@ const AddAttendee = ({ options, attendees, addNewAttendee, handleAttendeeChange,
                                 <AvatarImage src={attendee.avatar} alt="@shadcn" />
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            <p className='max-w-[80px] truncate'>{attendee.fullName}</p>
+                            <p className={`max-w-[${maxWidth}px] truncate`}>{attendee.fullName}</p>
                         </div>
                         <div onClick={() => removeAttendee(index)} className='cursor-pointer text-sm'>x</div>
                     </div>

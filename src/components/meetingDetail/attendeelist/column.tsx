@@ -10,8 +10,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Attendee } from "@/types/attendee.type"
+import apiClient from "@/lib/apiClient"
+import { toast } from "@/components/ui/use-toast"
 
-export const columns: ColumnDef<Attendee>[] = [
+export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<Attendee>[] = (meetingId, refreshData) => [
     {
         accessorKey: "id",
         header: ({ column }) => {
@@ -27,7 +29,7 @@ export const columns: ColumnDef<Attendee>[] = [
         },
     },
     {
-        accessorKey: "name",
+        accessorKey: "fullName",
         header: ({ column }) => {
             return (
                 <Button
@@ -48,6 +50,27 @@ export const columns: ColumnDef<Attendee>[] = [
         id: "actions",
         cell: ({ row }) => {
             const user = row.original;
+            const onDeleteAttendee = async() => {
+                try {
+                    let response = await apiClient.delete(`/usermeetings?userId=${user.id}&meetingId=${meetingId}`);
+                    if(response) {
+                        toast({
+                            title: "Successfully",
+                            description: "Delete attendee successfully",
+                            variant: "success",
+                        });
+                        refreshData();
+                    }
+                } catch (error: any) {
+                    console.log(error);
+                    toast({
+                        title: "Failed",
+                        description: error.response.data.message,
+                        variant: "destructive",
+                    });
+                }
+                
+            }
 
             return (
                 <DropdownMenu>
@@ -60,7 +83,7 @@ export const columns: ColumnDef<Attendee>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem><p className="text-red-500">Delete</p></DropdownMenuItem>
+                        <DropdownMenuItem><p className="text-red-500" onClick={onDeleteAttendee}>Delete</p></DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
