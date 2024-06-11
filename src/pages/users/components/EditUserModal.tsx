@@ -57,8 +57,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
         console.log("Form Data:", data); // Debug log
-        if (date && user!.dateOfBirth && date.getTime() !== new Date(user!.dateOfBirth).getTime()) {
-            data.dateOfBirth = new Date(date.toISOString());
+        if (date && user && date.getTime()!== new Date(user.dateOfBirth).getTime()) {
+            data.dateOfBirth = new Date(date.toISOString());        
         }
 
         if (avatarFile) {
@@ -79,8 +79,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
-                    <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
-                    <AvatarSection setAvatarFile={setAvatarFile} userData={user} />
+                <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
+                    {user && <AvatarSection setAvatarFile={setAvatarFile} userData={user} />}
                 </DialogHeader>
                 <UserProfileForm 
                     onSubmit={handleSubmit(onSubmit)} 
