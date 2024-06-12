@@ -90,7 +90,6 @@ export function DataTable<TData, TValue>({
                                 >
                                     {row.getVisibleCells().map((cell) => {
                                         if (cell.column.id === 'avatar') {
-                                            console.log(cell.getValue());
                                             return (
                                                 <TableCell key={cell.id}>
                                                     <Avatar>

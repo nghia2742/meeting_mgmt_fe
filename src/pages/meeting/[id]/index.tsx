@@ -11,13 +11,16 @@ import apiClient from '@/lib/apiClient'
 import { Meeting } from '@/types/meeting.type'
 import { calcMinutes, formatDateTime } from '@/utils/datetime.util'
 import { Slash } from 'lucide-react'
-import React, { useState } from 'react'
+import Link from 'next/link'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AttendeeList } from '@/components/meetingDetail/attendeelist/AttendeeList'
 import FileList from '@/components/meetingDetail/fileList/FileList'
 import AddNewAttendee from '@/components/modal/AddNewAttendee'
 import AddNewFile from '@/components/modal/AddNewFile'
 import PreviewMeetingMinute from '@/components/modal/PreviewMeetingMinute'
+import { Attendee } from '@/types/attendee.type'
+import { MeetingFile } from '@/types/meeting.file.type'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -30,6 +33,37 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
     const [isOpenModalAddAttendee, setIsOpenModalAddAttendee] = useState(false);
     const [isOpenModalAddFile, setIsOpenModalAddFile] = useState(false);
     const [isOpenPreviewMeeetingMinute, setIsOpenPreviewMeeetingMinute] = useState(false);
+    const [attendees, setAttendees] = useState<Attendee[]>();
+    const [files, setFiles] = useState<MeetingFile[]>();
+    const [users, setUsers] = useState<Attendee[]>();
+
+    const fetchAttendees = useCallback(async () => {
+        const res = await apiClient.get(`/usermeetings/attendees/${meeting.id}`);
+        if (res && res.data) {
+            setAttendees(res.data);
+        }
+    }, []);
+
+    const fetchAllUser = useCallback(async () => {
+        const res = await apiClient.get(`/users`);
+        if (res && res.data) {
+            setUsers(res.data);
+        }
+    }, []);
+
+    const fetchFiles = useCallback(async() => {
+        const res = await apiClient.get(`/files/${meeting.id}`);
+        if (res && res.data) {
+            console.log("File list: ", res.data);
+            setFiles(res.data);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchAttendees();
+        fetchAllUser();
+        fetchFiles();
+    }, []);
 
     return (
         <MainLayout>
@@ -37,13 +71,17 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
+                            <BreadcrumbLink asChild>
+                                <Link href='/dashboard'>Home</Link>
+                            </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator>
                             <Slash />
                         </BreadcrumbSeparator>
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/meeting">Meeting</BreadcrumbLink>
+                            <BreadcrumbLink asChild>
+                                <Link href='/meeting'>Meeting</Link>
+                            </BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator>
                             <Slash />
@@ -88,7 +126,11 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                                 <p className='font-bold text-xl'>Attendees</p>
                                 <Button className='text-[13px]' onClick={() => setIsOpenModalAddAttendee(true)}>Add new attendee</Button>
                             </div>
-                            <AttendeeList />
+                            <AttendeeList
+                                attendees={attendees || []}
+                                meetingId={meeting.id}
+                                refreshData={() => fetchAttendees()}
+                            />
                         </div>
                     </div>
                     <div className='space-y-4'>
@@ -101,24 +143,33 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                                 Add new file
                             </Button>
                         </div>
-                        <FileList />
+                        <FileList 
+                            files={files || []}
+                            meetingId={meeting.id}
+                            refreshData={() => fetchFiles()}
+                        />
                     </div>
                 </div>
             </div>
             <AddNewAttendee
                 isOpen={isOpenModalAddAttendee}
                 onClose={() => setIsOpenModalAddAttendee(false)}
-                onAddAttendees={() => setIsOpenModalAddAttendee(false)}
+                onAddAttendees={() => fetchAttendees()}
+                attendees={users}
+                meetingId={meeting.id}
             />
             <AddNewFile
                 isOpen={isOpenModalAddFile}
                 onClose={() => setIsOpenModalAddFile(false)}
-                onAddFile={() => setIsOpenModalAddFile(false)}
+                onAddFile={() => fetchFiles()}
+                meetingId={meeting.id}
             />
             <PreviewMeetingMinute
                 isOpen={isOpenPreviewMeeetingMinute}
                 onClose={() => setIsOpenPreviewMeeetingMinute(false)}
                 meeting={meeting}
+                attendees={attendees || []}
+                files={files || []}
             />
         </MainLayout>
     )
