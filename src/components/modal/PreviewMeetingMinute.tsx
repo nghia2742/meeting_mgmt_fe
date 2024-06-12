@@ -4,8 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Inter } from "next/font/google"
 import { Meeting } from '@/types/meeting.type'
-import attendeeOptions from '@/const/attendee-options'
-import files from '@/const/files'
 import { Input } from '@/components/ui/input'
 import { DateTimePickerForm } from '../timePicker/DateTimePickerForm'
 import { Textarea } from "@/components/ui/textarea"
@@ -16,48 +14,52 @@ import MeetingPDF from '../templates/meeting-pdf-template'
 import { calcMinutes, formatDateTime } from '@/utils/datetime.util'
 import { useToast } from "@/components/ui/use-toast";
 import apiClient from '@/lib/apiClient'
+import useCreatedBy from '@/hooks/useCreatedBy'
+import { MeetingFile } from '@/types/meeting.file.type'
 
 const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    meeting: Meeting
+    meeting: Meeting;
+    attendees: Attendee[];
+    files: MeetingFile[];
 }
 
-const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
+const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Props) => {
 
     const onCloseModal = () => {
         onClose();
         setFormData({
             title: '',
-            type: '',
+            tag: '',
             description: '',
             location: '',
             note: '',
-            attendees: attendeeOptions,
-            files: files,
+            attendees,
+            files,
         })
     }
 
     const [formData, setFormData] = useState({
         title: '',
-        type: '',
+        tag: '',
         description: '',
         location: '',
         note: '',
-        attendees: attendeeOptions,
+        attendees,
         files: files
     })
 
     useEffect(() => {
         setFormData({
             title: meeting.title,
-            type: meeting.type,
+            tag: meeting.type,
             description: meeting.description,
             location: meeting.location,
             note: meeting.note,
-            attendees: attendeeOptions,
+            attendees,
             files: files,
         })
     }, [isOpen])
@@ -67,6 +69,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
     const { formattedDate, formattedTime } = formatDateTime(meeting.startTime.toString());
     const minutes = calcMinutes(meeting.startTime.toString(), meeting.endTime.toString());
     const { toast } = useToast();
+    const { user } = useCreatedBy(meeting.createdBy);
 
     const [attendee, setAttendee] = useState<Attendee>();
 
@@ -113,6 +116,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
             startTime={formattedTime}
             date={formattedDate}
             duration={minutes.toString()}
+            createdBy={user}
         />;
         const asPdf = pdf();
         asPdf.updateContainer(doc);
@@ -127,13 +131,14 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
-            toast({
-                title: "Successfully",
-                description: "Create file successfully",
-                variant: "success",
-            });
-            onCloseModal();
+            if(response && response.status === 201) {
+                toast({
+                    title: "Successfully",
+                    description: "Create file successfully",
+                    variant: "success",
+                });
+                onCloseModal();
+            }
         } catch (error) {
             console.error('Error uploading file:', error);
         }
@@ -196,10 +201,11 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
                         <div className="space-y-2">
                             <AddAttendee
                                 attendees={formData.attendees}
-                                options={attendeeOptions}
+                                options={attendees}
                                 removeAttendee={removeAttendee}
                                 addNewAttendee={addNewAttendee}
                                 handleAttendeeChange={handleAttendeeChange}
+                                maxWidth={50}
                             />
                         </div>
                     </div>
@@ -211,6 +217,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting }: Props) => {
                                     startTime={formattedTime}
                                     date={formattedDate}
                                     duration={minutes.toString()}
+                                    createdBy={user}
                                 />
                             </PDFViewer>
                         </div>

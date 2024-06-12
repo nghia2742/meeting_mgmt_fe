@@ -3,6 +3,7 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 import { Attendee } from '@/types/attendee.type';
 import { MeetingFile } from '@/types/meeting.file.type';
+import { User } from '@/types/user.type';
 
 const styles = StyleSheet.create({
     page: {
@@ -82,10 +83,11 @@ interface Props {
     date: string;
     duration: string;
     location: string;
-    files: MeetingFile[]
+    files: MeetingFile[],
+    createdBy: User | undefined
 }
 
-const MeetingPDF = ({ title, description, note, date, startTime, duration, attendees, location, files }: Props) => (
+const MeetingPDF = ({ title, description, note, date, startTime, duration, attendees, location, files, createdBy }: Props) => (
     <Document>
         <Page style={styles.page}>
             <View style={styles.section}>
@@ -98,7 +100,7 @@ const MeetingPDF = ({ title, description, note, date, startTime, duration, atten
                 <Text style={styles.text}>Start time: {startTime}</Text>
                 <Text style={styles.text}>Duration: {duration} minutes</Text>
                 <Text style={styles.text}>Location: {location}</Text>
-                <Text style={styles.text}>Organised by: {attendees[0]?.name}</Text>
+                <Text style={styles.text}>Organised by: {createdBy?.fullName}</Text>
             </View>
             <View style={styles.divider}></View>
             <View style={styles.section}>
@@ -123,10 +125,10 @@ const MeetingPDF = ({ title, description, note, date, startTime, duration, atten
                     {attendees.map((attendee, index) => (
                         <View style={styles.tableRow} key={index}>
                             <View style={styles.tableCol}>
-                                <Text style={styles.tableCell}>{attendee.name.split(' ')[0]}</Text>
+                                <Text style={styles.tableCell}>{attendee.fullName.split(' ')[0]}</Text>
                             </View>
                             <View style={styles.tableCol}>
-                                <Text style={styles.tableCell}>{attendee.name.split(' ')[1]}</Text>
+                                <Text style={styles.tableCell}>{attendee.fullName.split(' ')[1]}</Text>
                             </View>
                             <View style={styles.tableCol}>
                                 <Text style={styles.tableCellEmail}>{attendee.email}</Text>

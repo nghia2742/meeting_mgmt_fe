@@ -35,7 +35,7 @@ export function DateTimePickerForm({ time, title }: { time?: Date, title: string
         resolver: zodResolver(formSchema),
         defaultValues: {
             dateTime: time,
-        },
+        }
     });
 
     function onSubmit(data: FormSchemaType) {
@@ -90,7 +90,7 @@ export function DateTimePickerForm({ time, title }: { time?: Date, title: string
                                     <div className="p-3 border-t border-border">
                                         <TimePicker
                                             setDate={field.onChange}
-                                            date={field.value}
+                                            date={new Date(field.value)}
                                         />
                                     </div>
                                 </PopoverContent>
