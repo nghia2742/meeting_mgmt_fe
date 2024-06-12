@@ -27,8 +27,9 @@ interface MeetingDetailPageProps {
     meeting: Meeting;
 }
 
-const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
+const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeting }) => {
 
+    const [meeting, setMeeeting] = useState(initialMeeting);
     const { formattedDate, formattedTime } = formatDateTime(meeting.startTime.toString());
     const minutes = calcMinutes(meeting.startTime.toString(), meeting.endTime.toString());
     const [isOpenModalAddAttendee, setIsOpenModalAddAttendee] = useState(false);
@@ -38,6 +39,13 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
     const [files, setFiles] = useState<MeetingFile[]>();
     const [users, setUsers] = useState<Attendee[]>();
     const [latestMeetingMinutes, setLatestMeetingMinutes] = useState<MeetingMinutes>();
+
+    const fetchMeeting = async() => {
+        let response = await apiClient.get(`/meetings/${initialMeeting.id}`);
+        if (response && response.data) {
+            setMeeeting(response.data);
+        }
+    }
 
     const fetchAttendees = useCallback(async () => {
         const res = await apiClient.get(`/usermeetings/attendees/${meeting.id}`);
@@ -179,6 +187,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting }) => {
                 meeting={meeting}
                 attendees={attendees || []}
                 files={files || []}
+                refreshMeeting={fetchMeeting}
             />
         </MainLayout>
     )

@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import apiClient from '@/lib/apiClient'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import { MeetingFile } from '@/types/meeting.file.type'
+import { differenceInMilliseconds } from 'date-fns'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,9 +25,10 @@ interface Props {
     meeting: Meeting;
     attendees: Attendee[];
     files: MeetingFile[];
+    refreshMeeting: () => void;
 }
 
-const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Props) => {
+const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refreshMeeting }: Props) => {
 
     const onCloseModal = () => {
         onClose();
@@ -38,7 +40,9 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
             note: '',
             attendees,
             files,
-        })
+        });
+        setStartTime(new Date());
+        setEndTime(new Date());
     }
 
     const [formData, setFormData] = useState({
@@ -60,18 +64,17 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
             note: meeting.note,
             attendees,
             files: files,
-        })
+        });
+        setStartTime(meeting.startTime);
+        setEndTime(meeting.endTime);
     }, [isOpen])
 
-    const [startTime, setStartTime] = useState<Date | undefined>(meeting.startTime);
-    const [endTime, setEndTime] = useState<Date | undefined>(meeting.endTime);
-    const { formattedDate, formattedTime } = formatDateTime(meeting.startTime.toString());
-    const minutes = calcMinutes(meeting.startTime.toString(), meeting.endTime.toString());
+    const [startTime, setStartTime] = useState<Date>(meeting.startTime);
+    const [endTime, setEndTime] = useState<Date>(meeting.endTime);
+    const { formattedDate, formattedTime } = formatDateTime(startTime.toString());
+    const minutes = calcMinutes(startTime.toString(), endTime.toString());
     const { toast } = useToast();
     const { user } = useCreatedBy(meeting.createdBy);
-
-    const [attendee, setAttendee] = useState<Attendee>();
-
     //Show preview PDF
     const [showPreview, setShowPreview] = useState(false);
 
@@ -84,30 +87,6 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
             }));
         }
     };
-
-    // const removeAttendee = (index: number) => {
-    //     const newAttendess = [...formData.attendees];
-    //     newAttendess.splice(index, 1);
-    //     setFormData(prevState => ({
-    //         ...prevState,
-    //         attendees: newAttendess
-    //     }));
-    // }
-
-    // const addNewAttendee = () => {
-    //     if (attendee) {
-    //         setFormData(prevState => ({
-    //             ...prevState,
-    //             attendees: [...formData.attendees, attendee]
-    //         }));
-    //     }
-    // };
-
-    // const handleAttendeeChange = (selectedOption: Attendee | null) => {
-    //     if (selectedOption) {
-    //         setAttendee(selectedOption);
-    //     }
-    // };
 
     const onSaveMeetingMinutes = async () => {
         const doc = <MeetingPDF
@@ -130,39 +109,68 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            if(response && response.status === 201) {
+            if (response && response.status === 201) {
                 let responseCreateMeetingMinutes = await apiClient.post('/meetingminutes', {
                     name: `${formData.title}_meeting_minutes.pdf`,
                     link: response.data.secure_url,
                     meetingId: meeting.id
                 });
-                if(responseCreateMeetingMinutes && responseCreateMeetingMinutes.status === 201) {
+                if (responseCreateMeetingMinutes && responseCreateMeetingMinutes.status === 201) {
                     toast({
                         title: "Successfully",
                         description: "Create meeting minutes successfully",
                         variant: "success",
                     });
-                    onCloseModal();
+                    const responseUpdateMeeting = await apiClient.patch(`/meetings/${meeting.id}`, {
+                        ...formData,
+                        startTime: startTime,
+                        endTime: endTime,
+                    });
+                    if(responseUpdateMeeting) {
+                        toast({
+                            title: "Successfully",
+                            description: "Update meeting successfully",
+                            variant: "success",
+                        });
+                        refreshMeeting();
+                        onCloseModal();
+                    }
                 }
             }
         } catch (error: any) {
             console.error('Error uploading file:', error);
             toast({
-                title: "Ohh! Something went wrong",
+                title: "Oops! Something went wrong",
                 description: error.response.data.message,
                 variant: "destructive",
             });
         }
     }
 
+    const onChangeDate = (date: Date, type: string) => {
+        if (type === 'start') {
+            if (endTime && differenceInMilliseconds(date, endTime) > 0) {
+                alert('Start time must be equal to or earlier than end time');
+            } else {
+                setStartTime(date);
+            }
+        } else if (type === 'end') {
+            if (startTime && differenceInMilliseconds(date, startTime) < 0) {
+                alert('End time must be equal to or later than start time');
+            } else {
+                setEndTime(date);
+            }
+        }
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
             <DialogContent className={`lg:min-w-[800px] w-full ${inter.className}`}>
                 <DialogHeader>
-                    <DialogTitle>Preview meeting minute</DialogTitle>
+                    <DialogTitle className='px-2'>Preview meeting minute</DialogTitle>
                 </DialogHeader>
                 <div className="max-h-[500px] overflow-x-hidden overflow-y-auto">
-                    <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 gap-x-4">
+                    <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 gap-x-8 px-2">
                         <div className="space-y-2">
                             <Label htmlFor="title">Title</Label>
                             <Input
@@ -184,10 +192,18 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
                             />
                         </div>
                         <div className="space-y-4">
-                            <DateTimePickerForm time={meeting.startTime} title="Start time" />
+                            <DateTimePickerForm
+                                time={meeting.startTime}
+                                title="Start time"
+                                onChangeDate={(date) => {console.log(date); onChangeDate(date ? date : new Date(), "start")}}
+                            />
                         </div>
                         <div className="space-y-4">
-                            <DateTimePickerForm time={meeting.endTime} title="Endtime" />
+                            <DateTimePickerForm
+                                time={meeting.endTime}
+                                title="Endtime"
+                                onChangeDate={(date) => onChangeDate(date ? date : new Date(), "end")}
+                            />
                         </div>
                         <div className="space-y-2 col-span-full">
                             <Label htmlFor="description">Description</Label>
@@ -211,7 +227,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files }: Pr
                         </div>
                     </div>
                     {showPreview && (
-                        <div className="mt-4">
+                        <div className="mt-4 px-2">
                             <PDFViewer width="100%" height="500">
                                 <MeetingPDF
                                     {...formData}

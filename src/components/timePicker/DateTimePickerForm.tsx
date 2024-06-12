@@ -1,5 +1,4 @@
 "use client";
-
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,7 +29,8 @@ const formSchema = z.object({
 
 type FormSchemaType = z.infer<typeof formSchema>;
 
-export function DateTimePickerForm({ time, title }: { time?: Date, title: string }) {
+export function DateTimePickerForm({
+    time, title, onChangeDate }: { time?: Date, title: string, onChangeDate: (date: Date | undefined) => void }) {
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -38,68 +38,59 @@ export function DateTimePickerForm({ time, title }: { time?: Date, title: string
         }
     });
 
-    function onSubmit(data: FormSchemaType) {
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre>
-                    <code>{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        });
-    }
-
     return (
         <Form {...form}>
-            <form
-                className="flex items-end space-x-2 justify-center"
-                onSubmit={form.handleSubmit(onSubmit)}
-            >
-                <FormField
-                    control={form.control}
-                    name="dateTime"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                            <FormLabel className="text-left">{title}</FormLabel>
-                            <Popover>
-                                <FormControl>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className={cn(
-                                                "w-[280px] justify-start text-left font-normal",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {field.value ? (
-                                                format(field.value, "PPP HH:mm:ss")
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )}
-                                        </Button>
-                                    </PopoverTrigger>
-                                </FormControl>
-                                <PopoverContent className="w-auto p-0">
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                        initialFocus
+            <FormField
+                control={form.control}
+                name="dateTime"
+                render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                        <FormLabel className="text-left">{title}</FormLabel>
+                        <Popover>
+                            <FormControl className="w-full">
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !field.value && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {field.value ? (
+                                            format(field.value, "PPP HH:mm:ss")
+                                        ) : (
+                                            <span>Pick a date</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                            </FormControl>
+                            <PopoverContent className="w-full p-0">
+                                <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={(date) => {
+                                        console.log("Calendar date selected:", date);
+                                        field.onChange(date);
+                                        onChangeDate(date);
+                                    }}
+                                    initialFocus
+                                />
+                                <div className="p-3 border-t border-border">
+                                    <TimePicker
+                                        setDate={(date) => {
+                                            console.log("TimePicker date selected:", date);
+                                            field.onChange(date);
+                                            onChangeDate(date);
+                                        }}
+                                        date={new Date(field.value)}
                                     />
-                                    <div className="p-3 border-t border-border">
-                                        <TimePicker
-                                            setDate={field.onChange}
-                                            date={new Date(field.value)}
-                                        />
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
-                        </FormItem>
-                    )}
-                />
-                <Button type="submit">Submit</Button>
-            </form>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </FormItem>
+                )}
+            />
         </Form>
     );
 }
