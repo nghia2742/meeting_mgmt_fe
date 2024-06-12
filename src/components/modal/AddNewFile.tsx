@@ -122,7 +122,6 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
     }
 
     const progressPercentage = totalSize !== 0 ? (uploadedSize / totalSize) * 100 : 0;
-    console.log(progressPercentage);
 
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
