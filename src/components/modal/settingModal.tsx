@@ -11,7 +11,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiClient";
+import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
 
