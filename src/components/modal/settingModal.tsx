@@ -1,164 +1,124 @@
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-
-import { cn } from "@/lib/utils"
-import { Calendar } from "@/components/ui/calendar"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
-import image from "next/image";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { UserProfile } from "@/types/userProfile.type";
+import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
+import AvatarSection from "./components/AvatarSection";
+import UserProfileForm from "./components/UserProfileForm";
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
 
+const schema = z.object({
+    fullName: z.string().nonempty("Full name is required"),
+    email: z.string().email("Invalid email format").nonempty("Email is required"),
+    phoneNumber: z.string().nonempty("Phone number is required"),
+    address: z.string().nonempty("Address is required"),
+    gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }),
+    dateOfBirth: z.date().optional(),
+});
+
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-    const [date, setDate] = React.useState<Date>()
-    const [image, setImage] = useState("https://github.com/shadcn.png");
-    const handleChangeImage = (newImage: React.SetStateAction<string>) => {
-        setImage(newImage);
+    const [date, setDate] = useState<Date>();
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+
+    const queryClient = useQueryClient();
+
+    const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
+        resolver: zodResolver(schema),
+    });
+
+    const { data: userData, isLoading, isError, error } = useQuery({
+        queryKey: ['userProfile'],
+        queryFn: fetchUserProfile,
+    });
+
+    useEffect(() => {
+        const getUserProfile = async () => {
+            try {
+                const userData = await fetchUserProfile();
+                setValue("fullName", userData.fullName);
+                setValue("email", userData.email);
+                if (userData.dateOfBirth) {
+                    setValue("dateOfBirth", new Date(userData.dateOfBirth));
+                    setDate(new Date(userData.dateOfBirth));
+                }
+                setValue("address", userData.address);
+                setValue("gender", userData.gender);
+                setValue("phoneNumber", userData.phoneNumber);
+                setValue("provider", userData.provider);
+                if (userData.avatar) {
+                    // Assuming userData.avatar is a base64 string
+                    setAvatarFile(null); // Reset to null because base64 string is not a File object
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        };
+
+        getUserProfile();
+    }, []); // Removed userData and setValue from the dependency array
+
+    const mutation = useMutation({
+        mutationFn: (updatedUser: UserProfile) => updateUserProfile(updatedUser.email, updatedUser),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+            onClose();
+        }
+    });
+
+    const onSubmit: SubmitHandler<UserProfile> = async (data) => {
+        if (date && date.getTime() !== new Date(userData.dateOfBirth).getTime()) {
+            data.dateOfBirth = new Date(date.toISOString());
+        }
+
+        if (avatarFile) {
+            try {
+                const avatarUrl = await uploadToCloudinary(avatarFile);
+                mutation.mutate({
+                    ...data,
+                    avatar: avatarUrl,
+                });
+            } catch (error) {
+                console.error("Error uploading image to Cloudinary:", error);
+            }
+        } else {
+            mutation.mutate(data);
+        }
     };
+
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error loading user data: {error.message}</div>;
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
                     <DialogTitle className="mb-2">Edit profile</DialogTitle>
-                    <Popover>
-                        <PopoverTrigger>
-                            <Avatar className="h-[200px] w-[200px] cursor-pointer">
-                                <AvatarImage src={image} className="rounded-full" />
-                                <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                            {/* Add options for changing the image */}
-                            {/* For example, you can provide buttons or an input field for uploading a new image */}
-                            <button onClick={() => handleChangeImage("new_image_url")}>Change Image</button>
-                            {/* This is where you'd handle the logic for changing the image */}
-                        </PopoverContent>
-                    </Popover>
+                    <AvatarSection setAvatarFile={setAvatarFile} userData={userData} />
                 </DialogHeader>
-
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
-                            FullName
-                        </Label>
-                        <Input
-                            id="name"
-                            defaultValue="Pedro Duarte"
-                            className="col-span-3"
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="password" className="text-right">
-                            Password
-                        </Label>
-                        <Input
-                            id="password"
-                            placeholder="**************"
-                            className="col-span-3"
-                            type="password"
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="email" className="text-right">
-                            Email
-                        </Label>
-                        <Input
-                            id="email"
-                            defaultValue="example@example.com"
-                            className="col-span-3"
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="Gender" className="text-right">
-                            Gender
-                        </Label>
-                        <Select>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Male">Male</SelectItem>
-                                <SelectItem value="Female">Female</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="Date of Birth" className="text-right">
-                            Date of Birth
-                        </Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-[280px] justify-start text-left font-normal",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                    fromYear={1920}
-                                    toYear={2004}
-                                    captionLayout="dropdown-buttons"
-                                />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="address" className="text-right">
-                            Address
-                        </Label>
-                        <Input
-                            id="adress"
-                            placeholder="143 Tran Xuan Xoan, District 7"
-                            className="col-span-3"
-                        />
-                    </div>
-
-                </div>
-                <DialogFooter>
-                    <Button type="submit">Save changes</Button>
-                    <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-                </DialogFooter>
+                <UserProfileForm 
+                    onSubmit={handleSubmit(onSubmit)} 
+                    register={register} 
+                    control={control} 
+                    setValue={setValue} 
+                    errors={errors} 
+                    date={date} 
+                    setDate={setDate}
+                    avatarFile={avatarFile}
+                    onClose={onClose}
+                />
             </DialogContent>
         </Dialog>
     );
