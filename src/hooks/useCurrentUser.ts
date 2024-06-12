@@ -2,7 +2,7 @@ import apiClient from "@/lib/apiClient"
 import { User } from "@/types/user.type"
 import { useEffect, useState } from "react"
 
-const useCurrentUser = async() => {
+const useCurrentUser = () => {
 
     const [user, setUser] = useState<User>();
     const [error, setError] = useState(null);

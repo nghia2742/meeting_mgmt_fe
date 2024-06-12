@@ -6,10 +6,11 @@ interface AttendeesProps {
     attendees: Attendee[];
     meetingId: string;
     refreshData: () => void;
+    canHaveActions: boolean;
 }
 
-export const AttendeeList: React.FC<AttendeesProps> = ({refreshData, meetingId, attendees: initialAttendees }) => {
+export const AttendeeList: React.FC<AttendeesProps> = ({ refreshData, meetingId, attendees: initialAttendees, canHaveActions }) => {
     return (
-        <DataTable columns={columns(meetingId, refreshData)} data={initialAttendees ? initialAttendees : []}/>
+        <DataTable columns={columns(meetingId, refreshData, canHaveActions)} data={initialAttendees ? initialAttendees : []}/>
     )
 }
