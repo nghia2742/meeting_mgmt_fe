@@ -22,19 +22,12 @@ const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginRequest) => fetchLogin(credentials),
     onSuccess: (data) => {
-      const { accessToken, refreshToken } = data;
-      Cookies.set("accessToken", accessToken, {
-        expires: 1,
-        secure: true,
-        sameSite: "strict",
-      });
-      Cookies.set("refreshToken", refreshToken, {
-        expires: 7,
-        secure: true,
-        sameSite: "strict",
-      });
+      const accessToken = Cookies.get("accessToken") || "";
+      const refreshToken = Cookies.get("refreshToken") || "";
       setTokens(accessToken, refreshToken);
-      console.log(data);
+      console.log("AccessToken: ", accessToken);
+      console.log("refreshToken: ", refreshToken);
+
       toast({
         title: "Login Successfully",
         description: "Welcome to our app",
