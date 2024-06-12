@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import MainLayout from "@/components/main.layout";
-import { Meeting } from "@/types/meeting.type";
+import { DashboardMeeting } from "@/types/meeting.type";
 import { MeetingCategory } from "@/types/enums/meeting.enum";
 import { DashboardDataTable } from "./data-table";
 import { dashboardColumns } from "./column";
+import { useDeleteMeeting } from "@/hooks/useMeeting";
+import UpcomingMeetings from "@/components/upcoming-meetings";
+import { isFutureDate } from "@/utils/time-picker.util";
 
-const meetings: Meeting[] = [
+const meetings: DashboardMeeting[] = [
   {
     id: "1",
     title: "Meeting 1",
@@ -35,8 +38,8 @@ const meetings: Meeting[] = [
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
     note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
+    startTime: new Date("2025-06-11T12:40:18.982"),
+    endTime: new Date("2025-06-11T13:40:18.982"),
     location: "Rafah 2F",
   },
   {
@@ -130,16 +133,34 @@ const meetings: Meeting[] = [
 ];
 
 function Dashboard() {
-  const [selectedMeetings, setSelectedMeetings] = useState<Meeting[]>([]);
+  const [selectedMeetings, setSelectedMeetings] = useState<DashboardMeeting[]>(
+    []
+  );
+  const { mutate: deleteMeeting } = useDeleteMeeting();
+
+  const onDeleteMeetings = async () => {
+    await Promise.all(
+      selectedMeetings.map((meeting) => deleteMeeting(meeting.id))
+    );
+  };
 
   return (
     <MainLayout>
-      <DashboardDataTable
-        columns={dashboardColumns}
-        data={meetings}
-        isLoading={false}
-        setSelectedItems={setSelectedMeetings}
-      />
+      <div className='max-w-[1020px] overflow-x-hidden'>
+        <UpcomingMeetings
+          meetings={meetings.filter((meeting) =>
+            isFutureDate(meeting.startTime)
+          )}
+        />
+        <DashboardDataTable
+          columns={dashboardColumns}
+          data={meetings}
+          isLoading={false}
+          selectedItems={selectedMeetings}
+          setSelectedItems={setSelectedMeetings}
+          handleDeleteItems={onDeleteMeetings}
+        />
+      </div>
     </MainLayout>
   );
 }

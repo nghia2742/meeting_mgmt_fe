@@ -29,27 +29,36 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ClipLoader from "react-spinners/ClipLoader";
+import { PlusCircle, Trash2 } from "lucide-react";
+import ConfirmDialog from "@/components/modal/ConfirmDialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading: boolean;
+  selectedItems: TData[];
   setSelectedItems: (items: TData[]) => void;
+  handleDeleteItems: () => void;
 }
 
 export function DashboardDataTable<TData, TValue>({
   columns,
   data,
   isLoading,
+  selectedItems,
   setSelectedItems,
+  handleDeleteItems,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [filterUpcoming, setFilterUpcoming] = useState(false);
 
   const table = useReactTable({
     data,
@@ -76,6 +85,15 @@ export function DashboardDataTable<TData, TValue>({
     );
   }, [rowSelection, setSelectedItems, table]);
 
+  const handleFilterUpcomingChange = (checked: boolean) => {
+    setFilterUpcoming(checked);
+    if (checked) {
+      table.getColumn("start")?.setFilterValue(true);
+    } else {
+      table.getColumn("start")?.setFilterValue(undefined);
+    }
+  };
+
   return (
     <div>
       <div className='flex items-center py-4'>
@@ -87,32 +105,74 @@ export function DashboardDataTable<TData, TValue>({
           }
           className='max-w-sm'
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='ml-auto'>
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className='capitalize'
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className='flex ml-auto'>
+          <Dialog>
+            <DialogTrigger>
+              <Button className='mx-2'>
+                <PlusCircle className='h-3.5 w-3.5 mr-1' />
+                <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
+                  Add Meeting
+                </span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>haha</DialogContent>
+          </Dialog>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                disabled={selectedItems.length === 0}
+                variant='outline'
+                className='mr-2'
+              >
+                <Trash2 className='h-3.5 w-3.5 mr-1' />
+                <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
+                  Delete
+                </span>
+              </Button>
+            </AlertDialogTrigger>
+            <ConfirmDialog handleConfirm={handleDeleteItems} />
+          </AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className='mr-2'>
+              <Button variant='outline'>Filter</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='center'>
+              <DropdownMenuCheckboxItem
+                className='capitalize'
+                checked={filterUpcoming}
+                onCheckedChange={handleFilterUpcomingChange}
+              >
+                Upcoming Meetings
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' className='ml-auto'>
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className='capitalize'
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className='rounded-md border'>
         <Table>

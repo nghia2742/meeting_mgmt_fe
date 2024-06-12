@@ -2,14 +2,23 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Meeting } from "@/types/meeting.type";
+import { DashboardMeeting } from "@/types/meeting.type";
 import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { isFutureDate } from "@/utils/time-picker.util";
 
-export const dashboardColumns: ColumnDef<Meeting>[] = [
+export const dashboardColumns: ColumnDef<DashboardMeeting>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -75,6 +84,10 @@ export const dashboardColumns: ColumnDef<Meeting>[] = [
         </div>
       );
     },
+    filterFn: (row) => {
+      const date = row.original.startTime;
+      return isFutureDate(date);
+    },
   },
   {
     accessorKey: "end",
@@ -114,6 +127,28 @@ export const dashboardColumns: ColumnDef<Meeting>[] = [
     id: "actions",
     cell: ({ row }) => {
       const meeting = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='ghost' className='h-8 w-8 p-0'>
+              <span className='sr-only'>Open menu</span>
+              <MoreHorizontal className='h-4 w-4' />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end'>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href={`/meeting/${meeting.id}`}>View Meeting Details</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>Update</DropdownMenuItem>
+            <DropdownMenuItem>
+              <p className='text-red-500'>Delete</p>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
     },
   },
   // {
