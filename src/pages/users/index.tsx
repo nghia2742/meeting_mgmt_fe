@@ -4,7 +4,7 @@ import { DataTableDemo } from './data-table';
 import { Search as SearchIcon, Filter as FilterIcon, Calendar as CalendarIcon, List as ListIcon, LayoutGridIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import CreateUserModal from './components/CreateUserModal';
-import { getUser, searchUsersByEmail, updateUserProfile } from '@/lib/apiClient';
+import { getUser, searchUsersByEmail, updateUserProfile } from '@/lib/apiUser';
 import { UserProfile } from '@/types/userProfile.type';
 
 function User() {
@@ -48,7 +48,7 @@ function User() {
                 <h1 className="text-2xl font-bold text-gray-800">User</h1>
                 <div className="flex flex-wrap mt-4 items-center justify-between">
                     <div className="flex items-center flex-grow space-x-4">
-                        <form className="flex-grow max-w-xs sm:max-w-none" onSubmit={handleSearch}>
+                        <form className="flex-grow max-w-xs sm:max-w-none mr-1" onSubmit={handleSearch}>
                             <label className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

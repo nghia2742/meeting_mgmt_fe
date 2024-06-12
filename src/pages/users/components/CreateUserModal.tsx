@@ -1,7 +1,7 @@
 // components/CreateUserModal.tsx
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { createUser } from "@/lib/apiClient";
+import { createUser } from "@/lib/apiUser";
 
 interface CreateUserModalProps {
   isOpen: boolean;

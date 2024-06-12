@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { UserProfile } from "@/types/userProfile.type";
-import { getUser, softDeleteUser, updateUserProfile } from "@/lib/apiClient";
+import { getUser, softDeleteUser, updateUserProfile } from "@/lib/apiUser";
 import { DeleteUserModal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 import { getColumns } from "./column";

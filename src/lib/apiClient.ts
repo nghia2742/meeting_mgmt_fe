@@ -1,7 +1,5 @@
 import axios from "axios";
 import useAuthStore from "@/stores/authStore";
-import { User } from "@/types/user.type";
-import { UserProfile } from "@/types/userProfile.type";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:8000",
@@ -50,82 +48,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-export const fetchUserProfile = async () => {
-  const { accessToken } = useAuthStore.getState();
-  const response = await apiClient.get("/users/profile", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
-};
-export const updateUserProfile = async (email: string, userData: UserProfile) => {
-  try {
-    const { accessToken } = useAuthStore.getState();
-    const response = await apiClient.patch(`/users/${email}`, userData, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error("Error updating user profile");
-  }
-};
-export const getUser = async () => {
-  const { accessToken } = useAuthStore.getState();
-  const response = await apiClient.get("/users", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  return response.data;
-};
-// apiClient.ts
-export const createUser = async (email: string, password: string, fullName: string) => {
-  try {
-    const response = await apiClient.post("/auth/register", {
-      email,
-      password,
-      fullName,
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error("Error creating user");
-  }
-};
-export const searchUsersByEmail = async (email: string) => {
-  try {
-    const response = await apiClient.get(`/users/filter?email=${email}`);
-    return response.data;
-  } catch (error) {
-    throw new Error("Error searching users");
-  }
-};
-export const softDeleteUser = async (userId: string) => {
-  try {
-    const response = await apiClient.delete(`/users/${userId}`);
-    return response.data;
-  } catch (error) {
-    throw new Error("Error deleting user");
-  }
-};
-export const uploadToCloudinary = async (file: File): Promise<string> => {
-  try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await apiClient.post('/cloudinary/upload', formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-          },
-      });
-      return response.data.url; // Assuming the API returns the URL in response.data.url
-  } catch (error) {
-      throw new Error("Error uploading file");
-  }
-}
-
-
 
 export default apiClient;
