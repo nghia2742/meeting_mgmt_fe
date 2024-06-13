@@ -1,4 +1,4 @@
-import create from 'zustand';
+import {create} from 'zustand';
 import { UserProfile } from "@/types/userProfile.type";
 import { fetchUserProfile } from "@/lib/apiUser";
 
@@ -12,7 +12,7 @@ interface UserStore {
     fetchUserProfile: () => Promise<void>;
 }
 
-const useUserStore = create<UserStore>((set) => ({
+const userStore = create<UserStore>((set) => ({
     userProfile: null,
     isLoading: false,
     isError: false,
@@ -30,4 +30,4 @@ const useUserStore = create<UserStore>((set) => ({
     }
 }));
 
-export default useUserStore;
+export default userStore;

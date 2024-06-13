@@ -14,7 +14,7 @@ import { UserProfile } from "@/types/userProfile.type";
 import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
-import useUserStore from "@/hooks/useUserStore";
+import userStore from "@/stores/UserStore";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -39,7 +39,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         resolver: zodResolver(schema),
     });
 
-    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = useUserStore();
+    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = userStore();
 
 
     useEffect(() => {
