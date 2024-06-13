@@ -5,12 +5,13 @@ import { columns } from './column'
 interface Props {
     files: MeetingFile[],
     meetingId: string,
-    refreshData: () => void
+    refreshData: () => void,
+    currentUserId: string | undefined
 }
 
-const FileList = ({files, meetingId, refreshData}: Props) => {
+const FileList = ({files, meetingId, refreshData, currentUserId}: Props) => {
     return (
-        <DataTable columns={columns(meetingId, refreshData)} data={files}/>
+        <DataTable columns={columns(meetingId, refreshData, currentUserId || '')} data={files}/>
     )
 }
 

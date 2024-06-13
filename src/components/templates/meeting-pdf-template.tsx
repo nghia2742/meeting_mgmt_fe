@@ -33,7 +33,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     table: {
-        display: 'table',
         width: 'auto',
         marginTop: 10,
     },
@@ -52,6 +51,8 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: '#000',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     },
     tableCellHeader: {
         margin: 5,
@@ -113,25 +114,25 @@ const MeetingPDF = ({ title, description, note, date, startTime, duration, atten
                 <View style={styles.table}>
                     <View style={styles.tableRow}>
                         <View style={styles.tableColHeader}>
-                            <Text style={styles.tableCellHeader}>First Name</Text>
-                        </View>
-                        <View style={styles.tableColHeader}>
-                            <Text style={styles.tableCellHeader}>Last Name</Text>
+                            <Text style={styles.tableCellHeader}>Full name</Text>
                         </View>
                         <View style={styles.tableColHeader}>
                             <Text style={styles.tableCellHeader}>Email Address</Text>
+                        </View>
+                        <View style={styles.tableColHeader}>
+                            <Text style={styles.tableCellHeader}>Role</Text>
                         </View>
                     </View>
                     {attendees.map((attendee, index) => (
                         <View style={styles.tableRow} key={index}>
                             <View style={styles.tableCol}>
-                                <Text style={styles.tableCell}>{attendee.fullName.split(' ')[0]}</Text>
-                            </View>
-                            <View style={styles.tableCol}>
-                                <Text style={styles.tableCell}>{attendee.fullName.split(' ')[1]}</Text>
+                                <Text style={styles.tableCell}>{attendee.fullName}</Text>
                             </View>
                             <View style={styles.tableCol}>
                                 <Text style={styles.tableCellEmail}>{attendee.email}</Text>
+                            </View>
+                            <View style={styles.tableCol}>
+                                <Text style={styles.tableCell}>{createdBy?.id === attendee.id ? 'Owner' : 'Attendee'}</Text>
                             </View>
                         </View>
                     ))}
