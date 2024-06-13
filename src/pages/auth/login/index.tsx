@@ -54,6 +54,7 @@ function LoginPage() {
             alt='Image'
             width='100'
             height='100'
+            priority
           />
         </Link>
         <Image
@@ -62,6 +63,7 @@ function LoginPage() {
           width='1080'
           height='1080'
           className='dark:brightness-[0.2] dark:grayscale'
+          priority
         />
       </div>
       <div className='flex items-center justify-center py-12'>
