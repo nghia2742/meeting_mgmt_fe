@@ -9,6 +9,10 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
+    HeaderGroup,
+    Header,
+    Row,
+    Cell
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -57,7 +61,6 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
     };
 
     const handleEditSave = async (updatedUser: UserProfile) => {
-        console.log("Updated User:", updatedUser); // Debug log
         try {
             await updateUserProfile(updatedUser.email, updatedUser);
             const updatedUserData = await getUser();
@@ -93,9 +96,9 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
+                        {table.getHeaderGroups().map((headerGroup : HeaderGroup<UserProfile>) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
+                                {headerGroup.headers.map((header : Header<UserProfile, unknown>) => {
                                     return (
                                         <TableHead key={header.id}>
                                             {header.isPlaceholder
@@ -112,9 +115,9 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                            table.getRowModel().rows.map((row : Row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                                    {row.getVisibleCells().map((cell) => (
+                                    {row.getVisibleCells().map((cell : Cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>

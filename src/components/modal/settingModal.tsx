@@ -14,6 +14,7 @@ import { UserProfile } from "@/types/userProfile.type";
 import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
+import useUserStore from "@/hooks/useUserStore";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -31,7 +32,6 @@ const schema = z.object({
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<Date>();
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -39,36 +39,26 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         resolver: zodResolver(schema),
     });
 
-    const { data: userData, isLoading, isError, error } = useQuery({
-        queryKey: ['userProfile'],
-        queryFn: fetchUserProfile,
-    });
+    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = useUserStore();
+
 
     useEffect(() => {
-        const getUserProfile = async () => {
-            try {
-                const userData = await fetchUserProfile();
-                setValue("fullName", userData.fullName);
-                setValue("email", userData.email);
-                if (userData.dateOfBirth) {
-                    setValue("dateOfBirth", new Date(userData.dateOfBirth));
-                    setDate(new Date(userData.dateOfBirth));
-                }
-                setValue("address", userData.address);
-                setValue("gender", userData.gender);
-                setValue("phoneNumber", userData.phoneNumber);
-                setValue("provider", userData.provider);
-                if (userData.avatar) {
-                    // Assuming userData.avatar is a base64 string
-                    setAvatarFile(null); // Reset to null because base64 string is not a File object
-                }
-            } catch (error) {
-                console.error("Error fetching user profile:", error);
+        if (!userProfile) {
+            fetchUserProfile();
+        } else {
+            setValue("fullName", userProfile.fullName);
+            setValue("email", userProfile.email);
+            if (userProfile.dateOfBirth) {
+                setValue("dateOfBirth", new Date(userProfile.dateOfBirth));
+                setDate(new Date(userProfile.dateOfBirth));
             }
-        };
-
-        getUserProfile();
-    }, []); // Removed userData and setValue from the dependency array
+            setValue("address", userProfile.address);
+            setValue("gender", userProfile.gender);
+            setValue("phoneNumber", userProfile.phoneNumber);
+            setValue("provider", userProfile.provider);
+            setValue("avatar", userProfile.avatar);
+        }
+    }, [userProfile, setValue]);
 
     const mutation = useMutation({
         mutationFn: (updatedUser: UserProfile) => updateUserProfile(updatedUser.email, updatedUser),
@@ -79,7 +69,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     });
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && date.getTime() !== new Date(userData.dateOfBirth).getTime()) {
+        if (date && date.getTime() !== new Date(userProfile.dateOfBirth).getTime()) {
             data.dateOfBirth = new Date(date.toISOString());
         }
 
@@ -99,14 +89,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     };
 
     if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading user data: {error.message}</div>;
+    if (isError) return <div>Error loading user data: {error}</div>;
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
                     <DialogTitle className="mb-2">Edit profile</DialogTitle>
-                    <AvatarSection setAvatarFile={setAvatarFile} userData={userData} />
+                    {userProfile && (
+                        <AvatarSection setAvatarFile={setAvatarFile} userData={userProfile} />
+                    )}
                 </DialogHeader>
                 <UserProfileForm 
                     onSubmit={handleSubmit(onSubmit)} 
