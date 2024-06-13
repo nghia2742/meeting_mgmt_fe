@@ -35,6 +35,13 @@ const useLogin = () => {
       });
       router.replace("/dashboard");
     },
+    onError: (error: any) => {
+      toast({
+        title: "Uh oh! Something went wrong",
+        description: error.response.data.message,
+        variant: "destructive",
+      });
+    },
   });
 };
 
