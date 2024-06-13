@@ -13,21 +13,7 @@ import { MeetingFile } from "@/types/meeting.file.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
 
-export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<MeetingFile>[] = (meetingId, refreshData) => [
-    {
-        accessorKey: "id",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Id
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
+export const columns: (meetingId: string, refreshData: () => void, currentUserId: string) => ColumnDef<MeetingFile>[] = (meetingId, refreshData, currentUserId) => [
     {
         accessorKey: "name",
         header: ({ column }) => {
@@ -57,14 +43,28 @@ export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<
         },
     },
     {
+        accessorKey: "createdBy",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Owner
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        }
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
             const file = row.original;
 
-            const onDeleteFile = async() => {
+            const onDeleteFile = async () => {
                 try {
                     let response = await apiClient.delete(`/files/${file.id}`);
-                    if(response) {
+                    if (response) {
                         toast({
                             title: "Successfully",
                             description: "Delete file successfully",
@@ -94,7 +94,7 @@ export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem><a className="w-full" href={file.link} target="_blank" rel="noopener noreferrer">View</a></DropdownMenuItem>
-                        <DropdownMenuItem><p className="text-red-500" onClick={onDeleteFile}>Delete</p></DropdownMenuItem>
+                        {file.createdBy === currentUserId && <DropdownMenuItem><p className="text-red-500" onClick={onDeleteFile}>Delete</p></DropdownMenuItem>}
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

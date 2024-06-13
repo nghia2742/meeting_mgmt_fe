@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead className="p-0" key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
                                         if (cell.column.id === 'avatar') {
                                             return (
                                                 <TableCell key={cell.id}>
-                                                    <Avatar>
+                                                    <Avatar className="w-[30px] h-[30px]">
                                                         <AvatarImage src={cell.getValue() as string} alt="@shadcn" />
                                                         <AvatarFallback>CN</AvatarFallback>
                                                     </Avatar>
@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
                                             )
                                         }else {
                                             return (
-                                                <TableCell key={cell.id}>
+                                                <TableCell className="text-[13px] lg:text-sm" key={cell.id}>
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             )
