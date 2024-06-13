@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Meeting } from "@/types/meeting.type"
+import Link from "next/link"
 
 export const columns: ColumnDef<Meeting>[] = [
     {
@@ -47,16 +48,21 @@ export const columns: ColumnDef<Meeting>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            return (
+                <Link href={`/meeting/${row.original.id}`}>{row.getValue('title')}</Link>
+            );
+        },
     },
     {
-        accessorKey: "type",
+        accessorKey: "tag",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Type
+                    Tag
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
