@@ -1,8 +1,8 @@
-export type MeetingFile = {
-    id: number;
+export type MeetingMinutes = {
+    id: string;
+    meetingId: string;
     name: string;
     link: string;
-    type: string;
     createdBy: string;
     updatedBy: string;
     createdAt: Date;
