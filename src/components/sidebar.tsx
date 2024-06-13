@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Home, Package, Package2, Video, User } from 'lucide-react';
+import useAuthStore from '@/stores/authStore';
+import defineAbilityFor from '@/pages/users/ability';
 
 function Sidebar() {
     const router = useRouter();
+    const { role, fetchUserRole } = useAuthStore((state) => state);
+    const ability = defineAbilityFor(role);
+
+    useEffect(() => {
+        fetchUserRole();
+    }, [fetchUserRole]);
 
     const isActive = (pathname: string) => router.pathname === pathname;
 
@@ -54,17 +62,19 @@ function Sidebar() {
                 <Package2 className="h-4 w-4" />
                 Storage
             </Link>
-            <Link
-                href="/users"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                    isActive('/users')
-                        ? 'bg-muted text-primary'
-                        : 'text-muted-foreground'
-                }`}
-            >
-                <User className="h-4 w-4" />
-                User
-            </Link>
+            {ability.can('read', 'User') && (
+                <Link
+                    href="/users"
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                        isActive('/users')
+                            ? 'bg-muted text-primary'
+                            : 'text-muted-foreground'
+                    }`}
+                >
+                    <User className="h-4 w-4" />
+                    User
+                </Link>
+            )}
         </nav>
     );
 }
