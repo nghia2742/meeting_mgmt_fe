@@ -17,31 +17,26 @@ import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
 import SettingsModal from "./modal/settingModal";
 import useLogout from "@/hooks/useLogout";
-import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile } from "@/lib/apiUser";
+import useUserStore from "@/stores/userStore";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const { userProfile, fetchUserProfile } = useUserStore((state) => ({
+    userProfile: state.userProfile,
+    fetchUserProfile: state.fetchUserProfile,
+  }));
   const { mutate: logout } = useLogout();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    const loadUserProfile = async () => {
-      try {
-        const profile = await fetchUserProfile();
-        setUserProfile(profile);
-      } catch (error) {
-        console.error("Failed to fetch user profile:", error);
-      }
-    };
-
-    loadUserProfile();
-  }, []);
+    if (!userProfile) {
+      fetchUserProfile();
+    }
+  }, [fetchUserProfile, userProfile]);
 
   return (
     <div

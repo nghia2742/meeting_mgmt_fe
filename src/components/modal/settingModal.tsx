@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -49,10 +44,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     }));
 
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen && !userProfile) {
             fetchUserProfile();
         }
-    }, [isOpen, fetchUserProfile]);
+    }, [isOpen, fetchUserProfile, userProfile]);
 
     useEffect(() => {
         if (userProfile) {
