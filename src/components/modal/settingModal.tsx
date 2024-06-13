@@ -2,19 +2,18 @@ import React, { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
+import { updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
-import userStore from "@/stores/UserStore";
+import useUserStore from "@/stores/userStore";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -39,13 +38,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         resolver: zodResolver(schema),
     });
 
-    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = userStore();
-
+    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = useUserStore((state) => ({
+        userProfile: state.userProfile,
+        isLoading: state.isLoading,
+        isError: state.isError,
+        error: state.error,
+        fetchUserProfile: state.fetchUserProfile,
+        avatarFile: state.avatarFile,
+        setAvatarFile: state.setAvatarFile,
+    }));
 
     useEffect(() => {
-        if (!userProfile) {
+        if (isOpen) {
             fetchUserProfile();
-        } else {
+        }
+    }, [isOpen, fetchUserProfile]);
+
+    useEffect(() => {
+        if (userProfile) {
             setValue("fullName", userProfile.fullName);
             setValue("email", userProfile.email);
             if (userProfile.dateOfBirth) {
@@ -55,8 +65,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             setValue("address", userProfile.address);
             setValue("gender", userProfile.gender);
             setValue("phoneNumber", userProfile.phoneNumber);
-            setValue("provider", userProfile.provider);
-            setValue("avatar", userProfile.avatar);
         }
     }, [userProfile, setValue]);
 
@@ -69,7 +77,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     });
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && date.getTime() !== new Date(userProfile.dateOfBirth).getTime()) {
+        if (date && date.getTime() !== new Date(userProfile?.dateOfBirth || "").getTime()) {
             data.dateOfBirth = new Date(date.toISOString());
         }
 

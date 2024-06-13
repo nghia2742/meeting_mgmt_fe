@@ -75,8 +75,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="secondary"
-                size="icon"
-                className="flex items-center gap-4 rounded-full"
+                className="flex items-center gap-4 p-0"
               >
                 {userProfile?.avatar ? (
                   <Image
@@ -84,12 +83,12 @@ export function MainLayout({ children }: { children: ReactNode }) {
                     alt="User Avatar"
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="w-10 h-10 rounded-full"
                   />
                 ) : (
-                  <CircleUser className="h-10 w-10 rounded-full" />
+                  <CircleUser className="w-10 h-10" />
                 )}
-                <div className="font-medium">
+                <div className="font-medium dark:text-white">
                   <div>{userProfile?.fullName}</div>
                   
                 </div>
