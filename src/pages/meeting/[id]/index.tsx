@@ -24,6 +24,7 @@ import { MeetingFile } from '@/types/meeting.file.type'
 import { MeetingMinutes } from '@/types/meeting-minutes.type'
 import ErrorMessage from '@/components/error/ErrorMessage'
 import useCurrentUser from '@/hooks/useCurrentUser'
+import useCreatedBy from '@/hooks/useCreatedBy'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -73,7 +74,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     const [users, setUsers] = useState<Attendee[]>();
     const [latestMeetingMinutes, setLatestMeetingMinutes] = useState<MeetingMinutes>();
     const { user } = useCurrentUser();
-    console.log("Current user: ", user)
+    const { user: userCreated } = useCreatedBy(meeting.createdBy);
 
     const fetchMeeting = async () => {
         let response = await apiClient.get(`/meetings/${initialMeeting.id}`);
@@ -155,7 +156,11 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                         <p className='font-bold'>Start time: {formattedTime}</p>
                                         <div className='rounded-lg px-2 py-1 text-[12px] bg-black text-white'>{minutes} minutes</div>
                                     </div>
-
+                                    <div className="flex text-sm items-center space-x-3">
+                                        <p>Location: {meeting.location}</p>
+                                        <p>|</p>
+                                        <p>Organised by: {userCreated?.fullName}</p>
+                                    </div>
                                     <p className="text-gray-700">{meeting.description}</p>
                                     <div className="lg:flex lg:space-x-4 space-y-4 lg:space-y-0">
                                         <Button className='text-[13px] w-full lg-w-auto' variant={"secondary"}>

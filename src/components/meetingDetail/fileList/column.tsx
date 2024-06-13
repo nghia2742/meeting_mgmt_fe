@@ -12,8 +12,6 @@ import {
 import { MeetingFile } from "@/types/meeting.file.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
-import { useCallback, useEffect, useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export const columns: (meetingId: string, refreshData: () => void, currentUserId: string) => ColumnDef<MeetingFile>[] = (meetingId, refreshData, currentUserId) => [
     {
@@ -56,27 +54,7 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
-        },
-        // cell: ({ row }) => {
-        //     const file = row.original;
-        //     const [name, setName] = useState('');
-        //     const getUser = useCallback(async () => {
-        //         const response = await apiClient.get(`/users/${file.createdBy}`);
-        //         if (response) {
-        //             setName(response.data.fullName);
-        //         }
-        //     }, [])
-
-        //     useEffect(() => {
-        //         getUser();
-        //     }, [])
-
-        //     return (
-        //         <div className="flex space-x-4 items-center">
-        //             <p>{name}</p>
-        //         </div>
-        //     )
-        // }
+        }
     },
     {
         id: "actions",
