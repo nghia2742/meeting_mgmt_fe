@@ -1,7 +1,27 @@
-// components/CreateUserModal.tsx
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { createUser } from "@/lib/apiUser";
+import { Blocks, Lock, Mail, User } from "lucide-react";
+
+const CreateUserSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters long" }),
+  fullName: z.string().min(4, { message: "Full Name is required" }),
+});
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -9,15 +29,23 @@ interface CreateUserModalProps {
   onUserCreated: () => void;
 }
 
-const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onUserCreated }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+const CreateUserModal: React.FC<CreateUserModalProps> = ({
+  isOpen,
+  onClose,
+  onUserCreated,
+}) => {
+  const form = useForm<z.infer<typeof CreateUserSchema>>({
+    resolver: zodResolver(CreateUserSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      fullName: "",
+    },
+  });
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const onSubmit = async (values: z.infer<typeof CreateUserSchema>) => {
     try {
-      await createUser(email, password, fullName);
+      await createUser(values.email, values.password, values.fullName);
       onClose();
       onUserCreated();
     } catch (error) {
@@ -29,46 +57,85 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onUs
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4">Create User</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        
+        <h2 className="text-xl font-bold mb-4 text-center">Create User</h2>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="grid gap-2 mb-2">
+                  <FormLabel>
+                    <div className="flex items-center">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Email
+                    </div>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="grid gap-2 mb-2">
+                  <FormLabel>
+                    <div className="flex items-center">
+                      <Lock className="w-4 h-4 mr-2" />
+                      Password
+                    </div>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input
-              type="text"
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem className="grid gap-2 mb-2">
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your full name"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="flex justify-end">
-            <Button type="button" variant="outline" onClick={onClose} className="mr-2">
-              Cancel
-            </Button>
-            <Button type="submit">Create</Button>
-          </div>
-        </form>
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="mr-2"
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Create</Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );

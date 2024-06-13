@@ -67,8 +67,8 @@ function User() {
                             </div>
                         </form>
                     </div>
-                    <div className="flex space-x-4 mt-4 ml-[520px] sm:mt-0">
-                        <button className="p-2 rounded hover:bg-gray-200"><ListIcon /></button>
+                    <div className="flex space-x-4 mt-4 ml-[520px] rounded-md shadow-sm sm:mt-0">
+                        <button className="p-2 rounded hover:bg-gray-200 bg-muted text-primary"><ListIcon /></button>
                         <button className="p-2 rounded hover:bg-gray-200"><LayoutGridIcon /></button>
                         <button className="p-2 rounded hover:bg-gray-200"><CalendarIcon /></button>
                     </div>
@@ -77,7 +77,7 @@ function User() {
             <div className="container mx-auto py-10 w-full overflow-hidden">
                 <div className="flex justify-between items-center mb-4">
                     <div></div> {/* This empty div helps push the button to the right */}
-                    <Button className="w-[100px] h-[50px]" onClick={openModal}>Create User</Button>
+                    <Button className="w-[100px] h-[50px]" onClick={openModal}> <CalendarIcon/>Create User</Button>
                 </div>
                 <DataTableDemo users={users} setUsers={setUsers}/> 
             </div>
