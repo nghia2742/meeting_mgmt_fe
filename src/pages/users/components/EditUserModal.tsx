@@ -21,20 +21,21 @@ interface EditUserModalProps {
 }
 
 const schema = z.object({
-    fullName: z.string().nonempty("Full name is required"),
+    fullName: z.string().nonempty("Full name is required").min(5, { message: "The fullname must be at least 5 characters" }),
     email: z.string().email("Invalid email format").nonempty("Email is required"),
-    phoneNumber: z.string().nonempty("Phone number is required"),
-    address: z.string().nonempty("Address is required"),
+    phoneNumber: z.string().nonempty("Phone number is required").length(10, { message: "The phone number must be 10 characters" }),
+    address: z.string().nonempty("Address is required").min(5, { message: "The address must be at least 5 characters" }),
     gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }).optional(),
-    dateOfBirth: z.date().optional().refine(value => {
-        return value !== undefined; 
-    }, { message: 'Invalid date of birth' }),
+    dateOfBirth: z.date({
+        required_error: "Please select a date and time",
+        invalid_type_error: "That's not a date!",
+    }),
 });
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave }) => {
     const [date, setDate] = useState<Date>();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
-    
+
 
     const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
         resolver: zodResolver(schema),
@@ -59,8 +60,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     }, [user, setValue]);
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && user && date.getTime()!== new Date(user.dateOfBirth).getTime()) {
-            data.dateOfBirth = new Date(date.toISOString());        
+        if (date && user && date.getTime() !== new Date(user.dateOfBirth).getTime()) {
+            data.dateOfBirth = new Date(date.toISOString());
         }
 
         if (avatarFile) {
@@ -80,16 +81,16 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
-                <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
+                    <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
                     {user && <AvatarSection setAvatarFile={setAvatarFile} userData={user} />}
                 </DialogHeader>
-                <UserProfileForm 
-                    onSubmit={handleSubmit(onSubmit)} 
-                    register={register} 
-                    control={control} 
-                    setValue={setValue} 
-                    errors={errors} 
-                    date={date} 
+                <UserProfileForm
+                    onSubmit={handleSubmit(onSubmit)}
+                    register={register}
+                    control={control}
+                    setValue={setValue}
+                    errors={errors}
+                    date={date}
                     setDate={setDate}
                     avatarFile={avatarFile}
                     onClose={onClose}

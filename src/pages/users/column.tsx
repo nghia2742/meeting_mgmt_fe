@@ -3,6 +3,8 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserProfile } from "@/types/userProfile.type";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { formatDateTime } from "@/utils/datetime.util";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const getColumns = (handleEditClick: (user: UserProfile) => void, handleDeleteClick: (user: UserProfile) => void): ColumnDef<UserProfile>[] => [
     {
@@ -20,6 +22,10 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
     {
         accessorKey: "dateOfBirth",
         header: "Date of Birth",
+        cell: ({ row }) => {
+            const { formattedDate } = formatDateTime(row.getValue("dateOfBirth"));
+            return formattedDate;
+        }
     },
     {
         accessorKey: "phoneNumber",
@@ -33,11 +39,11 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
         accessorKey: "avatar",
         header: "Avatar",
         cell: ({ row }) => (
-            <img
-                src={row.getValue("avatar")}
-                alt="Avatar"
-                style={{ borderRadius: "50%", width: "30px", height: "30px" }}
-            />
+            <Avatar className="w-8 h-8">
+                <AvatarImage src={row.getValue("avatar") || "/images/logoCLT.png" }/>
+                <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+               
         ),
     },
     {
