@@ -13,16 +13,16 @@ import { Attendee } from "@/types/attendee.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
 
-export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<Attendee>[] = (meetingId, refreshData) => [
+export const columns: (meetingId: string, refreshData: () => void, canHaveActions: boolean) => ColumnDef<Attendee>[] = (meetingId, refreshData, canHaveActions) => [
     {
-        accessorKey: "id",
+        accessorKey: "email",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Id
+                    Email
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -50,10 +50,10 @@ export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<
         id: "actions",
         cell: ({ row }) => {
             const user = row.original;
-            const onDeleteAttendee = async() => {
+            const onDeleteAttendee = async () => {
                 try {
                     let response = await apiClient.delete(`/usermeetings?userId=${user.id}&meetingId=${meetingId}`);
-                    if(response) {
+                    if (response) {
                         toast({
                             title: "Successfully",
                             description: "Delete attendee successfully",
@@ -69,10 +69,11 @@ export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<
                         variant: "destructive",
                     });
                 }
-                
+
             }
 
             return (
+                canHaveActions &&
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
