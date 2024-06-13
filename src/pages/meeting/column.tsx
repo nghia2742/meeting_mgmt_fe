@@ -11,22 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-export type Meeting = {
-    id: string;
-    title: string;
-    type: string;
-    description: string;
-    notes: string;
-    startTime: Date;
-    endTime: Date;
-    location: string;
-    createdBy: string;
-    updatedBy: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-}
+import { Meeting } from "@/types/meeting.type"
 
 export const columns: ColumnDef<Meeting>[] = [
     {

@@ -9,17 +9,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
+import SettingsModal from './modal/settingModal';
 import useLogout from "@/hooks/useLogout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
-  const logout = useLogout();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { mutate: logout } = useLogout();
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
   return (
     <div
@@ -58,17 +64,21 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem onClick={openModal}>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
         </header>
         <main className='flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6'>
           {children}
         </main>
       </div>
+            <SettingsModal isOpen={isModalOpen} onClose={closeModal}></SettingsModal>
     </div>
   );
 }
