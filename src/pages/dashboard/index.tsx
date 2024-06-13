@@ -1,165 +1,109 @@
-import { useEffect, useState } from "react";
 import MainLayout from "@/components/main.layout";
-import { DashboardMeeting } from "@/types/meeting.type";
-import { MeetingCategory } from "@/types/enums/meeting.enum";
+import { Meeting } from "@/types/meeting.type";
 import { DashboardDataTable } from "./data-table";
 import { dashboardColumns } from "./column";
-import { useDeleteMeeting } from "@/hooks/useMeeting";
 import UpcomingMeetings from "@/components/upcoming-meetings";
+import CustomizedCalendar from "@/components/calendar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isFutureDate } from "@/utils/time-picker.util";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "@/components/ui/use-toast";
+import apiClient from "@/lib/apiClient";
 
-const meetings: DashboardMeeting[] = [
-  {
-    id: "1",
-    title: "Meeting 1",
-    type: MeetingCategory.PROJECT_KICKOFF,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Paris 6F",
-  },
-  {
-    id: "2",
-    title: "Meeting 2",
-    type: MeetingCategory.PLANNING,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Singapore 5F",
-  },
-  {
-    id: "3",
-    title: "Meeting 3",
-    type: MeetingCategory.PROJECT_KICKOFF,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2025-06-11T12:40:18.982"),
-    endTime: new Date("2025-06-11T13:40:18.982"),
-    location: "Rafah 2F",
-  },
-  {
-    id: "4",
-    title: "Meeting 4",
-    type: MeetingCategory.TRAINING,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Tel Aviv 6F",
-  },
-  {
-    id: "5",
-    title: "Meeting 5",
-    type: MeetingCategory.PROJECT_KICKOFF,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Madrid 6F",
-  },
-  {
-    id: "6",
-    title: "Meeting 6",
-    type: MeetingCategory.CLIENT,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Beijing 6F",
-  },
-  {
-    id: "7",
-    title: "Meeting 7",
-    type: MeetingCategory.PERFORMANCE_REVIEW,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "London 6F",
-  },
-  {
-    id: "8",
-    title: "Meeting 8",
-    type: MeetingCategory.PROBLEM_SOLVING,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Amsterdam 2F",
-  },
-  {
-    id: "9",
-    title: "Meeting 9",
-    type: MeetingCategory.PROJECT_KICKOFF,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Harbin 5F",
-  },
-  {
-    id: "10",
-    title: "Meeting 10",
-    type: MeetingCategory.REGULAR_TEAM,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Kyiv 6F",
-  },
-  {
-    id: "11",
-    title: "Meeting 11",
-    type: MeetingCategory.STATUS_UPDATE,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    note: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolorem repellendus eligendi excepturi animi omnis soluta minima, ducimus culpa doloremque ab, totam sit quo cumque. Vero repellat quos tenetur reprehenderit!",
-    startTime: new Date("2024-06-01T12:40:18.982"),
-    endTime: new Date("2024-06-01T13:40:18.982"),
-    location: "Moscow 5F",
-  },
-];
+const fetchMeetings = async () => {
+  const response = await apiClient.get("/usermeetings/meetings/attend");
+  return response?.data?.map((meeting: Meeting) => ({
+    ...meeting,
+    startTime: new Date(meeting.startTime),
+    endTime: new Date(meeting.endTime),
+  }));
+};
 
 function Dashboard() {
-  const [selectedMeetings, setSelectedMeetings] = useState<DashboardMeeting[]>(
-    []
-  );
-  const { mutate: deleteMeeting } = useDeleteMeeting();
+  const [filteredMeetings, setFilteredMeetings] = useState<Meeting[]>([]);
+  const [selectedDate, setSelectedDate] = useState("");
 
-  const onDeleteMeetings = async () => {
-    await Promise.all(
-      selectedMeetings.map((meeting) => deleteMeeting(meeting.id))
-    );
+  const {
+    isLoading,
+    isError,
+    error,
+    data: meetings,
+  } = useQuery<Meeting[]>({
+    queryKey: ["dashboard-meetings"],
+    queryFn: fetchMeetings,
+  });
+
+  useEffect(() => {
+    if (meetings) {
+      setFilteredMeetings(meetings);
+    }
+  }, [meetings]);
+
+  if (isError) {
+    toast({
+      title: "Uh oh! Error",
+      description: error.message,
+      variant: "destructive",
+    });
+  }
+
+  const handleSetAllMeetings = () => {
+    setFilteredMeetings(meetings || []);
+    setSelectedDate("");
+  };
+
+  const handleDateClick = (date: string) => {
+    console.log("Selected date:", date);
+    if (meetings) {
+      setSelectedDate(date);
+      setFilteredMeetings(
+        meetings.filter((meeting) => {
+          const meetingDate = meeting.startTime.toISOString().split("T")[0];
+          return meetingDate === date;
+        })
+      );
+    }
   };
 
   return (
     <MainLayout>
-      <div className='max-w-[1020px] overflow-x-hidden'>
-        <UpcomingMeetings
-          meetings={meetings.filter((meeting) =>
-            isFutureDate(meeting.startTime)
-          )}
-        />
-        <DashboardDataTable
-          columns={dashboardColumns}
-          data={meetings}
-          isLoading={false}
-          selectedItems={selectedMeetings}
-          setSelectedItems={setSelectedMeetings}
-          handleDeleteItems={onDeleteMeetings}
-        />
+      <div className='max-w-[1028px] overflow-x-hidden'>
+        {meetings && (
+          <UpcomingMeetings
+            meetings={
+              meetings?.filter((meeting) => isFutureDate(meeting.startTime)) ??
+              []
+            }
+          />
+        )}
+        <Tabs defaultValue='table' className='w-full mt-9'>
+          <TabsList>
+            <TabsTrigger value='table'>Table</TabsTrigger>
+            <TabsTrigger value='calendar'>Calendar</TabsTrigger>
+          </TabsList>
+          <TabsContent value='table'>
+            <DashboardDataTable
+              columns={dashboardColumns}
+              data={filteredMeetings}
+              selectedDate={selectedDate}
+              isLoading={isLoading}
+              onSetAllMeetings={handleSetAllMeetings}
+            />
+          </TabsContent>
+          <TabsContent value='calendar'>
+            <CustomizedCalendar
+              meetings={
+                meetings?.map((meeting) => ({
+                  title: meeting.title,
+                  start: meeting.startTime,
+                  end: meeting.endTime,
+                })) ?? []
+              }
+              onDateClick={handleDateClick}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );

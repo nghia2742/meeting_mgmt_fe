@@ -29,30 +29,24 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ClipLoader from "react-spinners/ClipLoader";
-import { PlusCircle, Trash2 } from "lucide-react";
-import ConfirmDialog from "@/components/modal/ConfirmDialog";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  selectedDate: string;
   isLoading: boolean;
-  selectedItems: TData[];
-  setSelectedItems: (items: TData[]) => void;
-  handleDeleteItems: () => void;
+  onSetAllMeetings: () => void;
 }
 
 export function DashboardDataTable<TData, TValue>({
   columns,
   data,
   isLoading,
-  selectedItems,
-  setSelectedItems,
-  handleDeleteItems,
+  selectedDate,
+  onSetAllMeetings,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -79,12 +73,6 @@ export function DashboardDataTable<TData, TValue>({
     },
   });
 
-  useEffect(() => {
-    setSelectedItems(
-      table.getFilteredSelectedRowModel().rows.map((row) => row.original)
-    );
-  }, [rowSelection, setSelectedItems, table]);
-
   const handleFilterUpcomingChange = (checked: boolean) => {
     setFilterUpcoming(checked);
     if (checked) {
@@ -106,32 +94,9 @@ export function DashboardDataTable<TData, TValue>({
           className='max-w-sm'
         />
         <div className='flex ml-auto'>
-          <Dialog>
-            <DialogTrigger>
-              <Button className='mx-2'>
-                <PlusCircle className='h-3.5 w-3.5 mr-1' />
-                <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                  Add Meeting
-                </span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>haha</DialogContent>
-          </Dialog>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                disabled={selectedItems.length === 0}
-                variant='outline'
-                className='mr-2'
-              >
-                <Trash2 className='h-3.5 w-3.5 mr-1' />
-                <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                  Delete
-                </span>
-              </Button>
-            </AlertDialogTrigger>
-            <ConfirmDialog handleConfirm={handleDeleteItems} />
-          </AlertDialog>
+          <Button className='mx-2' variant='outline' onClick={onSetAllMeetings}>
+            All Meetings
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild className='mr-2'>
               <Button variant='outline'>Filter</Button>
@@ -195,7 +160,7 @@ export function DashboardDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table?.getRowModel()?.rows?.length ?? 0 ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -226,7 +191,9 @@ export function DashboardDataTable<TData, TValue>({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  {`No results${
+                    selectedDate ? ` on the date ${selectedDate}` : ""
+                  }.`}
                 </TableCell>
               </TableRow>
             )}

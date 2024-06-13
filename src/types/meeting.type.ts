@@ -3,7 +3,7 @@ import { MeetingCategory } from "./enums/meeting.enum";
 export type Meeting = {
   id: string;
   title: string;
-  type: string;
+  tag: string;
   description: string;
   note: string;
   startTime: Date;
