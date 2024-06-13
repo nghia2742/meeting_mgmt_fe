@@ -39,7 +39,7 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
         header: "Avatar",
         cell: ({ row }) => (
             <img
-                src={row.getValue("avatar") || "https://github.com/shadcn.png"}
+                src={row.getValue("avatar") || "/images/logoCLT.png"}
                 alt="Avatar"
                 style={{ borderRadius: "50%", width: "30px", height: "30px" }}
             />
