@@ -10,7 +10,7 @@ interface Props {
 
 const FileList = ({files, meetingId, refreshData}: Props) => {
     return (
-        <DataTable columns={columns} data={files}/>
+        <DataTable columns={columns(meetingId, refreshData)} data={files}/>
     )
 }
 

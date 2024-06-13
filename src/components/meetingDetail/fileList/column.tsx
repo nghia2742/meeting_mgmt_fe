@@ -10,8 +10,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MeetingFile } from "@/types/meeting.file.type"
+import apiClient from "@/lib/apiClient"
+import { toast } from "@/components/ui/use-toast"
 
-export const columns: ColumnDef<MeetingFile>[] = [
+export const columns: (meetindId: string, refreshData: () => void) => ColumnDef<MeetingFile>[] = (meetingId, refreshData) => [
     {
         accessorKey: "id",
         header: ({ column }) => {
@@ -59,6 +61,27 @@ export const columns: ColumnDef<MeetingFile>[] = [
         cell: ({ row }) => {
             const file = row.original;
 
+            const onDeleteFile = async() => {
+                try {
+                    let response = await apiClient.delete(`/files/${file.id}`);
+                    if(response) {
+                        toast({
+                            title: "Successfully",
+                            description: "Delete file successfully",
+                            variant: "success",
+                        });
+                        refreshData();
+                    }
+                } catch (error: any) {
+                    console.log(error);
+                    toast({
+                        title: "Failed",
+                        description: error.response.data.message,
+                        variant: "destructive",
+                    });
+                }
+            }
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -71,7 +94,7 @@ export const columns: ColumnDef<MeetingFile>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem><a className="w-full" href={file.link} target="_blank" rel="noopener noreferrer">View</a></DropdownMenuItem>
-                        <DropdownMenuItem><p className="text-red-500">Delete</p></DropdownMenuItem>
+                        <DropdownMenuItem><p className="text-red-500" onClick={onDeleteFile}>Delete</p></DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

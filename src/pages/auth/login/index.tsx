@@ -34,7 +34,12 @@ function LoginPage() {
     },
   });
 
-  const { mutate: handleLogin, isPending: isLoggingIn } = useLogin();
+  const {
+    mutate: handleLogin,
+    isPending: isLoggingIn,
+    isError: isLoginError,
+    error: loginError,
+  } = useLogin();
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     handleLogin(values);
@@ -103,6 +108,11 @@ function LoginPage() {
                   </FormItem>
                 )}
               />
+              {isLoginError && (
+                <p className='text-destructive'>
+                  {loginError.response.data.message}
+                </p>
+              )}
               <Button className='w-full' type='submit' disabled={isLoggingIn}>
                 {isLoggingIn && (
                   <ClipLoader className='mr-2' color='#36d7b7' size={20} />
