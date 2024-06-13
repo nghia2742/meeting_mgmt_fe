@@ -163,15 +163,17 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                     </div>
                                     <p className="text-gray-700">{meeting.description}</p>
                                     <div className="lg:flex lg:space-x-4 space-y-4 lg:space-y-0">
-                                        <Button className='text-[13px] w-full lg-w-auto' variant={"secondary"}>
-                                            <a
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                href={latestMeetingMinutes?.link}
-                                            >
-                                                View meeting minutes
-                                            </a>
-                                        </Button>
+                                        {latestMeetingMinutes &&
+                                            <Button className='text-[13px] w-full lg-w-auto' variant={"secondary"}>
+                                                <a
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    href={latestMeetingMinutes?.link}
+                                                >
+                                                    View meeting minutes
+                                                </a>
+                                            </Button>
+                                        }
                                         {user?.id === meeting.createdBy ?
                                             <Button
                                                 className='text-[13px] w-full lg-w-auto'
