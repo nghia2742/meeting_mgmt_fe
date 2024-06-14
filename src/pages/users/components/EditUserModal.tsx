@@ -26,10 +26,8 @@ const schema = z.object({
     phoneNumber: z.string().nonempty("Phone number is required").length(10, { message: "The phone number must be 10 characters" }),
     address: z.string().nonempty("Address is required").min(5, { message: "The address must be at least 5 characters" }),
     gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }).optional(),
-    dateOfBirth: z.date({
-        required_error: "Please select a date and time",
-        invalid_type_error: "That's not a date!",
-    }),
+    dateOfBirth: z.date().optional(),
+
 });
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave }) => {

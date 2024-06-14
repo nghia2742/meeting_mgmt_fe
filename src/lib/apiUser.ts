@@ -3,28 +3,24 @@ import { User } from "@/types/user.type";
 import { UserProfile } from "@/types/userProfile.type";
 import apiClient from "./apiClient";
 
-export const fetchUserProfile = async () => {
+export const fetchUserProfile = async (): Promise<UserProfile> => {
   const { accessToken } = useAuthStore.getState();
   const response = await apiClient.get("/users/profile", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+      headers: {
+          Authorization: `Bearer ${accessToken}`,
+      },
   });
   return response.data;
 };
 
-export const updateUserProfile = async (email: string, userData: UserProfile) => {
-  try {
-    const { accessToken } = useAuthStore.getState();
-    const response = await apiClient.patch(`/users/${email}`, userData, {
+export const updateUserProfile = async (email: string, userData: UserProfile): Promise<UserProfile> => {
+  const { accessToken } = useAuthStore.getState();
+  const response = await apiClient.patch(`/users/${email}`, userData, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
       },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error("Error updating user profile");
-  }
+  });
+  return response.data;
 };
 
 export const getUser = async () => {
@@ -69,17 +65,13 @@ export const softDeleteUser = async (userId: string) => {
 };
 
 export const uploadToCloudinary = async (file: File): Promise<string> => {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const response = await apiClient.post('/cloudinary/upload', formData, {
+  const response = await apiClient.post('/cloudinary/upload', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data',
       },
-    });
-    return response.data.url; // Assuming the API returns the URL in response.data.url
-  } catch (error) {
-    throw new Error("Error uploading file");
-  }
+  });
+  return response.data.url;
 };
