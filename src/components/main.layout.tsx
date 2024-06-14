@@ -93,12 +93,12 @@ export function MainLayout({ children }: { children: ReactNode }) {
                             </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-32">
-                            <DropdownMenuItem onClick={openModal}>
+                            <DropdownMenuItem onClick={openModal} className='cursor-pointer'>
                                 Settings
                             </DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
+                            <DropdownMenuItem className='cursor-pointer'>Support</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => logout()} className='text-destructive'>
+                            <DropdownMenuItem onClick={() => logout()} className='cursor-pointer text-destructive focus:text-destructive'>
                                 Logout
                             </DropdownMenuItem>
                         </DropdownMenuContent>
