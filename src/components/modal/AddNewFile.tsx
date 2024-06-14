@@ -1,7 +1,6 @@
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useDropzone } from 'react-dropzone'
-import { Inter } from "next/font/google";
 import { FileIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useCallback, useState } from 'react';
@@ -9,8 +8,6 @@ import apiClient from '@/lib/apiClient';
 import { isImage } from '@/utils/image.util';
 import { toast } from '../ui/use-toast';
 import { getExtension } from '@/utils/get-extension.util';
-
-const inter = Inter({ subsets: ["latin"] });
 
 export interface FilePreview {
     preview: string;
@@ -116,7 +113,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
-            <DialogContent className={`${inter.className}`}>
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add new file</DialogTitle>
                 </DialogHeader>

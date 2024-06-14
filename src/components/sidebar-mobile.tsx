@@ -9,7 +9,8 @@ import Image from 'next/image';
 function SidebarMobile() {
     const router = useRouter();
 
-    const isActive = (pathname: string) => router.pathname === pathname;
+    const isActive = (pathname: string) =>
+        '/' + router.pathname.split('/')[1] === pathname;
 
     return (
         <Sheet>
@@ -17,7 +18,7 @@ function SidebarMobile() {
                 <Button
                     variant="outline"
                     size="icon"
-                    className="shrink-0 md:hidden"
+                    className="shrink-0 lg:hidden"
                 >
                     <Menu className="h-5 w-5" />
                     <span className="sr-only">Toggle navigation menu</span>
@@ -27,12 +28,14 @@ function SidebarMobile() {
                 <nav className="grid gap-2 text-lg font-medium">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-lg font-semibold"
+                        className="flex items-center justify-center gap-2 text-lg font-semibold"
                     >
                         <Image
                             src="/images/logoCLT.png"
-                            height={75}
-                            width={75}
+                            width="0"
+                            height="0"
+                            sizes="100px"
+                            className="w-[100px] h-auto"
                             priority={true}
                             alt="Logo CLT"
                         />
@@ -58,7 +61,7 @@ function SidebarMobile() {
                         }`}
                     >
                         <Package className="h-5 w-5" />
-                        Projects
+                        Project
                     </Link>
                     <Link
                         href="/meeting"
@@ -69,7 +72,7 @@ function SidebarMobile() {
                         }`}
                     >
                         <Video className="h-5 w-5" />
-                        Meetings
+                        Meeting
                     </Link>
                     <Link
                         href="/storage"
