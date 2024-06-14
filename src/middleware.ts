@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Define protected routes
-const protectedRoutes = ["/dashboard", "/meeting", "/project", "/storage", "/"];
+const protectedRoutes = [
+  "/dashboard",
+  "/meeting",
+  "/project",
+  "/storage",
+  "/",
+  /^\/meeting\/[^/]+$/,
+];
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
@@ -11,8 +18,19 @@ export function middleware(req: NextRequest) {
   // Check for the access token in cookies
   const accessToken = req.cookies.get("accessToken")?.value;
 
+  // Define a function to check if a route matches the pathname
+  const isProtectedRoute = (route: string | RegExp) => {
+    if (typeof route === "string") {
+      return pathname === route;
+    }
+    if (route instanceof RegExp) {
+      return route.test(pathname);
+    }
+    return false;
+  };
+
   // If the user is trying to access a protected route without being authenticated, redirect to login
-  if (!accessToken && protectedRoutes.includes(pathname)) {
+  if (!accessToken && protectedRoutes.some(isProtectedRoute)) {
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
@@ -28,5 +46,12 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [...protectedRoutes, "/login"],
+  matcher: [
+    "/dashboard",
+    "/project",
+    "/storage",
+    "/",
+    "/auth/login",
+    "/meeting/:id*",
+  ],
 };

@@ -15,14 +15,3 @@ export type Meeting = {
   updatedAt: Date;
   deletedAt: Date;
 };
-
-export type DashboardMeeting = {
-  id: string;
-  title: string;
-  type: MeetingCategory;
-  description: string;
-  note: string;
-  startTime: Date;
-  endTime: Date;
-  location: string;
-};
