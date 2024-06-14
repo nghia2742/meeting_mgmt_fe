@@ -7,14 +7,16 @@ interface AttendeesProps {
     meetingId: string;
     refreshData: () => void;
     canHaveActions: boolean;
+    isLoading: boolean;
 }
 
-export const AttendeeList: React.FC<AttendeesProps> = ({ refreshData, meetingId, attendees: initialAttendees, canHaveActions }) => {
+export const AttendeeList: React.FC<AttendeesProps> = ({ refreshData, meetingId, attendees: initialAttendees, canHaveActions, isLoading }) => {
     return (
         <DataTable
             columns={columns(meetingId, refreshData, canHaveActions)}
             data={initialAttendees ? initialAttendees : []}
             defaultPageSize={5}
+            isLoading={isLoading}
         />
     )
 }

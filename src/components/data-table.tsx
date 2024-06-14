@@ -24,18 +24,21 @@ import {
 } from "@/components/ui/table"
 import { useState } from "react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import ClipLoader from "react-spinners/ClipLoader"
 
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     defaultPageSize?: number
+    isLoading: boolean
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    defaultPageSize
+    defaultPageSize,
+    isLoading
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -105,7 +108,7 @@ export function DataTable<TData, TValue>({
                                                     </Avatar>
                                                 </TableCell>
                                             )
-                                        }else {
+                                        } else {
                                             return (
                                                 <TableCell className="text-[13px] lg:text-sm" key={cell.id}>
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -115,6 +118,16 @@ export function DataTable<TData, TValue>({
                                     })}
                                 </TableRow>
                             ))
+                        ) : isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center space-y-2'
+                                >
+                                    <ClipLoader color='#000000'/>
+                                    <p>Loading data...</p>
+                                </TableCell>
+                            </TableRow>
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
