@@ -43,7 +43,7 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
         },
     },
     {
-        accessorKey: "createdBy",
+        accessorKey: "userCreateName",
         header: ({ column }) => {
             return (
                 <Button

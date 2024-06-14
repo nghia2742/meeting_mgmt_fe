@@ -29,11 +29,13 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    defaultPageSize?: number
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    defaultPageSize
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -57,6 +59,11 @@ export function DataTable<TData, TValue>({
             columnVisibility,
             rowSelection
         },
+        initialState: {
+            pagination: {
+                pageSize: defaultPageSize ? defaultPageSize : 10
+            }
+        }
     })
 
     return (
@@ -93,7 +100,7 @@ export function DataTable<TData, TValue>({
                                             return (
                                                 <TableCell key={cell.id}>
                                                     <Avatar className="w-[30px] h-[30px]">
-                                                        <AvatarImage src={cell.getValue() as string} alt="@shadcn" />
+                                                        <AvatarImage src={cell.getValue() as string || "/images/logoCLT.png"} alt="@shadcn" />
                                                         <AvatarFallback>CN</AvatarFallback>
                                                     </Avatar>
                                                 </TableCell>

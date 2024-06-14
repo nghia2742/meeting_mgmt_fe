@@ -15,19 +15,16 @@ interface Props {
 }
 
 const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId }: Props) => {
-
-    const [attendee, setAttendee] = useState<Attendee>();
     const [attendeesAdd, setAttendeesAdd] = useState<Attendee[]>([]);
 
     const handleAttendeeChange = (selectedOption: Attendee | null) => {
         if (selectedOption) {
-            setAttendee(selectedOption);
-        }
-    };
-
-    const addNewAttendee = () => {
-        if (attendee) {
-            setAttendeesAdd([...attendeesAdd, attendee]);
+            const duplicateAttendees = attendeesAdd.find((attendee) => attendee.id === selectedOption.id);
+            if(duplicateAttendees) {
+                alert('This attendee is added');
+            }else {
+                setAttendeesAdd([...attendeesAdd, selectedOption]);
+            }
         }
     };
 
@@ -88,7 +85,6 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                     attendees={attendeesAdd}
                     options={attendees || []}
                     handleAttendeeChange={handleAttendeeChange}
-                    addNewAttendee={addNewAttendee}
                     removeAttendee={removeAttendee}
                     maxWidth={80}
                 />
