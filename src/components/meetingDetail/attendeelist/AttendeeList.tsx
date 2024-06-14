@@ -11,6 +11,10 @@ interface AttendeesProps {
 
 export const AttendeeList: React.FC<AttendeesProps> = ({ refreshData, meetingId, attendees: initialAttendees, canHaveActions }) => {
     return (
-        <DataTable columns={columns(meetingId, refreshData, canHaveActions)} data={initialAttendees ? initialAttendees : []}/>
+        <DataTable
+            columns={columns(meetingId, refreshData, canHaveActions)}
+            data={initialAttendees ? initialAttendees : []}
+            defaultPageSize={5}
+        />
     )
 }
