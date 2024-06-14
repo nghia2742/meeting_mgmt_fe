@@ -57,8 +57,10 @@ function LoginPage() {
                         <Image
                             src="/images/logoCLT.png"
                             alt="Image"
-                            width="100"
-                            height="100"
+                            width={0}
+                            height={0}
+                            sizes="100px"
+                            className="w-[100px] h-auto"
                             priority
                         />
                     </Link>
