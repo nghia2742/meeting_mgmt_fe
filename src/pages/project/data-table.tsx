@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   ColumnDef,
@@ -35,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import Image from "next/image"
 
 const data: Task[] = [
   {
@@ -117,10 +116,13 @@ export const columns: ColumnDef<Task>[] = [
     accessorKey: "leader",
     header: "Leader",
     cell: ({ row }) => (
-      <img
-        src={row.getValue("leader")}
+      <Image
+        src={'https://github.com/shadcn.png'}
+        width={0}
+        height={0}
+        sizes="100vw"
+        className="w-8 h-auto rounded-full"
         alt="Leader"
-        style={{ borderRadius: "50%", width: "30px", height: "30px" }}
       />
     ),
   },

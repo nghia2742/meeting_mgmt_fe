@@ -51,9 +51,9 @@ function User() {
                         <form className="flex-grow max-w-xs sm:max-w-none mr-1" onSubmit={handleSearch}>
                             <label className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                             <div className="relative flex items-center gap-2">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <button type="submit" className="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <SearchIcon />
-                                </div>
+                                </button>
                                 <input
                                     type="search"
                                     id="default-search"

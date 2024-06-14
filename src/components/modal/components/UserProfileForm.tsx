@@ -35,17 +35,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 />
                 {errors.fullName && <p className="col-span-3 col-start-2 text-red-500">{errors.fullName.message}</p>}
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="password" className="text-right">
-                    Password
-                </Label>
-                <Input
-                    id="password"
-                    placeholder="**************"
-                    className="col-span-3"
-                    type="password"
-                />
-            </div>
+            
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
                     Email
@@ -68,16 +58,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 />
                 {errors.phoneNumber && <p className="col-span-3 col-start-2 text-red-500">{errors.phoneNumber.message}</p>}
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="provider" className="text-right">
-                    Provider
-                </Label>
-                <Input
-                    id="provider"
-                    {...register("provider")}
-                    className="col-span-3"
-                />
-            </div>
+        
             <GenderSelect control={control} error={errors.gender?.message} />
             <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message}/>
             <div className="grid grid-cols-4 items-center gap-4">

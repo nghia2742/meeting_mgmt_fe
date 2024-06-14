@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createUser } from "@/lib/apiUser";
-import { Blocks, Lock, Mail, User } from "lucide-react";
+import { Blocks, Lock, Mail, User, User2, UserCheck } from "lucide-react";
 
 const CreateUserSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -58,7 +58,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        
+
         <h2 className="text-xl font-bold mb-4 text-center">Create User</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -111,7 +111,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               name="fullName"
               render={({ field }) => (
                 <FormItem className="grid gap-2 mb-2">
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>
+                    <div className="flex items-center">
+                      <UserCheck className="w-4 h-4 mr-2" />
+                      Full Name
+                    </div>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="text"

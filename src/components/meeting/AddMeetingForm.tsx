@@ -2,8 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Inter } from 'next/font/google';
-import { Loader, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -31,8 +30,6 @@ import { useFilteredUsers } from '@/hooks/useMeeting';
 import Image from 'next/image';
 import apiClient from '@/lib/apiClient';
 import { useMeetingStore } from '@/stores/meetingStore';
-
-const inter = Inter({ subsets: ['latin'] });
 
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -176,7 +173,7 @@ export default function AddMeetingForm() {
     return (
         <Form {...form}>
             <form
-                className={`${inter.className} px-5`}
+                className={`px-5`}
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
