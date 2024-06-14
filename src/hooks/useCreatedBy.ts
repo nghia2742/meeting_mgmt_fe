@@ -10,7 +10,7 @@ const useCreatedBy = (userId: string) => {
     const fetchUserCreated = async() => {
         try {
             const response = await apiClient.get(`/users/${userId}`);
-            console.log(response.data);
+            
             if(response && response.data) {
                 setUser(response.data);
             }

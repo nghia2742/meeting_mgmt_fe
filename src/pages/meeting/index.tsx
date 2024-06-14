@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Slash } from 'lucide-react';
 import Link from 'next/link';
+import Head from 'next/head';
 
 interface MeetingPageProps {
     meetings: Meeting[];
@@ -21,26 +22,31 @@ interface MeetingPageProps {
 
 const Meeting: React.FC<MeetingPageProps> = ({ meetings: initialMeetings }) => {
     return (
-        <MainLayout>
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                          <Link href="/dashboard">Home</Link>
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator>
-                        <Slash />
-                    </BreadcrumbSeparator>
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>Meeting</BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-            <div className="container mx-auto py-10">
-                <DataTable columns={columns} data={initialMeetings} />
-            </div>
-        </MainLayout>
+        <>
+            <Head>
+                <title>Meeting</title>
+            </Head>
+            <MainLayout>
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink asChild>
+                                <Link href="/dashboard">Home</Link>
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator>
+                            <Slash />
+                        </BreadcrumbSeparator>
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Meeting</BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+                <div className="container mx-auto py-10">
+                    <DataTable columns={columns} data={initialMeetings} />
+                </div>
+            </MainLayout>
+        </>
     );
 };
 

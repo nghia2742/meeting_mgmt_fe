@@ -1,119 +1,119 @@
-import Link from "next/link";
-import { CircleUser, Home, Package, Package2, Video } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import Link from 'next/link';
+import { CircleUser, Home, Package, Package2, Video } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ReactNode, useEffect, useState } from "react";
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ReactNode, useEffect, useState } from 'react';
 
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import Sidebar from "./sidebar";
-import SidebarMobile from "./sidebar-mobile";
-import SettingsModal from "./modal/settingModal";
-import useLogout from "@/hooks/useLogout";
-import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile } from "@/lib/apiUser";
+import Image from 'next/image';
+import { Inter } from 'next/font/google';
+import Sidebar from './sidebar';
+import SidebarMobile from './sidebar-mobile';
+import SettingsModal from './modal/settingModal';
+import useLogout from '@/hooks/useLogout';
+import useUserStore from '@/stores/userStore';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const { mutate: logout } = useLogout();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { userProfile, fetchUserProfile } = useUserStore((state) => ({
+        userProfile: state.userProfile,
+        fetchUserProfile: state.fetchUserProfile,
+    }));
+    const { mutate: logout } = useLogout();
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
-  useEffect(() => {
-    const loadUserProfile = async () => {
-      try {
-        const profile = await fetchUserProfile();
-        setUserProfile(profile);
-      } catch (error) {
-        console.error("Failed to fetch user profile:", error);
-      }
-    };
+    useEffect(() => {
+        if (!userProfile) {
+            fetchUserProfile();
+        }
+    }, [fetchUserProfile, userProfile]);
 
-    loadUserProfile();
-  }, []);
-
-  return (
-    <div
-      className={`grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr] ${inter.className}`}
-    >
-      <div className="hidden border-r bg-muted/40 md:block">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center justify-center px-4 lg:h-[100px] lg:px-6">
-            {/* LOGO */}
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Image
-                src="/images/logoCLT.png"
-                width={100}
-                height={100}
-                priority={true}
-                alt="Logo CLT"
-              />
-            </Link>
-          </div>
-          <div className="flex-1">
-            <Sidebar />
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <SidebarMobile />
-          <div className="w-full flex-1"></div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="flex items-center gap-4 rounded-full"
-              >
-                {userProfile?.avatar ? (
-                  <Image
-                    src={userProfile.avatar}
-                    alt="User Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <CircleUser className="h-10 w-10 rounded-full" />
-                )}
-                <div className="font-medium">
-                  <div>{userProfile?.fullName}</div>
-                  
+    return (
+        <div className={`flex min-h-screen w-full ${inter.className}`}>
+            <div className="hidden lg:block transition-all fixed top-0 left-0 h-full max-h-screen border-r bg-muted z-20 min-w-[70px] group">
+                <div className="flex flex-col gap-2">
+                    <div className="my-2">
+                        {/* LOGO */}
+                        <Link
+                            href="/"
+                            className="flex items-center justify-center"
+                        >
+                            <Image
+                                src="/images/logoCLT.png"
+                                width="0"
+                                height="0"
+                                sizes="64px"
+                                className="w-[64px] h-auto"
+                                priority={true}
+                                alt="Logo CLT"
+                            />
+                        </Link>
+                    </div>
+                    <Sidebar />
                 </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{userProfile?.fullName}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={openModal}>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => logout()}>
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          {children}
-        </main>
-      </div>
-      <SettingsModal isOpen={isModalOpen} onClose={closeModal}></SettingsModal>
-    </div>
-  );
+            </div>
+            <div className="lg:ml-[70px] flex w-full flex-col">
+                <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+                    <SidebarMobile />
+                    <div className="w-full flex-1"></div>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <div className="flex items-center gap-4 p-0 hover:bg-muted cursor-pointer">
+                                {userProfile?.avatar ? (
+                                    <>
+                                        <Image
+                                            src={userProfile.avatar}
+                                            alt="User Avatar"
+                                            width={0}
+                                            height={0}
+                                            sizes='100px'
+                                            className="w-8 h-auto rounded-full"
+                                        />
+                                        <div className="text-sm font-semibold dark:text-white">
+                                            <div>{userProfile?.fullName}</div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="w-10 h-10 rounded-full bg-slate-300 animate-pulse"></div>
+                                        <div className="h-5 w-32 bg-slate-300 animate-pulse"></div>
+                                    </>
+                                )}
+                            </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-32">
+                            <DropdownMenuItem onClick={openModal} className='cursor-pointer'>
+                                Settings
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className='cursor-pointer'>Support</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => logout()} className='cursor-pointer text-destructive focus:text-destructive'>
+                                Logout
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </header>
+                <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+                    {children}
+                </main>
+            </div>
+            <SettingsModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+            ></SettingsModal>
+        </div>
+    );
 }
 
 export default MainLayout;

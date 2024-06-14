@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile, updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
+import { updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
-import userStore from "@/stores/UserStore";
+import useUserStore from "@/stores/userStore";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -39,13 +33,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         resolver: zodResolver(schema),
     });
 
-    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = userStore();
-
+    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = useUserStore((state) => ({
+        userProfile: state.userProfile,
+        isLoading: state.isLoading,
+        isError: state.isError,
+        error: state.error,
+        fetchUserProfile: state.fetchUserProfile,
+        avatarFile: state.avatarFile,
+        setAvatarFile: state.setAvatarFile,
+    }));
 
     useEffect(() => {
-        if (!userProfile) {
+        if (isOpen && !userProfile) {
             fetchUserProfile();
-        } else {
+        }
+    }, [isOpen, fetchUserProfile, userProfile]);
+
+    useEffect(() => {
+        if (userProfile) {
             setValue("fullName", userProfile.fullName);
             setValue("email", userProfile.email);
             if (userProfile.dateOfBirth) {
@@ -55,8 +60,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             setValue("address", userProfile.address);
             setValue("gender", userProfile.gender);
             setValue("phoneNumber", userProfile.phoneNumber);
-            setValue("provider", userProfile.provider);
-            setValue("avatar", userProfile.avatar);
         }
     }, [userProfile, setValue]);
 
@@ -69,7 +72,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     });
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && date.getTime() !== new Date(userProfile.dateOfBirth).getTime()) {
+        if (date && date.getTime() !== new Date(userProfile?.dateOfBirth || "").getTime()) {
             data.dateOfBirth = new Date(date.toISOString());
         }
 
@@ -87,13 +90,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             mutation.mutate(data);
         }
     };
-
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading user data: {error}</div>;
-
+    
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
+            <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
                     <DialogTitle className="mb-2">Edit profile</DialogTitle>
                     {userProfile && (

@@ -24,12 +24,12 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({ setAvatarFile, userData }
         <Popover>
             <PopoverTrigger asChild>
                 <div className="relative cursor-pointer">
-                    <Avatar className="h-[200px] w-[200px]">
+                    <Avatar className="h-32 w-32">
                         <AvatarImage src={selectedImage || userData.avatar} className="rounded-full" />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarFallback>Avatar</AvatarFallback>
                     </Avatar>
-                    <div className="absolute bottom-0 right-0 bg-white p-5 rounded-full shadow">
-                        <Pencil className="h-7 w-7" />
+                    <div className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow">
+                        <Pencil className="h-5 w-5" />
                     </div>
                 </div>
             </PopoverTrigger>
