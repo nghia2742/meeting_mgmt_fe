@@ -15,6 +15,8 @@ interface CalendarProps {
   onDateClick: (date: string) => void;
 }
 
+// TODO: custom the cell
+
 const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
   const handleSelectSlot = (slotInfo: any) => {
     const selectedDate = new Date(slotInfo.start);
@@ -35,11 +37,15 @@ const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
     };
   };
 
-  const EventTooltip = ({ event }: { event: Event }) => (
-    <Tooltip>
-      <TooltipTrigger>{event.title}</TooltipTrigger>
-      <TooltipContent>{event.title}</TooltipContent>
-    </Tooltip>
+  const EventWrapper = ({ event }: { event: Event }) => (
+    <div className='bg-blurGray text-white px-1 rounded flex items-center'>
+      <Tooltip>
+        <TooltipTrigger>
+          <span className='text-xs'>{event.title}</span>
+        </TooltipTrigger>
+        <TooltipContent>{event.title}</TooltipContent>
+      </Tooltip>
+    </div>
   );
 
   return (
@@ -55,7 +61,7 @@ const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
         onSelectSlot={handleSelectSlot}
         eventPropGetter={eventPropGetter}
         components={{
-          event: EventTooltip,
+          eventWrapper: EventWrapper,
         }}
       />
     </div>

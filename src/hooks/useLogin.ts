@@ -25,14 +25,13 @@ const useLogin = () => {
       const accessToken = Cookies.get("accessToken") || "";
       const refreshToken = Cookies.get("refreshToken") || "";
       setTokens(accessToken, refreshToken);
-      console.log("AccessToken: ", accessToken);
-      console.log("refreshToken: ", refreshToken);
 
       toast({
         title: "Login Successfully",
         description: "Welcome to our app",
         variant: "success",
       });
+
       router.replace("/dashboard");
     },
   });
