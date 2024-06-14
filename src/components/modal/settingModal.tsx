@@ -9,6 +9,7 @@ import { updateUserProfile, uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
 import useUserStore from "@/stores/userStore";
+import { toast } from "../ui/use-toast";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -88,6 +89,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             }
         } else {
             mutation.mutate(data);
+            toast({
+                variant: "success",
+                title: "Success",
+                description: "User edited successfully.",
+                duration: 1000,
+              });
         }
     };
     
