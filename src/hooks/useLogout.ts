@@ -18,11 +18,6 @@ const useLogout = () => {
     mutationFn: fetchLogout,
     onSuccess: () => {
       clearTokens();
-      toast({
-        title: "Logout Successfully",
-        description: "See you again soon!",
-        variant: "success",
-      });
       router.replace("/auth/login");
     },
     onError: (error: any) => {

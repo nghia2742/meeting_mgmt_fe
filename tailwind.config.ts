@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        customGreen: "#0B8043",
         blurGray: "#828282",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Meeting } from "@/types/meeting.type";
 import { format } from "date-fns";
 import { Video } from "lucide-react";
+import Link from "next/link";
 
 const UpcomingMeetings = ({ meetings }: { meetings: Meeting[] }) => {
   // Sort meetings by startTime
@@ -10,25 +11,24 @@ const UpcomingMeetings = ({ meetings }: { meetings: Meeting[] }) => {
   );
 
   return (
-    <div
-      className={`flex flex-1 my-1 ${
-        sortedMeetings.length > 0 ? "overflow-x-scroll" : ""
-      }`}
-    >
+    <div className='flex flex-1 my-1 overflow-x-auto'>
       {sortedMeetings.map((meeting) => (
         <Card
           key={meeting.id}
-          className='w-[240px] h-[120px] shrink-0 mr-3 hover:cursor-pointer hover:bg-gray-200'
+          className='w-[200px] h-[100px] shrink-0 mr-3 p-2 last:mr-0 hover:cursor-pointer hover:bg-gray-200'
         >
-          <div className='flex flex-col p-2 w-full h-full items-start justify-between'>
+          <Link
+            href={`/meeting/${meeting.id}`}
+            className='flex flex-col w-full h-full items-start justify-between'
+          >
             <div className='flex w-full justify-between items-start'>
-              <Video className='h-10 w-10' />
+              <Video className='h-11 w-11' />
               <span className='text-xs text-blurGray '>
                 {format(new Date(meeting.startTime), "MMMM dd yyyy")}
               </span>
             </div>
-            <div className='line-clamp-1 text-lg'>{meeting.title}</div>
-          </div>
+            <div className='line-clamp-1 text-sm'>{meeting.title}</div>
+          </Link>
         </Card>
       ))}
     </div>
