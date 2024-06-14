@@ -17,31 +17,26 @@ import Sidebar from "./sidebar";
 import SidebarMobile from "./sidebar-mobile";
 import SettingsModal from "./modal/settingModal";
 import useLogout from "@/hooks/useLogout";
-import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile } from "@/lib/apiUser";
+import useUserStore from "@/stores/userStore";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const { userProfile, fetchUserProfile } = useUserStore((state) => ({
+    userProfile: state.userProfile,
+    fetchUserProfile: state.fetchUserProfile,
+  }));
   const { mutate: logout } = useLogout();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    const loadUserProfile = async () => {
-      try {
-        const profile = await fetchUserProfile();
-        setUserProfile(profile);
-      } catch (error) {
-        console.error("Failed to fetch user profile:", error);
-      }
-    };
-
-    loadUserProfile();
-  }, []);
+    if (!userProfile) {
+      fetchUserProfile();
+    }
+  }, [fetchUserProfile, userProfile]);
 
   return (
     <div
@@ -75,8 +70,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="secondary"
-                size="icon"
-                className="flex items-center gap-4 rounded-full"
+                className="flex items-center gap-4 p-0"
               >
                 {userProfile?.avatar ? (
                   <Image
@@ -84,12 +78,12 @@ export function MainLayout({ children }: { children: ReactNode }) {
                     alt="User Avatar"
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="w-10 h-10 rounded-full"
                   />
                 ) : (
-                  <CircleUser className="h-10 w-10 rounded-full" />
+                  <CircleUser className="w-10 h-10" />
                 )}
-                <div className="font-medium">
+                <div className="font-medium dark:text-white">
                   <div>{userProfile?.fullName}</div>
                   
                 </div>
