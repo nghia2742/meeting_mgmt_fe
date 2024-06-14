@@ -2,12 +2,9 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from '
 import { Button } from '@/components/ui/button'
 import { Attendee } from '@/types/attendee.type';
 import { useState } from 'react';
-import { Inter } from "next/font/google";
 import AddAttendee from '../attendee/AddAttendee';
 import apiClient from '@/lib/apiClient';
 import { toast } from '@/components/ui/use-toast';
-
-const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
     isOpen: boolean;
@@ -83,7 +80,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
 
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
-            <DialogContent className={`${inter.className}`}>
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add new attendee</DialogTitle>
                 </DialogHeader>

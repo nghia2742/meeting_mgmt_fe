@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from '
 import { Label } from '@/components/ui/label'
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Inter } from "next/font/google"
 import { Meeting } from '@/types/meeting.type'
 import { Input } from '@/components/ui/input'
 import { DateTimePickerForm } from '../timePicker/DateTimePickerForm'
@@ -16,8 +15,6 @@ import apiClient from '@/lib/apiClient'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import { MeetingFile } from '@/types/meeting.file.type'
 import { differenceInMilliseconds } from 'date-fns'
-
-const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
     isOpen: boolean;
@@ -165,7 +162,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
 
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
-            <DialogContent className={`lg:min-w-[800px] w-full ${inter.className}`}>
+            <DialogContent className={`lg:min-w-[800px] w-full`}>
                 <DialogHeader>
                     <DialogTitle className='px-2'>Preview meeting minute</DialogTitle>
                 </DialogHeader>

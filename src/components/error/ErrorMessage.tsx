@@ -1,7 +1,3 @@
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
-
 interface Props {
     title: string;
     content?: string;
@@ -10,7 +6,7 @@ interface Props {
 
 const ErrorMessage = ({title, content, img}: Props) => {
     return (
-        <div className={`flex flex-col items-center justify-center ${inter.className}`}>
+        <div className={`flex flex-col items-center justify-center`}>
             <img
                 className="w-80 h-auto mb-6"
                 src={img}

@@ -90,13 +90,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             mutation.mutate(data);
         }
     };
-
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading user data: {error}</div>;
-
+    
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
+            <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
                 <DialogHeader className="flex justify-center items-center h-full">
                     <DialogTitle className="mb-2">Edit profile</DialogTitle>
                     {userProfile && (

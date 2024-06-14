@@ -14,65 +14,65 @@ function Sidebar() {
         fetchUserRole();
     }, [fetchUserRole]);
 
-    const isActive = (pathname: string) => router.pathname === pathname;
-
+    const isActive = (pathname: string) => '/' + router.pathname.split('/')[1] === pathname;
+    
     return (
-        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+        <nav className="px-2 text-sm font-semibold lg:px-4">
             <Link
                 href="/dashboard"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                     isActive('/dashboard')
-                        ? 'bg-muted text-primary'
+                        ? 'bg-slate-200 text-primary'
                         : 'text-muted-foreground'
                 }`}
             >
                 <Home className="h-4 w-4" />
-                Dashboard
+                <span className="hidden mt-1 group-hover:inline pr-5">Dashboard</span>
             </Link>
             <Link
                 href="/project"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                     isActive('/project')
-                        ? 'bg-muted text-primary'
+                        ? 'bg-slate-200 text-primary'
                         : 'text-muted-foreground'
                 }`}
             >
                 <Package className="h-4 w-4" />
-                Projects
+                <span className="hidden mt-1 group-hover:inline pr-5">Project</span>
             </Link>
             <Link
                 href="/meeting"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                     isActive('/meeting')
-                        ? 'bg-muted text-primary'
+                        ? 'bg-slate-200 text-primary'
                         : 'text-muted-foreground'
                 }`}
             >
                 <Video className="h-4 w-4" />
-                Meetings
+                <span className="hidden mt-1 group-hover:inline pr-5">Meeting</span>
             </Link>
             <Link
                 href="/storage"
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                     isActive('/storage')
-                        ? 'bg-muted text-primary'
+                        ? 'bg-slate-200 text-primary'
                         : 'text-muted-foreground'
                 }`}
             >
                 <Package2 className="h-4 w-4" />
-                Storage
+                <span className="hidden mt-1 group-hover:inline pr-5">Storage</span>
             </Link>
             {ability.can('read', 'User') && (
                 <Link
                     href="/users"
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                    className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                         isActive('/users')
-                            ? 'bg-muted text-primary'
+                            ? 'bg-slate-200 text-primary'
                             : 'text-muted-foreground'
                     }`}
                 >
                     <User className="h-4 w-4" />
-                    User
+                    <span className="hidden mt-1 group-hover:inline pr-5">User</span>
                 </Link>
             )}
         </nav>
