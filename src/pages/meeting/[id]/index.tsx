@@ -10,7 +10,7 @@ import {
 import apiClient from '@/lib/apiClient'
 import { Meeting } from '@/types/meeting.type'
 import { calcMinutes, formatDateTime } from '@/utils/datetime.util'
-import { Slash } from 'lucide-react'
+import { Eye, FilePlus2, Slash, UserRoundPlus, History } from 'lucide-react'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -154,7 +154,10 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                         <p className='font-bold'>Date: {formattedDate}</p>
                                         <p>|</p>
                                         <p className='font-bold'>Start time: {formattedTime}</p>
-                                        <div className='rounded-lg px-2 py-1 text-[12px] bg-black text-white'>{minutes} minutes</div>
+                                        <div className='flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] bg-black text-white'>
+                                            {minutes} minutes
+                                            <History className='w-4 h-4'/>
+                                        </div>
                                     </div>
                                     <div className="flex text-sm items-center space-x-3">
                                         <p>Location: {meeting.location}</p>
@@ -164,21 +167,24 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                     <p className="text-gray-700">{meeting.description}</p>
                                     <div className="lg:flex lg:space-x-4 space-y-4 lg:space-y-0">
                                         {latestMeetingMinutes &&
-                                            <Button className='text-[13px] w-full lg-w-auto' variant={"secondary"}>
+                                            <Button className='text-[13px] w-full lg-w-auto p-0' variant={"secondary"}>
                                                 <a
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     href={latestMeetingMinutes?.link}
+                                                    className='w-full h-full flex items-center gap-2 justify-center'
                                                 >
+                                                    <Eye className='w-4 h-4'/>
                                                     View meeting minutes
                                                 </a>
                                             </Button>
                                         }
                                         {user?.id === meeting.createdBy ?
                                             <Button
-                                                className='text-[13px] w-full lg-w-auto'
+                                                className='text-[13px] w-full lg-w-auto flex items-center gap-2'
                                                 onClick={() => setIsOpenPreviewMeeetingMinute(true)}
                                             >
+                                                <FilePlus2 className='w-4 h-4'/>
                                                 Create meeting minutes
                                             </Button>
                                             : ''}
@@ -190,9 +196,10 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                         <p className='font-bold text-xl'>Attendees</p>
                                         {user?.id === meeting.createdBy ?
                                             <Button
-                                                className='text-[13px]'
+                                                className='text-[13px] flex items-center gap-2'
                                                 onClick={() => setIsOpenModalAddAttendee(true)}
                                             >
+                                                <UserRoundPlus className='w-4 h-4'/>
                                                 Add new attendee
                                             </Button> : ''
                                         }
@@ -209,9 +216,10 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                 <div className="flex items-center justify-between">
                                     <p className='font-bold text-xl'>Files</p>
                                     <Button
-                                        className='text-[13px]'
+                                        className='text-[13px] flex items-center gap-2'
                                         onClick={() => setIsOpenModalAddFile(true)}
                                     >
+                                        <FilePlus2 className='w-4 h-4'/>
                                         Add new file
                                     </Button>
                                 </div>
