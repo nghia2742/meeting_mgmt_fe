@@ -6,12 +6,13 @@ interface Props {
     files: MeetingFile[],
     meetingId: string,
     refreshData: () => void,
-    currentUserId: string | undefined
+    currentUserId: string | undefined,
+    isLoading: boolean
 }
 
-const FileList = ({files, meetingId, refreshData, currentUserId}: Props) => {
+const FileList = ({files, meetingId, refreshData, currentUserId, isLoading}: Props) => {
     return (
-        <DataTable columns={columns(meetingId, refreshData, currentUserId || '')} data={files}/>
+        <DataTable isLoading={isLoading} columns={columns(meetingId, refreshData, currentUserId || '')} data={files}/>
     )
 }
 
