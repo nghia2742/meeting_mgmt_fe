@@ -183,7 +183,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                             <p>|</p>
                                             <p>Organised by: {userCreated?.fullName}</p>
                                         </div>
-                                        <p className="text-gray-700">{meeting.description}</p>
+                                        <p className="text-gray-700 text-[13px]">{meeting.description}</p>
                                         <div className="lg:flex lg:space-x-4 space-y-4 lg:space-y-0">
                                             {latestMeetingMinutes &&
                                                 <Button className='text-[13px] w-full lg-w-auto p-0' variant={"secondary"}>

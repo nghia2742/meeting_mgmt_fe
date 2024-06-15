@@ -14,7 +14,7 @@ import apiClient from '@/lib/apiClient'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import { MeetingFile } from '@/types/meeting.file.type'
 import { differenceInMilliseconds } from 'date-fns'
-import { Inter } from 'next/font/google';
+import { Faster_One, Inter } from 'next/font/google';
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -36,6 +36,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import ClipLoader from 'react-spinners/ClipLoader'
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -64,17 +65,15 @@ export type FormSchemaMeetingMinuteType = z.infer<typeof schema>;
 
 const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refreshMeeting }: Props) => {
 
+    const [isCreating, setIsCreating] = useState(false);
+
     const form = useForm<FormSchemaMeetingMinuteType>({
         resolver: zodResolver(schema),
     });
 
-    const { register, handleSubmit, control, setValue, getValues, formState: { errors }, setError, clearErrors } = form;
-
-    //Check valid date
-    const [isValidDate, setIsValidDate] = useState(true);
+    const { handleSubmit, control, setValue, getValues, formState: { errors }, setError, clearErrors } = form;
 
     const onCloseModal = () => {
-        onClose();
         setValue("title", '');
         setValue("description", '');
         setValue("location", '');
@@ -84,6 +83,8 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
         setValue("formattedDate", '');
         setValue("formattedTime", '');
         setValue("minutes", 0);
+        clearErrors();
+        onClose();
     }
 
     useEffect(() => {
@@ -108,6 +109,9 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
         if (!validateTimes(getValues("startTime"), getValues("endTime"))) {
             return;
         }
+
+        setIsCreating(true);
+
         const doc = <MeetingPDF
             {...getValues()}
             startTime={getValues("formattedTime")}
@@ -153,6 +157,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                             description: "Update meeting successfully",
                             variant: "success",
                         });
+                        setIsCreating(false);
                         refreshMeeting();
                         onCloseModal();
                     }
@@ -165,6 +170,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                 description: error.response.data.message,
                 variant: "destructive",
             });
+            setIsCreating(false);
         }
     }
 
@@ -432,7 +438,16 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                             </div>
                             <div className="flex space-x-4 col-span-full justify-end">
                                 <Button variant="outline" onClick={(e) => { e.preventDefault(); setShowPreview(true) }}>Preview</Button>
-                                <Button type='submit'>Create</Button>
+                                <Button type='submit'>
+                                    {isCreating && (
+                                        <ClipLoader
+                                            className="mr-2"
+                                            color="#ffffff"
+                                            size={16}
+                                        />
+                                    )}
+                                    Create
+                                </Button>
                                 <Button onClick={onCloseModal} type="button" variant="secondary">Close</Button>
                             </div>
                         </form>

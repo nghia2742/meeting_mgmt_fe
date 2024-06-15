@@ -132,7 +132,7 @@ const MeetingPDF = ({ title, description, note, date, startTime, duration, atten
                                 <Text style={styles.tableCellEmail}>{attendee.email}</Text>
                             </View>
                             <View style={styles.tableCol}>
-                                <Text style={styles.tableCell}>{createdBy?.id === attendee.id ? 'Owner' : 'Attendee'}</Text>
+                                <Text style={styles.tableCell}>{createdBy?.id === attendee.id ? 'Organizer' : 'Attendee'}</Text>
                             </View>
                         </View>
                     ))}

@@ -110,7 +110,7 @@ export function DataTable<TData, TValue>({
                                             )
                                         } else {
                                             return (
-                                                <TableCell className="text-[13px] lg:text-sm" key={cell.id}>
+                                                <TableCell className="text-[13px] lg:text-[13px]" key={cell.id}>
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             )

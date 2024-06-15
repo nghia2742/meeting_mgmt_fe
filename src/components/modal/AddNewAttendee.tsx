@@ -6,6 +6,7 @@ import AddAttendee from '../attendee/AddAttendee';
 import apiClient from '@/lib/apiClient';
 import { toast } from '@/components/ui/use-toast';
 import { Inter } from 'next/font/google';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,12 +21,16 @@ interface Props {
 const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId }: Props) => {
     const [attendeesAdd, setAttendeesAdd] = useState<Attendee[]>([]);
 
+    const [isEmptyAttendee, setIsEmptyAttendee] = useState(false);
+    const [isAddingAttendees, setIsAddingAttendees] = useState(false);
+
     const handleAttendeeChange = (selectedOption: Attendee | null) => {
+        setIsEmptyAttendee(false);
         if (selectedOption) {
             const duplicateAttendees = attendeesAdd.find((attendee) => attendee.id === selectedOption.id);
-            if(duplicateAttendees) {
+            if (duplicateAttendees) {
                 alert('This attendee is added');
-            }else {
+            } else {
                 setAttendeesAdd([...attendeesAdd, selectedOption]);
             }
         }
@@ -34,6 +39,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
     const onCloseModal = () => {
         onClose();
         setAttendeesAdd([]);
+        setIsEmptyAttendee(false);
     }
 
     const removeAttendee = (index: number) => {
@@ -42,13 +48,14 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
         setAttendeesAdd(newAttendess);
     }
 
-    const handleAddAttendees = async() => {
-        if(attendeesAdd.length === 0) {
-            alert("Please add at least one attendee");
-        }else {
+    const handleAddAttendees = async () => {
+        if (attendeesAdd.length === 0) {
+            setIsEmptyAttendee(true);
+        } else {
             let countAdd = 0;
             try {
-                for(let attendeeAdd of attendeesAdd) {
+                setIsAddingAttendees(true);
+                for (let attendeeAdd of attendeesAdd) {
                     const response = await apiClient.post('/usermeetings', {
                         userId: attendeeAdd.id,
                         meetingId: meetingId
@@ -57,12 +64,13 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                         countAdd++;
                     }
                 }
-                if(countAdd === attendeesAdd.length) {
+                if (countAdd === attendeesAdd.length) {
                     toast({
                         title: "Successfully",
                         description: "Add new attendee successfully",
                         variant: "success",
                     });
+                    setIsAddingAttendees(false);
                     onAddAttendees();
                     onCloseModal();
                 }
@@ -74,6 +82,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                     variant: "destructive",
                 });
                 onCloseModal();
+                setIsAddingAttendees(false);
             }
         }
     }
@@ -91,9 +100,23 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                     removeAttendee={removeAttendee}
                     maxWidth={80}
                 />
+                {isEmptyAttendee && (
+                    <p className="text-red-500 text-sm">Please choose at least one attendee</p>
+                )}
                 <DialogFooter className="sm:justify-end">
                     <div className="flex space-x-4 justify-end">
-                        <Button onClick={handleAddAttendees}>Save</Button>
+                        <Button
+                            onClick={handleAddAttendees}
+                        >
+                            {isAddingAttendees && (
+                                <ClipLoader
+                                    className="mr-2"
+                                    color="#ffffff"
+                                    size={16}
+                                />
+                            )}
+                            Save
+                        </Button>
                         <Button onClick={onCloseModal} type="button" variant="secondary">
                             Close
                         </Button>
