@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import Cookies from "js-cookie";
 import apiClient from "@/lib/apiClient";
+import useUserStore from "./userStore";
 
 interface AuthState {
   accessToken: string | null;
@@ -19,14 +20,15 @@ const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!Cookies.get("accessToken"),
   role: null,
   setTokens: (accessToken: string, refreshToken: string) => {
-    Cookies.set("accessToken", accessToken, { secure: true, sameSite: 'strict' });
-    Cookies.set("refreshToken", refreshToken, { secure: true, sameSite: 'strict' });
+    Cookies.set("accessToken", accessToken, { secure: true, sameSite: 'strict', httpOnly: true });
+    Cookies.set("refreshToken", refreshToken, { secure: true, sameSite: 'strict', httpOnly: true });
     set({ accessToken, refreshToken, isAuthenticated: true });
   },
   clearTokens: () => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     set({ accessToken: null, refreshToken: null, isAuthenticated: false, role: null });
+    useUserStore.getState().resetUserProfile();
   },
   fetchUserRole: async () => {
     try {
