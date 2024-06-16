@@ -73,8 +73,7 @@ function Dashboard() {
         <title>Dashboard</title>
       </Head>
       <MainLayout>
-        <div className='w-full lg:w-dashboard-full overflow-x-hidden'>
-          {/* <div className='w-full'> */}
+        <div className='w-full px-1 lg:w-dashboard-full overflow-x-hidden'>
           {meetings && (
             <UpcomingMeetings
               meetings={
@@ -111,7 +110,6 @@ function Dashboard() {
               />
             </TabsContent>
           </Tabs>
-          {/* </div> */}
         </div>
       </MainLayout>
     </>
