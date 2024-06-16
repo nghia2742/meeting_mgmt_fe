@@ -26,6 +26,7 @@ import ErrorMessage from '@/components/error/ErrorMessage'
 import useCurrentUser from '@/hooks/useCurrentUser'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import Head from 'next/head';
+import { useQuery } from '@tanstack/react-query'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -70,12 +71,35 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     const [isOpenModalAddAttendee, setIsOpenModalAddAttendee] = useState(false);
     const [isOpenModalAddFile, setIsOpenModalAddFile] = useState(false);
     const [isOpenPreviewMeeetingMinute, setIsOpenPreviewMeeetingMinute] = useState(false);
-    const [attendees, setAttendees] = useState<Attendee[]>();
-    const [files, setFiles] = useState<MeetingFile[]>();
+    // const [files, setFiles] = useState<MeetingFile[]>();
     const [users, setUsers] = useState<Attendee[]>();
     const [latestMeetingMinutes, setLatestMeetingMinutes] = useState<MeetingMinutes>();
     const { user } = useCurrentUser();
     const { user: userCreated } = useCreatedBy(meeting.createdBy);
+
+    const fetchFiles = async() => {
+        const res = await apiClient.get(`/files/${meeting.id}`);
+        if (res && res.data) {
+            return res.data;
+        }
+    };
+
+    const fetchAttendees = async() => {
+        const res = await apiClient.get(`/usermeetings/attendees/${meeting.id}`);
+        if (res && res.data) {
+            return res.data;
+        }
+    };
+
+    const { isLoading: isLoadingFiles, data: files, refetch: refreshFiles } = useQuery<MeetingFile[]>({
+        queryKey: ["meeting-details-files"],
+        queryFn: fetchFiles,
+    })
+
+    const { isLoading: isLoadingAttendees, data: attendees, refetch: refreshAttendees } = useQuery<Attendee[]>({
+        queryKey: ["meeting-details-attendees"],
+        queryFn: fetchAttendees,
+    })
 
     const fetchMeeting = async () => {
         let response = await apiClient.get(`/meetings/${initialMeeting.id}`);
@@ -84,24 +108,10 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
         }
     }
 
-    const fetchAttendees = useCallback(async () => {
-        const res = await apiClient.get(`/usermeetings/attendees/${meeting.id}`);
-        if (res && res.data) {
-            setAttendees(res.data);
-        }
-    }, []);
-
     const fetchAllUser = useCallback(async () => {
         const res = await apiClient.get(`/users`);
         if (res && res.data) {
             setUsers(res.data);
-        }
-    }, []);
-
-    const fetchFiles = useCallback(async () => {
-        const res = await apiClient.get(`/files/${meeting.id}`);
-        if (res && res.data) {
-            setFiles(res.data);
         }
     }, []);
 
@@ -115,7 +125,6 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     useEffect(() => {
         fetchAttendees();
         fetchAllUser();
-        fetchFiles();
         fetchLatestMeetingMinutes();
     }, []);
 
@@ -154,7 +163,12 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                             <div className="space-y-4">
                                 <div className="space-x-0 space-y-10 lg:space-y-0 lg:flex lg:space-x-20">
                                     <div className="space-y-4 text-sm w-[100%] lg:w-[50%]">
-                                        <p className='font-bold text-xl'>{meeting.title}</p>
+                                        <div className="flex items-center space-x-2">
+                                            <p className='font-bold text-xl'>{meeting.title}</p>
+                                            {meeting.tag.split(', ').map((tagItem: string, index: number) => (
+                                                <div key={index} className='px-3 py-0.5 rounded-full text-[10px] text-black border border-black'>#{tagItem}</div>
+                                            ))}
+                                        </div>
                                         <div className="flex text-sm items-center space-x-3">
                                             <p className='font-bold'>Date: {formattedDate}</p>
                                             <p>|</p>
@@ -212,8 +226,9 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                         <AttendeeList
                                             attendees={attendees || []}
                                             meetingId={meeting.id}
-                                            refreshData={() => fetchAttendees()}
+                                            refreshData={refreshAttendees}
                                             canHaveActions={user?.id === meeting.createdBy}
+                                            isLoading={isLoadingAttendees}
                                         />
                                     </div>
                                 </div>
@@ -231,8 +246,9 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                     <FileList
                                         files={files || []}
                                         meetingId={meeting.id}
-                                        refreshData={() => fetchFiles()}
+                                        refreshData={refreshFiles}
                                         currentUserId={user?.id}
+                                        isLoading={isLoadingFiles}
                                     />
                                 </div>
                             </div>
@@ -240,14 +256,14 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                         <AddNewAttendee
                             isOpen={isOpenModalAddAttendee}
                             onClose={() => setIsOpenModalAddAttendee(false)}
-                            onAddAttendees={() => fetchAttendees()}
+                            onAddAttendees={refreshAttendees}
                             attendees={users}
                             meetingId={meeting.id}
                         />
                         <AddNewFile
                             isOpen={isOpenModalAddFile}
                             onClose={() => setIsOpenModalAddFile(false)}
-                            onAddFile={() => fetchFiles()}
+                            onAddFile={refreshFiles}
                             meetingId={meeting.id}
                         />
                         <PreviewMeetingMinute

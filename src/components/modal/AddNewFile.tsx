@@ -8,6 +8,9 @@ import apiClient from '@/lib/apiClient';
 import { isImage } from '@/utils/image.util';
 import { toast } from '../ui/use-toast';
 import { getExtension } from '@/utils/get-extension.util';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export interface FilePreview {
     preview: string;
@@ -113,7 +116,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
-            <DialogContent>
+            <DialogContent className={`${inter.className}`}>
                 <DialogHeader>
                     <DialogTitle>Add new file</DialogTitle>
                 </DialogHeader>
