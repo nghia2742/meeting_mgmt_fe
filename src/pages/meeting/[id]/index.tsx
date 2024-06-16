@@ -120,6 +120,8 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
         const res = await apiClient.get(`/meetingminutes/latest/${meeting.id}`);
         if (res && res.data) {
             setLatestMeetingMinutes(res.data);
+        }else {
+            setLatestMeetingMinutes(undefined);
         }
     }, []);
 
