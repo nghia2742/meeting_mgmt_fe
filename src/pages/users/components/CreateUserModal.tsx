@@ -13,7 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createUser } from "@/lib/apiUser";
-import { Blocks, Lock, Mail, User, User2, UserCheck } from "lucide-react";
+import { Lock, Mail, UserCheck } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const CreateUserSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -46,11 +47,31 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const onSubmit = async (values: z.infer<typeof CreateUserSchema>) => {
     try {
       await createUser(values.email, values.password, values.fullName);
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "User created successfully.",
+        duration: 1000,
+      })
+      form.reset();
       onClose();
       onUserCreated();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to create user.",
+        duration: 1000,
+
+      })
       console.error("Error creating user:", error);
     }
+  };
+
+  const handleClose = () => {
+    form.reset(); 
+    form.clearErrors();
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -132,7 +153,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
               <Button
                 type="button"
                 variant="outline"
-                onClick={onClose}
+                onClick={handleClose}
                 className="mr-2"
               >
                 Cancel
