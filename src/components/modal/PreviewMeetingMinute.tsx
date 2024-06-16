@@ -15,6 +15,9 @@ import apiClient from '@/lib/apiClient'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import { MeetingFile } from '@/types/meeting.file.type'
 import { differenceInMilliseconds } from 'date-fns'
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 interface Props {
     isOpen: boolean;
@@ -55,7 +58,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
     useEffect(() => {
         setFormData({
             title: meeting.title,
-            tag: meeting.type,
+            tag: meeting.tag,
             description: meeting.description,
             location: meeting.location,
             note: meeting.note,
@@ -162,7 +165,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
 
     return (
         <Dialog open={isOpen} onOpenChange={onCloseModal}>
-            <DialogContent className={`lg:min-w-[800px] w-full`}>
+            <DialogContent className={`lg:min-w-[800px] w-full ${inter.className}`}>
                 <DialogHeader>
                     <DialogTitle className='px-2'>Preview meeting minute</DialogTitle>
                 </DialogHeader>
