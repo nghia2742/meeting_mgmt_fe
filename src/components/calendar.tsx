@@ -1,4 +1,4 @@
-import { Calendar, momentLocalizer, Event } from "react-big-calendar";
+import { Calendar, momentLocalizer, Event, View } from "react-big-calendar";
 import moment from "moment-timezone";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
@@ -6,6 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useState } from "react";
 
 moment.tz.setDefault("UTC");
 const localizer = momentLocalizer(moment);
@@ -16,6 +17,9 @@ interface CalendarProps {
 }
 
 const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
+  const [view, setView] = useState<View>("month");
+  const [date, setDate] = useState<Date>(new Date());
+
   const handleSelectSlot = (slotInfo: any) => {
     const selectedDate = new Date(slotInfo.start);
     const utcDate = new Date(
@@ -25,8 +29,15 @@ const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
         selectedDate.getUTCDate()
       )
     );
+    setDate(utcDate);
     const formattedDate = utcDate.toISOString().split("T")[0]; // 'YYYY-MM-DD'
     onDateClick(formattedDate);
+    setView("day");
+  };
+
+  const handleDrillDown = (d: Date, currentView: View) => {
+    setDate(d);
+    setView("day");
   };
 
   const eventPropGetter = () => {
@@ -35,11 +46,21 @@ const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
     };
   };
 
-  const EventTooltip = ({ event }: { event: Event }) => (
-    <Tooltip>
-      <TooltipTrigger>{event.title}</TooltipTrigger>
-      <TooltipContent>{event.title}</TooltipContent>
-    </Tooltip>
+  const dayPropGetter = () => {
+    return {
+      className: "cursor-pointer",
+    };
+  };
+
+  const EventWrapper = ({ event }: { event: Event }) => (
+    <div className='bg-blurGray text-white px-1 rounded flex items-center'>
+      <Tooltip>
+        <TooltipTrigger>
+          <span className='text-xs'>{event.title}</span>
+        </TooltipTrigger>
+        <TooltipContent>{event.title}</TooltipContent>
+      </Tooltip>
+    </div>
   );
 
   return (
@@ -54,9 +75,15 @@ const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
         selectable
         onSelectSlot={handleSelectSlot}
         eventPropGetter={eventPropGetter}
+        dayPropGetter={dayPropGetter}
         components={{
-          event: EventTooltip,
+          eventWrapper: EventWrapper,
         }}
+        view={view}
+        date={date}
+        onView={(view: View) => setView(view)}
+        onNavigate={(newDate) => setDate(newDate)}
+        onDrillDown={handleDrillDown}
       />
     </div>
   );

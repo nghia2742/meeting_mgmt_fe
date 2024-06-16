@@ -10,11 +10,14 @@ import AvatarSection from "./components/AvatarSection";
 import UserProfileForm from "./components/UserProfileForm";
 import useUserStore from "@/stores/userStore";
 import { toast } from "../ui/use-toast";
+import { Inter } from 'next/font/google';
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
+
+const inter = Inter({ subsets: ['latin'] });
 
 const schema = z.object({
     fullName: z.string().nonempty("Full name is required"),
@@ -100,7 +103,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
+            <DialogContent className={`sm:max-w-[450px] max-h-[90vh] ${inter.className}`}>
                 <DialogHeader className="flex justify-center items-center h-full">
                     <DialogTitle className="mb-2">Edit profile</DialogTitle>
                     {userProfile && (

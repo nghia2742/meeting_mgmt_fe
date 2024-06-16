@@ -120,7 +120,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     }, []);
 
     return (
-      >
+        <>
             <Head>
                 <title>Meeting detail</title>
             </Head>

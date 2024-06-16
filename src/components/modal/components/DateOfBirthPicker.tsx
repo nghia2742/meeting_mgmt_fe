@@ -17,14 +17,14 @@ const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({ date, setDate, er
     return (
         <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dateOfBirth" className="text-right">
-                Date of Birth
+                Date of birth
             </Label>
             <Popover>
                 <PopoverTrigger asChild>
                     <Button
                         variant={"outline"}
                         className={cn(
-                            "w-[280px] justify-start text-left font-normal",
+                            "w-[295px] justify-start text-left font-normal",
                             !date && "text-muted-foreground"
                         )}
                     >
