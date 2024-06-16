@@ -11,41 +11,25 @@ import {
 } from "@/components/ui/popover";
 import { TimePicker } from "./TimePicker";
 import {
-    Form,
     FormControl,
     FormField,
     FormItem,
     FormLabel,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { toast } from "@/components/ui/use-toast";
-
-const formSchema = z.object({
-    dateTime: z.date(),
-});
-
-type FormSchemaType = z.infer<typeof formSchema>;
+import { Control, Form } from "react-hook-form";
+import { FormSchemaMeetingMinuteType } from "../modal/PreviewMeetingMinute";
 
 export function DateTimePickerForm({
-    time, title, onChangeDate }: { time?: Date, title: string, onChangeDate: (date: Date | undefined) => void }) {
-    const form = useForm<FormSchemaType>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            dateTime: time,
-        }
-    });
+    form, title, onChangeDate, control }: { form: any, title: string, onChangeDate: (date: Date | undefined) => void, control: Control<FormSchemaMeetingMinuteType> }) {
 
     return (
         <Form {...form}>
             <FormField
-                control={form.control}
-                name="dateTime"
+                control={control}
+                name="startTime"
                 render={({ field }) => (
                     <FormItem className="flex flex-col">
-                        <FormLabel className="text-left">{title}</FormLabel>
+                        <FormLabel htmlFor="date" className="text-left">{title}</FormLabel>
                         <Popover>
                             <FormControl className="w-full">
                                 <PopoverTrigger asChild>
@@ -92,5 +76,7 @@ export function DateTimePickerForm({
                 )}
             />
         </Form>
+
+
     );
 }

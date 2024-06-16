@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useDropzone } from 'react-dropzone'
-import { FileIcon } from 'lucide-react';
+import { FileIcon, X } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useCallback, useState } from 'react';
 import apiClient from '@/lib/apiClient';
@@ -9,6 +9,7 @@ import { isImage } from '@/utils/image.util';
 import { toast } from '../ui/use-toast';
 import { getExtension } from '@/utils/get-extension.util';
 import { Inter } from 'next/font/google';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,12 +31,13 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
     const [files, setFiles] = useState<FilePreview[]>([]);
     const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [isEmptyFile, setIsEmptyFile] = useState(false);
+    const [isCreatingFiles, setIsCreatingFiles] = useState(false);
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
+        setIsEmptyFile(false);
         setUploading(true);
-
-        // const uploadPromises = acceptedFiles.map(file => uploadFile(file));
-        // await Promise.all(uploadPromises);
+        
         acceptedFiles.forEach(file => {
             setFiles(prevFiles => [
                 ...prevFiles,
@@ -60,24 +62,25 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     'Content-Type': 'multipart/form-data',
                 }
             });
-            if(response && response.data) {
+            if (response && response.data) {
                 const responseCreateFile = await apiClient.post('/files', {
                     name: acceptedFile.name,
                     type: getExtension(acceptedFile.name),
                     link: response.data.secure_url,
                     meetingId
                 });
-                if(responseCreateFile && responseCreateFile.data) {
+                if (responseCreateFile && responseCreateFile.data) {
                     countCreateFile++;
                 }
             }
         }
-        if(countCreateFile === acceptedFiles.length) {
+        if (countCreateFile === acceptedFiles.length) {
             toast({
                 title: "Successfully",
                 description: "Create files successfully",
                 variant: "success",
             });
+            setIsCreatingFiles(false);
             onAddFile();
             onCloseModal();
         }
@@ -93,13 +96,15 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
 
     const onCloseModal = () => {
         onClose();
+        setIsEmptyFile(false);
         setFiles([]);
     }
 
     const onAddNewFile = async () => {
         if (files.length === 0 || acceptedFiles.length === 0) {
-            alert("Please upload at least one file!");
+            setIsEmptyFile(true);
         } else {
+            setIsCreatingFiles(true);
             try {
                 await createFile(acceptedFiles);
             } catch (error: any) {
@@ -110,6 +115,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     variant: "destructive",
                 });
                 onCloseModal();
+                setIsCreatingFiles(false);
             }
         }
     }
@@ -129,6 +135,9 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     <FileIcon size={40} className="text-gray-500 mb-2" />
                     <p className="text-gray-500">Drag or drop file here</p>
                 </div>
+                {isEmptyFile && (
+                    <p className="text-red-500 text-sm">Please upload at least one file</p>
+                )}
                 {uploading === true ?
                     <p>Loading...</p> : <div className="flex flex-wrap">
                         <div className="flex flex-wrap items-center">
@@ -142,9 +151,9 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                                     <p className="text-xs text-gray-500 max-w-[90px] truncate">{file.name}</p>
                                     <button
                                         onClick={() => onDeleteImg(index)}
-                                        className='cursor-pointer absolute text-[12px] right-[-2px] top-[-4px] bg-black text-white px-2 py-0.5 rounded-full'
+                                        className='cursor-pointer absolute right-[-2px] top-[-4px] bg-black text-white px-1 py-1 rounded-full'
                                     >
-                                        x
+                                        <X className='w-3 h-3' />
                                     </button>
                                 </div>
                             ))}
@@ -153,7 +162,18 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
 
                 <DialogFooter className="sm:justify-end">
                     <div className="flex space-x-4 justify-end">
-                        <Button onClick={onAddNewFile}>Save</Button>
+                        <Button
+                            onClick={onAddNewFile}
+                        >
+                            {isCreatingFiles && (
+                                <ClipLoader
+                                    className="mr-2"
+                                    color="#ffffff"
+                                    size={16}
+                                />
+                            )}
+                            Save
+                        </Button>
                         <Button onClick={onCloseModal} type="button" variant="secondary">
                             Close
                         </Button>
