@@ -63,14 +63,17 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
 
             const onDeleteFile = async () => {
                 try {
-                    let response = await apiClient.delete(`/files/${file.id}`);
-                    if (response) {
-                        toast({
-                            title: "Successfully",
-                            description: "Delete file successfully",
-                            variant: "success",
-                        });
-                        refreshData();
+                    let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${file.publicId}&type=${file.type}`);
+                    if(responseDelCloudinary && responseDelCloudinary.data.result === 'ok') {
+                        let responseDelFile = await apiClient.delete(`/files/${file.id}`);
+                        if(responseDelFile) {
+                            toast({
+                                title: "Successfully",
+                                description: "Delete file successfully",
+                                variant: "success",
+                            });
+                            refreshData();
+                        }
                     }
                 } catch (error: any) {
                     console.log(error);

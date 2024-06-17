@@ -72,6 +72,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     name: acceptedFile.name,
                     type: getExtension(acceptedFile.name),
                     link: response.data.secure_url,
+                    publicId: response.data.public_id,
                     meetingId
                 });
                 if (responseCreateFile && responseCreateFile.data) {

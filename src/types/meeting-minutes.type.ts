@@ -3,6 +3,7 @@ export type MeetingMinutes = {
     meetingId: string;
     name: string;
     link: string;
+    publicId: string;
     createdBy: string;
     updatedBy: string;
     createdAt: Date;

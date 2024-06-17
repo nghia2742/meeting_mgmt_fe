@@ -15,6 +15,7 @@ import Link from 'next/link';
 import React from 'react'
 import { DataTable } from './data-table';
 import { columns } from './column';
+import useCurrentUser from '@/hooks/useCurrentUser';
 
 const MeetingHistory = () => {
 
@@ -25,6 +26,8 @@ const MeetingHistory = () => {
             return res.data;
         }
     }
+
+    const { user } = useCurrentUser();
 
     const { isLoading, data: meetingMinutes, refetch: refreshMeetingMinutes } = useQuery<MeetingMinutes[]>({
         queryKey: ["meeting-minutes"],
@@ -49,7 +52,7 @@ const MeetingHistory = () => {
                 </BreadcrumbList>
             </Breadcrumb>
             <DataTable
-                columns={columns}
+                columns={columns(refreshMeetingMinutes, user?.id || '')}
                 isLoading={isLoading}
                 data={meetingMinutes || []}
             />

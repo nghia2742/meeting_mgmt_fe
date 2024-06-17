@@ -138,6 +138,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                 let responseCreateMeetingMinutes = await apiClient.post('/meetingminutes', {
                     name: `${getValues("title")}_meeting_minutes.pdf`,
                     link: response.data.secure_url,
+                    publicId: response.data.public_id,
                     meetingId: meeting.id
                 });
                 if (responseCreateMeetingMinutes && responseCreateMeetingMinutes.status === 201) {

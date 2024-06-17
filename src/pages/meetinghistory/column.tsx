@@ -1,7 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Checkbox } from "@/components/ui/checkbox"
-
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -11,10 +9,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
 import { MeetingMinutes } from "@/types/meeting-minutes.type"
+import apiClient from "@/lib/apiClient"
+import { toast } from "@/components/ui/use-toast"
 
-export const columns: ColumnDef<MeetingMinutes>[] = [
+export const columns: (refreshData: () => void, currentUserId: string) => ColumnDef<MeetingMinutes>[] = (refreshData, currentUserId) => [
     {
         accessorKey: "name",
         header: ({ column }) => {
@@ -30,10 +29,6 @@ export const columns: ColumnDef<MeetingMinutes>[] = [
         },
     },
     {
-        accessorKey: "link",
-        header: "Link",
-    },
-    {
         accessorKey: "meetingTitle",
         header: "Meeting",
     },
@@ -44,6 +39,32 @@ export const columns: ColumnDef<MeetingMinutes>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
+            const meetingMinute = row.original;
+
+            const onDeleteMeetingMinute = async () => {
+                try {
+                    let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${meetingMinute.publicId}&type=pdf`);
+                    if(responseDelCloudinary && responseDelCloudinary.data.result === 'ok') {
+                        let responseDelFile = await apiClient.delete(`/meetingminutes/${meetingMinute.id}`);
+                        if(responseDelFile) {
+                            toast({
+                                title: "Successfully",
+                                description: "Delete file successfully",
+                                variant: "success",
+                            });
+                            refreshData();
+                        }
+                    }
+                } catch (error: any) {
+                    console.log(error);
+                    toast({
+                        title: "Failed",
+                        description: error.response.data.message,
+                        variant: "destructive",
+                    });
+                }
+            }
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -55,8 +76,8 @@ export const columns: ColumnDef<MeetingMinutes>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Update</DropdownMenuItem>
-                        <DropdownMenuItem><p className="text-red-500">Delete</p></DropdownMenuItem>
+                        <DropdownMenuItem><a className="w-full" href={meetingMinute.link} target="_blank" rel="noopener noreferrer">View</a></DropdownMenuItem>
+                        {meetingMinute.createdBy === currentUserId && <DropdownMenuItem><p onClick={onDeleteMeetingMinute} className="text-red-500">Delete</p></DropdownMenuItem>}
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
