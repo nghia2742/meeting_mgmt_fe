@@ -9,11 +9,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MeetingFile } from "@/types/meeting.file.type"
+import { MeetingMinutes } from "@/types/meeting-minutes.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
 
-export const columns: (meetingId: string, refreshData: () => void, currentUserId: string) => ColumnDef<MeetingFile>[] = (meetingId, refreshData, currentUserId) => [
+export const columns: (refreshData: () => void, currentUserId: string) => ColumnDef<MeetingMinutes>[] = (refreshData, currentUserId) => [
     {
         accessorKey: "name",
         header: ({ column }) => {
@@ -22,50 +22,30 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    File name
+                    Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
     {
-        accessorKey: "type",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Type
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+        accessorKey: "meetingTitle",
+        header: "Meeting",
     },
     {
         accessorKey: "userCreateName",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Owner
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        }
+        header: "Created by",
     },
     {
         id: "actions",
         cell: ({ row }) => {
-            const file = row.original;
+            const meetingMinute = row.original;
 
-            const onDeleteFile = async () => {
+            const onDeleteMeetingMinute = async () => {
                 try {
-                    let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${file.publicId}&type=${file.type}`);
+                    let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${meetingMinute.publicId}&type=pdf`);
                     if(responseDelCloudinary && responseDelCloudinary.data.result === 'ok') {
-                        let responseDelFile = await apiClient.delete(`/files/${file.id}`);
+                        let responseDelFile = await apiClient.delete(`/meetingminutes/${meetingMinute.id}`);
                         if(responseDelFile) {
                             toast({
                                 title: "Successfully",
@@ -96,8 +76,8 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem><a className="w-full" href={file.link} target="_blank" rel="noopener noreferrer">View</a></DropdownMenuItem>
-                        {file.createdBy === currentUserId && <DropdownMenuItem><p className="text-red-500" onClick={onDeleteFile}>Delete</p></DropdownMenuItem>}
+                        <DropdownMenuItem><a className="w-full" href={meetingMinute.link} target="_blank" rel="noopener noreferrer">View</a></DropdownMenuItem>
+                        {meetingMinute.createdBy === currentUserId && <DropdownMenuItem><p onClick={onDeleteMeetingMinute} className="text-red-500">Delete</p></DropdownMenuItem>}
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

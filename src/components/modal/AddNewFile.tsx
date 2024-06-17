@@ -10,6 +10,11 @@ import { toast } from '../ui/use-toast';
 import { getExtension } from '@/utils/get-extension.util';
 import { Inter } from 'next/font/google';
 import ClipLoader from 'react-spinners/ClipLoader';
+import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
+} from '@/components/ui/tooltip';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,7 +42,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
         setIsEmptyFile(false);
         setUploading(true);
-        
+
         acceptedFiles.forEach(file => {
             setFiles(prevFiles => [
                 ...prevFiles,
@@ -67,6 +72,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     name: acceptedFile.name,
                     type: getExtension(acceptedFile.name),
                     link: response.data.secure_url,
+                    publicId: response.data.public_id,
                     meetingId
                 });
                 if (responseCreateFile && responseCreateFile.data) {
@@ -139,7 +145,14 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     <p className="text-red-500 text-sm">Please upload at least one file</p>
                 )}
                 {uploading === true ?
-                    <p>Loading...</p> : <div className="flex flex-wrap">
+                    <div>
+                        <ClipLoader
+                            className="mr-2"
+                            color="#ffffff"
+                            size={16}
+                        />
+                        Loading...
+                    </div> : <div className="flex flex-wrap">
                         <div className="flex flex-wrap items-center">
                             {files.map((file, index) => (
                                 <div key={file.name} className="p-2 flex flex-col items-center relative">
@@ -148,7 +161,12 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                                     ) : (
                                         <FileIcon width={72} height={72} className="text-gray-500 mb-2" />
                                     )}
-                                    <p className="text-xs text-gray-500 max-w-[90px] truncate">{file.name}</p>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <p className="text-xs text-gray-500 max-w-[90px] truncate">{file.name}</p>
+                                        </TooltipTrigger>
+                                        <TooltipContent className='text-[12px]'>{file.name}</TooltipContent>
+                                    </Tooltip>
                                     <button
                                         onClick={() => onDeleteImg(index)}
                                         className='cursor-pointer absolute right-[-2px] top-[-4px] bg-black text-white px-1 py-1 rounded-full'
