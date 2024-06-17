@@ -76,7 +76,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     const [latestMeetingMinutes, setLatestMeetingMinutes] = useState<MeetingMinutes>();
     const { user } = useCurrentUser();
     const { user: userCreated } = useCreatedBy(meeting.createdBy);
-    
+
 
     const fetchFiles = async () => {
         const res = await apiClient.get(`/files/${meeting.id}`);
@@ -120,7 +120,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
         const res = await apiClient.get(`/meetingminutes/latest/${meeting.id}`);
         if (res && res.data) {
             setLatestMeetingMinutes(res.data);
-        }else {
+        } else {
             setLatestMeetingMinutes(undefined);
         }
     }, []);

@@ -10,3 +10,7 @@ export type MeetingMinutes = {
     updatedAt: Date;
     deletedAt: Date;
 }
+
+export type MeetingMinutesRes = MeetingMinutes & {
+    meetingTitle: string;
+}

@@ -14,7 +14,7 @@ import apiClient from '@/lib/apiClient'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import { MeetingFile } from '@/types/meeting.file.type'
 import { differenceInMilliseconds } from 'date-fns'
-import { Faster_One, Inter } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -64,8 +64,8 @@ const schema = z.object({
 export type FormSchemaMeetingMinuteType = z.infer<typeof schema>;
 
 const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refreshMeeting }: Props) => {
-
     const [isCreating, setIsCreating] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
 
     const form = useForm<FormSchemaMeetingMinuteType>({
         resolver: zodResolver(schema),
@@ -99,11 +99,10 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
             setValue("formattedTime", formatDateTime(meeting.startTime.toString()).formattedTime);
             setValue("minutes", calcMinutes(meeting.startTime.toString(), meeting.endTime.toString()))
         }
-    }, [isOpen]);
+    }, [isOpen, meeting, setValue]);
 
     const { toast } = useToast();
     const { user } = useCreatedBy(meeting.createdBy);
-    const [showPreview, setShowPreview] = useState(false);
 
     const onSaveMeetingMinutes: SubmitHandler<FormSchemaMeetingMinuteType> = async () => {
         if (!validateTimes(getValues("startTime"), getValues("endTime"))) {
@@ -292,7 +291,6 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                                         mode="single"
                                                         selected={field.value}
                                                         onSelect={(date) => {
-                                                            console.log("Calendar date selected:", date);
                                                             field.onChange(date);
                                                             onChangeDate(date, "start");
                                                         }}
@@ -301,7 +299,6 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                                     <div className="p-3 border-t border-border">
                                                         <TimePicker
                                                             setDate={(date) => {
-                                                                console.log("TimePicker date selected:", date);
                                                                 field.onChange(date);
                                                                 onChangeDate(date, "start");
                                                             }}
@@ -352,7 +349,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                                             if (date) {
                                                                 console.log("Calendar date selected:", date);
                                                                 field.onChange(date);
-                                                                onChangeDate(getValues("endTime"), "end");
+                                                                onChangeDate(date, "end");
                                                             }
                                                         }}
                                                         initialFocus
@@ -363,7 +360,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                                                 if (date) {
                                                                     console.log("TimePicker date selected:", date);
                                                                     field.onChange(date);
-                                                                    onChangeDate(getValues("endTime"), "end");
+                                                                    onChangeDate(date, "end");
                                                                 }
                                                             }}
                                                             date={new Date(field.value)}
