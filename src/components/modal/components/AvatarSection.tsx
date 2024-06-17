@@ -25,9 +25,9 @@ const AvatarSection: React.FC<AvatarSectionProps> = ({ setAvatarFile, userData }
             <PopoverTrigger asChild>
                 <div className="relative cursor-pointer">
                     <Avatar className="h-32 w-32">
-                        <AvatarImage src={selectedImage || userData.avatar} className="rounded-full" />
+                        <AvatarImage src={selectedImage || userData.avatar} className="rounded-full object-cover" />
                         <AvatarFallback>Avatar</AvatarFallback>
-                    </Avatar>
+                    </Avatar>   
                     <div className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow">
                         <Pencil className="h-5 w-5" />
                     </div>

@@ -69,8 +69,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
     const mutation = useMutation({
         mutationFn: (updatedUser: UserProfile) => updateUserProfile(updatedUser.email, updatedUser),
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+            useUserStore.setState({ userProfile: data }); 
             onClose();
         }
     });
