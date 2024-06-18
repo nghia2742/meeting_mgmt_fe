@@ -2,8 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { X } from 'lucide-react';
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { FileIcon, Loader, Plus, X } from 'lucide-react';
+import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,53 +26,93 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { TimePicker } from '@/components/timePicker/TimePicker';
-import { useFilteredUsers } from '@/hooks/useMeeting';
+import { useFilteredUsers } from '@/hooks/useUser';
 import Image from 'next/image';
 import apiClient from '@/lib/apiClient';
 import { useMeetingStore } from '@/stores/meetingStore';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '../ui/dialog';
+import { useDropzone } from 'react-dropzone';
+import { isImage } from '@/utils/image.util';
+import { getExtension } from '@/utils/get-extension.util';
+import { useAllMeeting } from '@/hooks/useMeeting';
+import { useRouter } from 'next/router';
+import { invalidateDateTime } from '@/utils/datetime.util';
+import { useDebounce } from '@/hooks/useDebounce';
+
+export interface FilePreview {
+    preview: string;
+    name: string;
+    type: string;
+}
 
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
-    tag: z.string(),
-    description: z.string(),
+    tag: z.string().optional(),
+    description: z.string().optional(),
     startTime: z.date(),
     endTime: z.date(),
     location: z.string(),
-    note: z.string(),
-    attendees: z.array(z.string()),
-    files: z.string(),
+    note: z.string().optional(),
+    attendees: z.array(z.string()).optional(),
 });
 
 type FormSchemaType = z.infer<typeof formSchema>;
 
+// const inter = Inter({ subsets: ['latin'] });
+
 export default function AddMeetingForm() {
     const { setIsOpenForm } = useMeetingStore();
+    const { refetch: refetchAllMeeting } = useAllMeeting();
+    const { push } = useRouter();
 
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: 'Title test',
+            title: '',
             tag: '',
-            description: 'Desc',
+            description: '',
             startTime: new Date(),
             endTime: new Date(),
-            location: 'Location test',
-            note: 'Notes',
+            location: '',
+            note: '',
             attendees: [],
-            files: '',
         },
     });
-    const { control, handleSubmit, setValue, setError, clearErrors } = form;
+    const {
+        control,
+        handleSubmit,
+        getValues,
+        setValue,
+        setError,
+        clearErrors,
+    } = form;
+
+    // Tags
     const [listTags, setListTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState<string>('');
 
+    // Attendees
     const [listAttendees, setListAttendees] = useState<string[]>([]);
-    const [attendeeInput, setAttendeeInput] = useState<string>('');
+    const [attendeeInput, setAttendeeInput] = useState('');
+    const debounceAttendeeInput = useDebounce(attendeeInput);
 
-    const [emailFetching, setEmailFetching] = useState('');
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-    const { data, isLoading, error } = useFilteredUsers(emailFetching);
+    const { data, isLoading, error } = useFilteredUsers(debounceAttendeeInput);
+
+    // Files
+    const [files, setFiles] = useState<FilePreview[]>([]);
+    const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const [isSubmit, setIsSubmit] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     // HANDLE TAGS
     const handleOnChangeTag = (e: ChangeEvent<HTMLInputElement>) => {
@@ -109,10 +149,9 @@ export default function AddMeetingForm() {
     // HANDLE ATTENDEES
     const handleOnChangeAttendee = (e: ChangeEvent<HTMLInputElement>) => {
         let targetValue = e.target.value;
-        setIsPopoverOpen(targetValue !== '');
-        setEmailFetching(targetValue);
-        clearErrors('attendees');
+        setIsPopoverOpen(!!targetValue);
         setAttendeeInput(targetValue);
+        clearErrors('attendees');
     };
 
     const handleOnClickAddAttendee = (email: string) => {
@@ -140,42 +179,132 @@ export default function AddMeetingForm() {
         setAttendeeInput('');
     };
 
+    // HANDLE FILES
+    const onDrop = useCallback(async (acceptedFiles: File[]) => {
+        setUploading(true);
+
+        acceptedFiles.forEach((file) => {
+            setFiles((prevFiles) => [
+                ...prevFiles,
+                {
+                    preview: URL.createObjectURL(file),
+                    name: file.name,
+                    type: file.type,
+                },
+            ]);
+        });
+        setAcceptedFiles(acceptedFiles);
+        setUploading(false);
+    }, []);
+
+    const onDeleteImg = (index: number) => {
+        const newFiles = [...files];
+        newFiles.splice(index, 1);
+        setFiles(newFiles);
+    };
+
+    const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
+    const onCloseModal = () => {
+        setIsOpen(!isOpen);
+        setFiles([]);
+    };
+
+    const onAddNewFile = async () => {
+        if (files.length === 0 || acceptedFiles.length === 0) {
+            alert('Please upload at least one file!');
+        } else {
+            setIsOpen(!isOpen);
+        }
+    };
+
+    const createFile = async (acceptedFiles: File[], meetingId: string) => {
+        for (let acceptedFile of acceptedFiles) {
+            const formData = new FormData();
+            formData.append('file', acceptedFile);
+            const response = await apiClient.post(
+                '/cloudinary/upload',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+            if (response && response.data) {
+                const responseCreateFile = await apiClient.post('/files', {
+                    name: acceptedFile.name,
+                    type: getExtension(acceptedFile.name),
+                    link: response.data.secure_url,
+                    publicId: response.data.public_id,
+                    meetingId,
+                });
+            }
+        }
+    };
+
     // HANDLE SUBMIT
     function onSubmit(data: FormSchemaType) {
-        apiClient
-            .post('/meetings', data)
-            .then((response) => {
-                setIsOpenForm();
-                return toast({
-                    title: 'Create successfully!',
-                    variant: 'success',
-                });
-            })
-            .catch((error) => {
-                setIsOpenForm();
-                console.error(error);
-                return toast({
-                    title: 'Something went wrong',
-                    variant: 'destructive',
-                });
+        setIsSubmit(true);
+        if (invalidateDateTime(getValues('startTime'), getValues('endTime'))) {
+            setError('startTime', {
+                type: 'manual',
+                message: 'Start time must be smaller than end time',
             });
+            setError('endTime', {
+                type: 'manual',
+                message: 'End time must be greater than start time',
+            });
+            setIsSubmit(false);
+            return;
+        } else {
+            clearErrors('startTime');
+            clearErrors('endTime');
+        }
 
-        // toast({
-        //     title: 'You submitted the following values:',
-        //     description: (
-        //         <pre>
-        //             <code>{JSON.stringify(data, null, 2)}</code>
-        //         </pre>
-        //     ),
-        // });
+        try {
+            apiClient
+                .post('/meetings', data)
+                .then(async (response) => {
+                    const meetingId = await response.data.id;
+                    await createFile(acceptedFiles, meetingId);
+                    setIsOpenForm();
+                    setIsSubmit(false);
+                    refetchAllMeeting();
+
+                    toast({
+                        title: 'Create successfully!',
+                        variant: 'success',
+                    });
+
+                    // Redirect to meeting detail page
+                    setTimeout(() => {
+                        push(`/meeting/${meetingId}`);
+                    }, 1500);
+                    return;
+                })
+                .catch((error) => {
+                    setIsOpenForm();
+                    setIsSubmit(false);
+                    return toast({
+                        title: error.response.data.message,
+                        variant: 'destructive',
+                    });
+                });
+        } catch (error: any) {
+            console.error('Error uploading file:', error.response.data.message);
+            toast({
+                title: 'Uh oh! Something went wrong',
+                description: error.response.data.message,
+                variant: 'destructive',
+            });
+            onCloseModal();
+        }
     }
 
     return (
         <Form {...form}>
-            <form
-                className={`px-5`}
-                onSubmit={handleSubmit(onSubmit)}
-            >
+            <form className={`px-5`} onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
                     <FormField
                         control={control}
@@ -423,9 +552,7 @@ export default function AddMeetingForm() {
                                                 <Input
                                                     type="text"
                                                     placeholder="Attendee"
-                                                    onChange={
-                                                        handleOnChangeAttendee
-                                                    }
+                                                    onChange={handleOnChangeAttendee}
                                                     value={attendeeInput}
                                                 />
                                                 {attendeeInput && (
@@ -443,7 +570,7 @@ export default function AddMeetingForm() {
                                                 )}
                                             </div>
                                             {isPopoverOpen && (
-                                                <ul className="absolute w-full bg-white gap-1 shadow-sm border mt-2 rounded-md">
+                                                <ul className="absolute w-full bg-white gap-1 shadow-sm border mt-2 rounded-md z-50">
                                                     {isLoading && (
                                                         <li className="flex items-center justify-center gap-2 px-4 py-1 rounded-md text-sm">
                                                             Loading...
@@ -524,24 +651,137 @@ export default function AddMeetingForm() {
                     >
                         Attached files
                     </label>
-                    <div className="flex items-center">
-                        <Badge className="mr-2 bg-sky-300">
-                            Comming soon 👀
-                        </Badge>
-                        {/* <Button
-                            className="ml-2"
-                            variant="outline"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setIsOpenForm();
-                            }}
-                        >
-                            + Add a file
-                        </Button> */}
+                    <div className="flex items-center flex-wrap">
+                        {files.map((file, index) => (
+                            <div
+                                key={file.name}
+                                className="p-2 flex flex-col items-center relative"
+                            >
+                                {isImage(file.name) ? (
+                                    <Image
+                                        src={file.preview}
+                                        alt={file.name}
+                                        width={0}
+                                        height={0}
+                                        sizes="100px"
+                                        className="w-20 h-20 object-cover rounded-md"
+                                        title={file.name}
+                                    />
+                                ) : (
+                                    <FileIcon
+                                        width={72}
+                                        height={72}
+                                        className="text-gray-500 mb-2"
+                                    />
+                                )}
+                                <p className="text-xs text-gray-500 max-w-[90px] truncate">
+                                    {file.name}
+                                </p>
+                                <button
+                                    onClick={() => onDeleteImg(index)}
+                                    className="cursor-pointer absolute text-[12px] right-[-2px] top-[-4px] bg-black text-white px-2 py-0.5 rounded-full"
+                                >
+                                    x
+                                </button>
+                            </div>
+                        ))}
+                        <Dialog open={isOpen} onOpenChange={onCloseModal}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant={'ghost'}
+                                    className="border-2 border-dashed"
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Add file
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add new file</DialogTitle>
+                                </DialogHeader>
+                                <div
+                                    {...getRootProps()}
+                                    className="flex flex-col items-center justify-center 
+                    border-2 border-dashed border-gray-300 p-6 rounded-md 
+                    cursor-pointer hover:border-black-500 transition duration-300"
+                                >
+                                    <Input multiple {...getInputProps()} />
+                                    <FileIcon
+                                        size={40}
+                                        className="text-gray-500 mb-2"
+                                    />
+                                    <p className="text-gray-500">
+                                        Drag or drop file here
+                                    </p>
+                                </div>
+                                {uploading === true ? (
+                                    <p>Loading...</p>
+                                ) : (
+                                    <div className="flex flex-wrap">
+                                        <div className="flex flex-wrap items-center">
+                                            {files.map((file, index) => (
+                                                <div
+                                                    key={file.name}
+                                                    className="p-2 flex flex-col items-center relative"
+                                                >
+                                                    {isImage(file.name) ? (
+                                                        <Image
+                                                            src={file.preview}
+                                                            alt={file.name}
+                                                            width={0}
+                                                            height={0}
+                                                            sizes="100px"
+                                                            className="w-20 h-20 object-cover rounded-md"
+                                                        />
+                                                    ) : (
+                                                        <FileIcon
+                                                            width={72}
+                                                            height={72}
+                                                            className="text-gray-500 mb-2"
+                                                        />
+                                                    )}
+                                                    <p className="text-xs text-gray-500 max-w-[90px] truncate">
+                                                        {file.name}
+                                                    </p>
+                                                    <button
+                                                        onClick={() =>
+                                                            onDeleteImg(index)
+                                                        }
+                                                        className="cursor-pointer absolute text-[12px] right-[-2px] top-[-4px] bg-black text-white px-2 py-0.5 rounded-full"
+                                                    >
+                                                        x
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <DialogFooter className="sm:justify-end">
+                                    <div className="flex space-x-4 justify-end">
+                                        <Button onClick={onAddNewFile}>
+                                            Save
+                                        </Button>
+                                        <Button
+                                            onClick={onCloseModal}
+                                            type="button"
+                                            variant="secondary"
+                                        >
+                                            Close
+                                        </Button>
+                                    </div>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
                 <div className="flex flex-row-reverse gap-4 items-center">
-                    <Button variant="default" type="submit">
+                    <Button
+                        variant="default"
+                        disabled={isSubmit}
+                        className="flex gap-2"
+                    >
+                        {isSubmit && <Loader className="animate-spin" />}
                         Save
                     </Button>
                     <Button

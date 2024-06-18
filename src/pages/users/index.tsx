@@ -1,11 +1,13 @@
 import MainLayout from '@/components/main.layout';
 import React, { useState, useEffect } from 'react';
 import { DataTableDemo } from './data-table';
-import { Search as SearchIcon, Filter as FilterIcon, Calendar as CalendarIcon, List as ListIcon, LayoutGridIcon } from "lucide-react";
+import { Search as SearchIcon, Filter as FilterIcon, Calendar as CalendarIcon, List as ListIcon, LayoutGridIcon, Slash } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import CreateUserModal from './components/CreateUserModal';
 import { getUser, searchUsersByEmail, updateUserProfile } from '@/lib/apiUser';
 import { UserProfile } from '@/types/userProfile.type';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import Link from 'next/link';
 
 function User() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,6 +46,21 @@ function User() {
 
     return (
         <MainLayout>
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                            <Link href="/dashboard">Home</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator>
+                        <Slash />
+                    </BreadcrumbSeparator>
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Users</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
             <div className="container mx-auto py-10 w-full overflow-hidden">
                 <h1 className="text-2xl font-bold text-gray-800">User</h1>
                 <div className="flex flex-wrap mt-4 items-center justify-between">
@@ -62,7 +79,7 @@ function User() {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
-                                <Button variant="outline" className="flex-shrink-0"><FilterIcon className='w-4 h-4 mr-2 '/> Filter</Button>
+                                <Button variant="outline" className="flex-shrink-0"><FilterIcon className='w-4 h-4 mr-2 ' /> Filter</Button>
 
                             </div>
                         </form>
@@ -77,9 +94,9 @@ function User() {
             <div className="container mx-auto py-10 w-full overflow-hidden">
                 <div className="flex justify-between items-center mb-4">
                     <div></div> {/* This empty div helps push the button to the right */}
-                    <Button className="w-[100px] h-[50px]" onClick={openModal}> <CalendarIcon/>Create User</Button>
+                    <Button className="w-[100px] h-[50px]" onClick={openModal}> <CalendarIcon />Create User</Button>
                 </div>
-                <DataTableDemo users={users} setUsers={setUsers}/> 
+                <DataTableDemo users={users} setUsers={setUsers} />
             </div>
             <CreateUserModal isOpen={isModalOpen} onClose={closeModal} onUserCreated={fetchUsers} />
         </MainLayout>

@@ -14,10 +14,13 @@ interface Props {
     maxWidth: number;
 }
 
-const formatOptionLabel = ({ email, avatar }: Attendee) => (
+const formatOptionLabel = ({ email, avatar, fullName }: Attendee) => (
     <div className='flex items-center'>
         <img src={avatar || "/images/logoCLT.png"} style={{ width: 30, height: 30, marginRight: 10, borderRadius: '50%' }} />
-        <span className='text-sm'>{email}</span>
+        <div>
+            <div className='text-[13px]'>{fullName}</div>
+            <div className='text-xs'>{email}</div>
+        </div>
     </div>
 );
 
@@ -25,7 +28,8 @@ const filterOptions = (option: any, input: string) => {
     if (!input) {
         return false;
     }
-    return option.data.email.toLowerCase().includes(input.toLowerCase());
+    return option.data.email.toLowerCase().includes(input.toLowerCase()) ||
+        option.data.fullName.toLowerCase().includes(input.toLowerCase());
 };
 
 const customStyles = {
@@ -76,7 +80,7 @@ const AddAttendee = ({ options, attendees, handleAttendeeChange, removeAttendee,
                             </Avatar>
                             <p>{attendee.email}</p>
                         </div>
-                        <div onClick={() => removeAttendee(index)} className="cursor-pointer text-sm"><X className='w-3 h-3'/></div>
+                        <div onClick={() => removeAttendee(index)} className="cursor-pointer text-sm"><X className='w-3 h-3' /></div>
                     </div>
                 ))}
             </div>
