@@ -39,7 +39,7 @@ function UserDropdownMenu() {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <div className="flex items-center gap-4 p-0 hover:bg-muted cursor-pointer">
-                        {userProfile?.avatar ? (
+                        {userProfile ? (
                             <>
                                 <Avatar >
                                     <AvatarImage src={userProfile.avatar || "/images/logoCLT.png"} className="w-8 h-8 rounded-full object-cover"/>

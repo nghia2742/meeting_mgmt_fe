@@ -21,7 +21,6 @@ interface UserProfileFormProps {
 }
 
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, control, setValue, errors, date, setDate, avatarFile, onClose }) => {
-    
     return (
         <form onSubmit={onSubmit} className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -35,7 +34,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 />
                 {errors.fullName && <p className="col-span-3 col-start-2 text-red-500">{errors.fullName.message}</p>}
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
                     Email
@@ -58,9 +57,9 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 />
                 {errors.phoneNumber && <p className="col-span-3 col-start-2 text-red-500">{errors.phoneNumber.message}</p>}
             </div>
-        
+
             <GenderSelect control={control} error={errors.gender?.message} />
-            <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message}/>
+            <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message} />
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="address" className="text-right">
                     Address
@@ -79,5 +78,6 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
         </form>
     );
 };
+
 
 export default UserProfileForm;
