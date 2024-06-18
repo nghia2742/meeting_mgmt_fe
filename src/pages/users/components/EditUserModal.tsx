@@ -12,13 +12,14 @@ import { UserProfile } from "@/types/userProfile.type";
 import { uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "../../../components/modal/components/AvatarSection";
 import UserProfileForm from "../../../components/modal/components/UserProfileForm";
-import ClipLoader from "react-spinners/ClipLoader";
 
 interface EditUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     user: UserProfile | null;
     onSave: (updatedUser: UserProfile) => void;
+    loading: boolean;
+
 }
 
 const schema = z.object({
@@ -92,13 +93,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                     setDate={setDate}
                     avatarFile={avatarFile}
                     onClose={onClose}
-                    loading={loading}
                 />
-                {loading && (
-                    <div className="flex justify-center mt-4">
-                        <ClipLoader size={30} color={"#000"} />
-                    </div>
-                )}
+               
             </DialogContent>
         </Dialog>
     );

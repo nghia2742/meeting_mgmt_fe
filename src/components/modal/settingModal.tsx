@@ -11,7 +11,6 @@ import UserProfileForm from "./components/UserProfileForm";
 import useUserStore from "@/stores/userStore";
 import { toast } from "../ui/use-toast";
 import { Inter } from 'next/font/google';
-import ClipLoader from "react-spinners/ClipLoader";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -133,12 +132,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             setDate={setDate}
                             avatarFile={avatarFile}
                             onClose={handleClose}
+
                         />
-                        {loading && (
-                            <div className="flex justify-center mt-4">
-                                <ClipLoader size={30} color={"#000"} />
-                            </div>
-                        )}
+                        
                     </DialogContent>
                 </Dialog>
             </div>
