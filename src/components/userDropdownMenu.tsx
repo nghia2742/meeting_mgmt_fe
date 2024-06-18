@@ -12,6 +12,8 @@ import { Inter } from 'next/font/google';
 import SettingsModal from './modal/settingModal';
 import useLogout from '@/hooks/useLogout';
 import useUserStore from '@/stores/userStore';
+import { Avatar } from '@radix-ui/react-avatar';
+import { AvatarFallback, AvatarImage } from './ui/avatar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,16 +39,14 @@ function UserDropdownMenu() {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <div className="flex items-center gap-4 p-0 hover:bg-muted cursor-pointer">
-                        {userProfile?.avatar ? (
+                        {userProfile ? (
                             <>
-                                <Image
-                                    src={userProfile.avatar}
-                                    alt="User Avatar"
-                                    width={0}
-                                    height={0}
-                                    sizes="100px"
-                                    className="w-8 h-auto rounded-full"
-                                />
+                                <Avatar >
+                                    <AvatarImage src={userProfile.avatar || "/images/logoCLT.png"} className="w-8 h-8 rounded-full object-cover"/>
+                                    <AvatarFallback>CN</AvatarFallback>
+                                </Avatar>
+
+
                                 <div className="text-sm font-semibold dark:text-white">
                                     <div>{userProfile?.fullName}</div>
                                 </div>

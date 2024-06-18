@@ -1,4 +1,4 @@
-import React, { Dispatch, FormEvent, SetStateAction } from "react";
+import React, { useState, Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,7 @@ import { UserProfile } from "@/types/userProfile.type";
 import GenderSelect from "./GenderSelect";
 import DateOfBirthPicker from "./DateOfBirthPicker";
 import { DialogFooter } from "@/components/ui/dialog";
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface UserProfileFormProps {
     onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -21,9 +22,22 @@ interface UserProfileFormProps {
 }
 
 const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, control, setValue, errors, date, setDate, avatarFile, onClose }) => {
-    
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setLoading(true);
+        try {
+            await onSubmit(event);
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <form onSubmit={onSubmit} className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="fullName" className="text-right">
                     Full Name
@@ -35,7 +49,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 />
                 {errors.fullName && <p className="col-span-3 col-start-2 text-red-500">{errors.fullName.message}</p>}
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
                     Email
@@ -58,9 +72,9 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 />
                 {errors.phoneNumber && <p className="col-span-3 col-start-2 text-red-500">{errors.phoneNumber.message}</p>}
             </div>
-        
+
             <GenderSelect control={control} error={errors.gender?.message} />
-            <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message}/>
+            <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message} />
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="address" className="text-right">
                     Address
@@ -73,8 +87,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 {errors.address && <p className="col-span-3 col-start-2 text-red-500">{errors.address.message}</p>}
             </div>
             <DialogFooter>
-                <Button type="submit">Save changes</Button>
-                <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? <ClipLoader size={20} color={"#fff"} /> : "Save changes"}
+                </Button>
+                <Button type="button" variant="secondary" onClick={onClose} disabled={loading}>
+                    Cancel
+                </Button>
             </DialogFooter>
         </form>
     );

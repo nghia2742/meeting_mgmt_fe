@@ -5,12 +5,20 @@ import { History, Home, Menu, Package, Package2, Video } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import ability from '@/pages/users/ability';
+import defineAbilityFor from '@/pages/users/ability';
+import useAuthStore from '@/stores/authStore';
 
 function SidebarMobile() {
     const router = useRouter();
 
     const isActive = (pathname: string) =>
         '/' + router.pathname.split('/')[1] === pathname;
+
+    const { role, fetchUserRole } = useAuthStore((state) => state);
+
+    const ability = defineAbilityFor(role);
+
 
     return (
         <Sheet>
@@ -91,6 +99,18 @@ function SidebarMobile() {
                         <History className="h-4 w-4" />
                         <span className="hidden mt-1 group-hover:inline pr-5">Meeting minutes</span>
                     </Link>
+                    {ability.can('read', 'User') && (
+                        <Link
+                            href="/users"
+                            className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${isActive('/users')
+                                    ? 'bg-slate-200 text-primary'
+                                    : 'text-muted-foreground'
+                                }`}
+                        >
+                            <User className="h-4 w-4" />
+                            User
+                        </Link>
+                    )}
                 </nav>
             </SheetContent>
         </Sheet>

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Meeting } from "@/types/meeting.type"
 import Link from "next/link"
+import { formatDateTime } from "@/utils/datetime.util"
 
 export const columns: ColumnDef<Meeting>[] = [
     {
@@ -71,10 +72,18 @@ export const columns: ColumnDef<Meeting>[] = [
     {
         accessorKey: "startTime",
         header: "Start time",
+        cell: ({ row }) => {
+            const { formattedDate, formattedTime } = formatDateTime(row.getValue('startTime'))
+            return formattedDate + ' ' + formattedTime;
+        },
     },
     {
         accessorKey: "endTime",
         header: "End time",
+        cell: ({ row }) => {
+            const { formattedDate, formattedTime } = formatDateTime(row.getValue('endTime'))
+            return formattedDate + ' ' + formattedTime;
+        },
     },
     {
         accessorKey: "location",

@@ -29,6 +29,7 @@ import { DeleteUserModal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 import { getColumns } from "./column";
 import { toast } from "@/components/ui/use-toast";
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface DataTableDemoProps {
   users: UserProfile[];
@@ -36,6 +37,7 @@ interface DataTableDemoProps {
 }
 
 export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
+  const [loading, setLoading] = React.useState<boolean>(false); // 1. Add loading state
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -48,6 +50,10 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
   const [selectedUser, setSelectedUser] = React.useState<UserProfile | null>(
     null
   );
+
+  React.useEffect(() => {
+    setLoading(users.length === 0); // 2. Update loading state based on users
+  }, [users]);
 
   const handleDeleteClick = (user: UserProfile) => {
     setSelectedUser(user);
@@ -158,7 +164,20 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
               ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? ( // 3. Conditionally render loading state
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <ClipLoader>
+                    
+                  </ClipLoader>
+                  <p>Loading data...</p>
+              
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row: Row) => (
                 <TableRow
                   key={row.id}

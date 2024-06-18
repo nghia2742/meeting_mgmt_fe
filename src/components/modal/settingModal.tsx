@@ -30,18 +30,16 @@ const schema = z.object({
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<Date>();
+    const [loading, setLoading] = useState(false);
 
     const queryClient = useQueryClient();
 
-    const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
+    const { register, handleSubmit, control, setValue, formState: { errors }, reset, clearErrors } = useForm<UserProfile>({
         resolver: zodResolver(schema),
     });
 
-    const { userProfile, isLoading, isError, error, fetchUserProfile, avatarFile, setAvatarFile } = useUserStore((state) => ({
+    const { userProfile, fetchUserProfile, avatarFile, setAvatarFile } = useUserStore((state) => ({
         userProfile: state.userProfile,
-        isLoading: state.isLoading,
-        isError: state.isError,
-        error: state.error,
         fetchUserProfile: state.fetchUserProfile,
         avatarFile: state.avatarFile,
         setAvatarFile: state.setAvatarFile,
@@ -69,60 +67,78 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
     const mutation = useMutation({
         mutationFn: (updatedUser: UserProfile) => updateUserProfile(updatedUser.email, updatedUser),
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+            useUserStore.setState({ userProfile: data }); 
             onClose();
+            setLoading(false);
         }
     });
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && date.getTime() !== new Date(userProfile?.dateOfBirth || "").getTime()) {
-            data.dateOfBirth = new Date(date.toISOString());
-        }
+        setLoading(true);
+        try {
+            if (date && date.getTime() !== new Date(userProfile?.dateOfBirth || "").getTime()) {
+                data.dateOfBirth = new Date(date.toISOString());
+            }
 
-        if (avatarFile) {
-            try {
+            if (avatarFile) {
                 const avatarUrl = await uploadToCloudinary(avatarFile);
                 mutation.mutate({
                     ...data,
                     avatar: avatarUrl,
                 });
-            } catch (error) {
-                console.error("Error uploading image to Cloudinary:", error);
+            } else {
+                mutation.mutate(data);
+                toast({
+                    variant: "success",
+                    title: "Success",
+                    description: "User edited successfully.",
+                    duration: 1000,
+                });
             }
-        } else {
-            mutation.mutate(data);
-            toast({
-                variant: "success",
-                title: "Success",
-                description: "User edited successfully.",
-                duration: 1000,
-              });
+        } catch (error) {
+            console.error("Error uploading image to Cloudinary:", error);
+        } finally {
+            setLoading(false);
         }
     };
-    
+
+    const handleClose = () => {
+        clearErrors();
+        onClose();
+    };
+
+    if (!isOpen) return null;
+
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className={`sm:max-w-[450px] max-h-[90vh] ${inter.className}`}>
-                <DialogHeader className="flex justify-center items-center h-full">
-                    <DialogTitle className="mb-2">Edit profile</DialogTitle>
-                    {userProfile && (
-                        <AvatarSection setAvatarFile={setAvatarFile} userData={userProfile} />
-                    )}
-                </DialogHeader>
-                <UserProfileForm 
-                    onSubmit={handleSubmit(onSubmit)} 
-                    register={register} 
-                    control={control} 
-                    setValue={setValue} 
-                    errors={errors} 
-                    date={date} 
-                    setDate={setDate}
-                    avatarFile={avatarFile}
-                    onClose={onClose}
-                />
-            </DialogContent>
-        </Dialog>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <Dialog open={isOpen} onOpenChange={onClose}>
+                    <DialogContent className={`sm:max-w-[450px] max-h-[90vh] ${inter.className}`}>
+                        <DialogHeader className="flex justify-center items-center h-full">
+                            <DialogTitle className="mb-2">Edit profile</DialogTitle>
+                            {userProfile && (
+                                <AvatarSection setAvatarFile={setAvatarFile} userData={userProfile} />
+                            )}
+                        </DialogHeader>
+                        <UserProfileForm 
+                            onSubmit={handleSubmit(onSubmit)} 
+                            register={register} 
+                            control={control} 
+                            setValue={setValue} 
+                            errors={errors} 
+                            date={date} 
+                            setDate={setDate}
+                            avatarFile={avatarFile}
+                            onClose={handleClose}
+
+                        />
+                        
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </div>
     );
 };
 

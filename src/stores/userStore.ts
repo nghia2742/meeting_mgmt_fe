@@ -11,6 +11,7 @@ interface UserState {
     lastFetchTime: number | null;
     fetchUserProfile: () => Promise<void>;
     setAvatarFile: (file: File | null) => void;
+    resetUserProfile: () => void; 
 }
 
 const useUserStore = create<UserState>((set, get) => ({
@@ -38,6 +39,8 @@ const useUserStore = create<UserState>((set, get) => ({
         }
     },
     setAvatarFile: (file) => set({ avatarFile: file }),
+    resetUserProfile: () => set({ userProfile: null, lastFetchTime: null }), // Add this method
+
 }));
 
 export default useUserStore;
