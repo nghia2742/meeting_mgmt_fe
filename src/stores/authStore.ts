@@ -29,8 +29,6 @@ const useAuthStore = create<AuthState>((set) => ({
       role: null,
     });
     useUserStore.getState().resetUserProfile();
-    // Cookies.remove("accessToken");
-    // Cookies.remove("refreshToken");
   },
   fetchUserRole: async () => {
     try {
