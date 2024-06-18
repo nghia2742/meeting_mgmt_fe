@@ -10,7 +10,7 @@ import {
 import apiClient from '@/lib/apiClient'
 import { Meeting } from '@/types/meeting.type'
 import { calcMinutes, formatDateTime } from '@/utils/datetime.util'
-import { Eye, FilePlus2, Slash, UserRoundPlus, History } from 'lucide-react'
+import { Eye, FilePlus2, Slash, UserRoundPlus, History, SeparatorVertical, Video } from 'lucide-react'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,7 @@ import useCurrentUser from '@/hooks/useCurrentUser'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import Head from 'next/head';
 import { useQuery } from '@tanstack/react-query'
+import { Separator } from '@/components/ui/separator'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -167,6 +168,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                 <div className="space-x-0 space-y-10 lg:space-y-0 lg:flex lg:space-x-20">
                                     <div className="space-y-4 text-sm w-[100%] lg:w-[50%]">
                                         <div className="flex items-center space-x-2">
+                                            <Video className="h-5 w-5" />
                                             <p className='font-bold text-xl'>{meeting.title}</p>
                                             {meeting.tag.split(', ').map((tagItem: string, index: number) => (
                                                 <div key={index} className='px-3 py-0.5 rounded-full text-[10px] text-black border border-black'>#{tagItem}</div>
@@ -174,7 +176,10 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                         </div>
                                         <div className="flex text-sm items-center space-x-3">
                                             <p className='font-bold'>Date: {formattedDate}</p>
-                                            <p>|</p>
+                                            <Separator
+                                                orientation='vertical'
+                                                className='h-4 mx-2 border-l border-black'
+                                            />
                                             <p className='font-bold'>Start time: {formattedTime}</p>
                                             <div className='flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] bg-black text-white'>
                                                 {minutes} minutes
@@ -183,7 +188,10 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                         </div>
                                         <div className="flex text-sm items-center space-x-3">
                                             <p>Location: {meeting.location}</p>
-                                            <p>|</p>
+                                            <Separator
+                                                orientation='vertical'
+                                                className='h-4 mx-2 border-l border-black'
+                                            />
                                             <p>Organised by: {userCreated?.fullName}</p>
                                         </div>
                                         <p className="text-gray-700 text-[13px]">{meeting.description}</p>

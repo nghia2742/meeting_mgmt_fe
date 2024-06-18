@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Home, Menu, Package, Package2, Video } from 'lucide-react';
+import { History, Home, Menu, Package, Package2, Video } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -43,47 +43,53 @@ function SidebarMobile() {
                     </Link>
                     <Link
                         href="/dashboard"
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                            isActive('/dashboard')
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/dashboard')
                                 ? 'bg-muted text-primary'
                                 : 'text-muted-foreground'
-                        }`}
+                            }`}
                     >
                         <Home className="h-5 w-5" />
                         Dashboard
                     </Link>
                     <Link
                         href="/project"
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                            isActive('/project')
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/project')
                                 ? 'bg-muted text-primary'
                                 : 'text-muted-foreground'
-                        }`}
+                            }`}
                     >
                         <Package className="h-5 w-5" />
                         Project
                     </Link>
                     <Link
                         href="/meeting"
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                            isActive('/meeting')
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/meeting')
                                 ? 'bg-muted text-primary'
                                 : 'text-muted-foreground'
-                        }`}
+                            }`}
                     >
                         <Video className="h-5 w-5" />
                         Meeting
                     </Link>
                     <Link
                         href="/storage"
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
-                            isActive('/storage')
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/storage')
                                 ? 'bg-muted text-primary'
                                 : 'text-muted-foreground'
-                        }`}
+                            }`}
                     >
                         <Package2 className="h-5 w-5" />
                         Storage
+                    </Link>
+                    <Link
+                        href="/meetinghistory"
+                        className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${isActive('/meetinghistory')
+                                ? 'bg-slate-200 text-primary'
+                                : 'text-muted-foreground'
+                            }`}
+                    >
+                        <History className="h-4 w-4" />
+                        <span className="hidden mt-1 group-hover:inline pr-5">Meeting minutes</span>
                     </Link>
                 </nav>
             </SheetContent>

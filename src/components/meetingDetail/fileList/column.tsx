@@ -53,7 +53,7 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
                     variant='ghost'
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Start
+                    Created at
                     <ArrowUpDown className='ml-2 h-4 w-4' />
                 </Button>
             );

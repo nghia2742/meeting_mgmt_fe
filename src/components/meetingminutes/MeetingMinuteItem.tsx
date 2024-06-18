@@ -8,24 +8,23 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import apiClient from '@/lib/apiClient';
 import { MeetingMinutes } from '@/types/meeting-minutes.type';
-import { MeetingFile } from '@/types/meeting.file.type';
-import { FileIcon, MoreHorizontal, MoreVertical } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 import { Inter } from 'next/font/google';
 import React from 'react'
 
 const inter = Inter({ subsets: ['latin'] });
 
 interface Props {
-    file: MeetingFile;
+    file: MeetingMinutes;
     currentUserId: string;
     refreshData: () => void;
 }
 
-const FileItem = ({ file, currentUserId, refreshData }: Props) => {
+const MeetingMinutesItem = ({ file, currentUserId, refreshData }: Props) => {
 
     const onDeleteFile = async () => {
         try {
-            let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${file.publicId}&type=${file.type}`);
+            let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${file.publicId}&type=pdf`);
             if (responseDelCloudinary && responseDelCloudinary.data.result === 'ok') {
                 let responseDelFile = await apiClient.delete(`/files/${file.id}`);
                 if (responseDelFile) {
@@ -47,30 +46,6 @@ const FileItem = ({ file, currentUserId, refreshData }: Props) => {
         }
     }
 
-    const renderFile = (file: MeetingFile) => {
-        switch (file.type) {
-            case 'png':
-            case 'jpg':
-            case 'jpeg':
-            case 'gif':
-            case 'webp':
-                return <img src={file.link} alt={file.name} className="w-[120px] h-[120px] object-contain rounded-md" />
-            case 'pdf':
-                return <img src={'/images/pdf.png'} alt={file.name} className="w-[120px] h-[120px] object-contain rounded-md" />
-            case 'doc':
-            case 'docx':
-                return <img src={'/images/word.png'} alt={file.name} className="w-[120px] h-[120px] object-contain rounded-md" />
-            case 'ppt':
-            case 'pptx':
-                return <img src={'/images/powerpoint.png'} alt={file.name} className="w-[120px] h-[120px] object-contain rounded-md" />
-            case 'xls':
-            case 'xlsx':
-                return <img src={'/images/excel.png'} alt={file.name} className="w-[120px] h-[120px] object-contain rounded-md" />
-            default:
-                return <FileIcon width={'160px'} height={'133px'} className="text-gray-500 mb-2" />
-        }
-    }
-
     return (
         <a target="_blank" rel="noopener noreferrer" href={file.link} key={file.name} className="px-5 py-4 rounded-lg flex flex-col items-center border-black border space-y-4 relative">
             <DropdownMenu>
@@ -86,7 +61,7 @@ const FileItem = ({ file, currentUserId, refreshData }: Props) => {
                     {file.createdBy === currentUserId && <DropdownMenuItem onClick={onDeleteFile} className='text-red-500'>Delete</DropdownMenuItem>}
                 </DropdownMenuContent>
             </DropdownMenu>
-            {renderFile(file)}
+            <img src={'/images/pdf.png'} alt={file.name} className="w-[120px] h-[120px] object-contain rounded-md" />
             <Tooltip>
                 <TooltipTrigger>
                     <p className="text-sm text-gray-500 max-w-[100px] sm:max-w-[100px] lg:max-w-[140px] truncate">{file.name}</p>
@@ -97,4 +72,4 @@ const FileItem = ({ file, currentUserId, refreshData }: Props) => {
     )
 }
 
-export default FileItem
+export default MeetingMinutesItem
