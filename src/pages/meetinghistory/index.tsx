@@ -17,6 +17,8 @@ import { DataTable } from './data-table';
 import { columns } from './column';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import MeetingMinutesItem from '@/components/meetingminutes/MeetingMinuteItem';
 
 const MeetingHistory = () => {
 
@@ -75,11 +77,29 @@ const MeetingHistory = () => {
                     </Button>
                 ))}
             </div>
-            <DataTable
-                columns={columns(refreshMeetingMinutes, user?.id || '')}
-                isLoading={isLoading}
-                data={filteredMeetingMinutes || []}
-            />
+            <Tabs defaultValue='table' className='w-full mt-9'>
+                <TabsList>
+                    <TabsTrigger value='table'>Table</TabsTrigger>
+                    <TabsTrigger value='files'>Files</TabsTrigger>
+                </TabsList>
+                <TabsContent value='table'>
+                    <DataTable
+                        columns={columns(refreshMeetingMinutes, user?.id || '')}
+                        isLoading={isLoading}
+                        data={filteredMeetingMinutes || []}
+                    />
+                </TabsContent>
+                <TabsContent value='files'>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8">
+                        {filteredMeetingMinutes && filteredMeetingMinutes.length > 0 && filteredMeetingMinutes.map((meetingMinute, index) => (
+                            <div key={index}>
+                                <MeetingMinutesItem refreshData={fetchCurrentMeetingMinutes} currentUserId={user?.id || ''} file={meetingMinute} />
+                            </div>
+                        ))}
+                    </div>
+                </TabsContent>
+            </Tabs>
+
         </MainLayout>
     )
 }

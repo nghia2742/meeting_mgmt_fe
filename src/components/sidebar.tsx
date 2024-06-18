@@ -8,7 +8,7 @@ import defineAbilityFor from '@/pages/users/ability';
 function Sidebar() {
     const router = useRouter();
     const { role, fetchUserRole } = useAuthStore((state) => state);
-    const ability = defineAbilityFor(role);
+    const ability = defineAbilityFor(role || '');
 
     useEffect(() => {
         fetchUserRole();
@@ -71,7 +71,7 @@ function Sidebar() {
                 }`}
             >
                 <History className="h-4 w-4" />
-                <span className="hidden mt-1 group-hover:inline pr-5">Meeting history</span>
+                <span className="hidden mt-1 group-hover:inline pr-5">Meeting minutes</span>
             </Link>
             {ability.can('read', 'User') && (
                 <Link

@@ -47,10 +47,6 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
         ),
     },
     {
-        accessorKey: "provider",
-        header: "Provider",
-    },
-    {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => (
