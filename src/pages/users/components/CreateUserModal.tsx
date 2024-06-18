@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import {
 import { createUser } from "@/lib/apiUser";
 import { Lock, Mail, UserCheck } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const CreateUserSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -35,6 +36,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   onClose,
   onUserCreated,
 }) => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof CreateUserSchema>>({
     resolver: zodResolver(CreateUserSchema),
     defaultValues: {
@@ -45,6 +47,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   });
 
   const onSubmit = async (values: z.infer<typeof CreateUserSchema>) => {
+    setLoading(true);
     try {
       await createUser(values.email, values.password, values.fullName);
       toast({
@@ -52,7 +55,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         title: "Success",
         description: "User created successfully.",
         duration: 1000,
-      })
+      });
       form.reset();
       onClose();
       onUserCreated();
@@ -62,14 +65,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         title: "Error",
         description: "Failed to create user.",
         duration: 1000,
-
-      })
+      });
       console.error("Error creating user:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleClose = () => {
-    form.reset(); 
+    form.reset();
     form.clearErrors();
     onClose();
   };
@@ -79,7 +83,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-
         <h2 className="text-xl font-bold mb-4 text-center">Create User</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -155,10 +158,13 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                 variant="outline"
                 onClick={handleClose}
                 className="mr-2"
+                disabled={loading}
               >
                 Cancel
               </Button>
-              <Button type="submit">Create</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? <ClipLoader size={20} color={"#fff"} /> : "Create"}
+              </Button>
             </div>
           </form>
         </Form>
