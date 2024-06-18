@@ -4,6 +4,7 @@ import apiClient from "../lib/apiClient";
 import { LoginRequest, LoginResponse } from "@/types/auth.type";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import useUserStore from "@/stores/userStore";
 
 const fetchLogin = async (credentials: LoginRequest) => {
   const response = await apiClient.post<LoginResponse>(
@@ -16,6 +17,8 @@ const fetchLogin = async (credentials: LoginRequest) => {
 const useLogin = () => {
   const setTokens = useAuthStore((state) => state.setTokens);
   const router = useRouter();
+  const fetchUserProfile = useUserStore((state) => state.fetchUserProfile);
+
 
   return useMutation({
     mutationFn: (credentials: LoginRequest) => fetchLogin(credentials),
@@ -24,6 +27,7 @@ const useLogin = () => {
       const refreshToken = Cookies.get("refreshToken") || "";
       setTokens(accessToken, refreshToken);
 
+      fetchUserProfile();
       router.replace("/dashboard");
     },
   });

@@ -28,6 +28,7 @@ import { getUser, softDeleteUser, updateUserProfile } from "@/lib/apiUser";
 import { DeleteUserModal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 import { getColumns } from "./column";
+import { toast } from "@/components/ui/use-toast";
 
 interface DataTableDemoProps {
   users: UserProfile[];
@@ -57,10 +58,20 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
     if (selectedUser) {
       try {
         await softDeleteUser(selectedUser.id);
+        toast({
+          variant: "success",
+          description: "User deleted successfully",
+          duration: 1000,
+        });
         setUsers((prevUsers) =>
           prevUsers.filter((user) => user.id !== selectedUser.id)
         );
       } catch (error) {
+        toast({
+          variant: "destructive",
+          description: "Failure deleting user",
+          duration: 1000,
+        });
         console.error("Error deleting user:", error);
       } finally {
         setIsDeleteModalOpen(false);
@@ -78,9 +89,21 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
     try {
       await updateUserProfile(updatedUser.email, updatedUser);
       const updatedUserData = await getUser();
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "User edited successfully.",
+        duration: 1000,
+      });
       setUsers(updatedUserData);
     } catch (error) {
       console.error("Error updating user:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to edit user.",
+        duration: 1000,
+      });
     }
   };
 
@@ -236,7 +259,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
         children={`Delete the ${selectedUser?.fullName}`}
-        />
+      />
       {selectedUser && (
         <EditUserModal
           isOpen={isEditModalOpen}

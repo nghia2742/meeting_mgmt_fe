@@ -4,6 +4,7 @@ import Select from 'react-select';
 import React from 'react'
 import { Button } from '@/components/ui/button';
 import { Attendee } from '@/types/attendee.type';
+import { X } from 'lucide-react';
 
 interface Props {
     options: Attendee[],
@@ -75,7 +76,7 @@ const AddAttendee = ({ options, attendees, handleAttendeeChange, removeAttendee,
                             </Avatar>
                             <p>{attendee.email}</p>
                         </div>
-                        <div onClick={() => removeAttendee(index)} className="cursor-pointer text-sm">x</div>
+                        <div onClick={() => removeAttendee(index)} className="cursor-pointer text-sm"><X className='w-3 h-3'/></div>
                     </div>
                 ))}
             </div>

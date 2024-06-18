@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Home, Package, Package2, Video, User } from 'lucide-react';
+import { Home, Package, Package2, Video, User, History } from 'lucide-react';
 import useAuthStore from '@/stores/authStore';
 import defineAbilityFor from '@/pages/users/ability';
 
@@ -61,6 +61,17 @@ function Sidebar() {
             >
                 <Package2 className="h-4 w-4" />
                 <span className="hidden mt-1 group-hover:inline pr-5">Storage</span>
+            </Link>
+            <Link
+                href="/meetinghistory"
+                className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
+                    isActive('/meetinghistory')
+                        ? 'bg-slate-200 text-primary'
+                        : 'text-muted-foreground'
+                }`}
+            >
+                <History className="h-4 w-4" />
+                <span className="hidden mt-1 group-hover:inline pr-5">Meeting history</span>
             </Link>
             {ability.can('read', 'User') && (
                 <Link

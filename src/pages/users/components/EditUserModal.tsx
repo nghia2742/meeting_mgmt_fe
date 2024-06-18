@@ -23,9 +23,6 @@ interface EditUserModalProps {
 const schema = z.object({
     fullName: z.string().nonempty("Full name is required").min(5, { message: "The fullname must be at least 5 characters" }),
     email: z.string().email("Invalid email format").nonempty("Email is required"),
-    phoneNumber: z.string().nonempty("Phone number is required").length(10, { message: "The phone number must be 10 characters" }),
-    address: z.string().nonempty("Address is required").min(5, { message: "The address must be at least 5 characters" }),
-    gender: z.enum(['male', 'female', 'other'], { errorMap: () => ({ message: 'Invalid gender' }) }).optional(),
     dateOfBirth: z.date().optional(),
 
 });
@@ -74,6 +71,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
         onSave(data);
         onClose();
     };
+
+    
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
