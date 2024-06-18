@@ -1,3 +1,5 @@
+import { differenceInMilliseconds } from 'date-fns';
+
 export function formatDateTime(datetimeString: string) {
     const date = new Date(datetimeString);
     // Get date format
@@ -35,3 +37,7 @@ export function calcMinutes(startTimeString: string, endTimeString: string) {
 
     return minutes;
 }
+
+export const invalidateDateTime = (startTime: Date, endTime: Date) => {
+    return differenceInMilliseconds(startTime, endTime) >= 0;
+};
