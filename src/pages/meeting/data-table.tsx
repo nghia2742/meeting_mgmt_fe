@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/table"
 import { useState } from "react"
 import AddNewMeeting from "@/components/modal/AddNewMeeting"
+import ClipLoader from "react-spinners/ClipLoader"
+import { useAllMeeting } from "@/hooks/useMeeting"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -38,6 +40,7 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
+    const { isLoading } = useAllMeeting();
 
     const table = useReactTable({
         data,
@@ -105,6 +108,16 @@ export function DataTable<TData, TValue>({
                                     ))}
                                 </TableRow>
                             ))
+                        ) : isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center space-y-2'
+                                >
+                                    <ClipLoader color='#000000' />
+                                    <p>Loading data...</p>
+                                </TableCell>
+                            </TableRow>
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
