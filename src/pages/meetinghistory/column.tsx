@@ -12,6 +12,8 @@ import {
 import { MeetingMinutesRes } from "@/types/meeting-minutes.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
+import { formatDateTime } from "@/utils/datetime.util"
+import { Separator } from "@/components/ui/separator"
 
 export const columns: (refreshData: () => void, currentUserId: string) => ColumnDef<MeetingMinutesRes>[] = (refreshData, currentUserId) => [
     {
@@ -26,6 +28,35 @@ export const columns: (refreshData: () => void, currentUserId: string) => Column
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
+        },
+    },
+    {
+        accessorKey: "createdAt",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant='ghost'
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Created at
+                    <ArrowUpDown className='ml-2 h-4 w-4' />
+                </Button>
+            );
+        },
+        cell: ({ row }) => {
+            const meetingMinute = row.original;
+            const { formattedDate, formattedTime } = formatDateTime(meetingMinute.createdAt.toString());
+
+            return (
+                <div className='flex'>
+                    {formattedDate}
+                    <Separator
+                        orientation='vertical'
+                        className='h-6 mx-2 border-l border-gray-300'
+                    />
+                    {formattedTime}
+                </div>
+            );
         },
     },
     {
