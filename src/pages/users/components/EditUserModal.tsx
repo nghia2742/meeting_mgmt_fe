@@ -12,6 +12,7 @@ import { UserProfile } from "@/types/userProfile.type";
 import { uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "../../../components/modal/components/AvatarSection";
 import UserProfileForm from "../../../components/modal/components/UserProfileForm";
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface EditUserModalProps {
     isOpen: boolean;
@@ -24,13 +25,12 @@ const schema = z.object({
     fullName: z.string().nonempty("Full name is required").min(5, { message: "The fullname must be at least 5 characters" }),
     email: z.string().email("Invalid email format").nonempty("Email is required"),
     dateOfBirth: z.date().optional(),
-
 });
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave }) => {
     const [date, setDate] = useState<Date>();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
-
+    const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
         resolver: zodResolver(schema),
@@ -55,24 +55,25 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     }, [user, setValue]);
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && user && date.getTime() !== new Date(user.dateOfBirth).getTime()) {
-            data.dateOfBirth = new Date(date.toISOString());
-        }
+        setLoading(true);
+        try {
+            if (date && user && date.getTime() !== new Date(user.dateOfBirth).getTime()) {
+                data.dateOfBirth = new Date(date.toISOString());
+            }
 
-        if (avatarFile) {
-            try {
+            if (avatarFile) {
                 const avatarUrl = await uploadToCloudinary(avatarFile);
                 data.avatar = avatarUrl;
-            } catch (error) {
-                console.error("Error uploading image to Cloudinary:", error);
             }
+
+            onSave(data);
+            onClose();
+        } catch (error) {
+            console.error("Error updating user:", error);
+        } finally {
+            setLoading(false);
         }
-
-        onSave(data);
-        onClose();
     };
-
-    
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -91,7 +92,13 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                     setDate={setDate}
                     avatarFile={avatarFile}
                     onClose={onClose}
+                    loading={loading}
                 />
+                {loading && (
+                    <div className="flex justify-center mt-4">
+                        <ClipLoader size={30} color={"#000"} />
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );

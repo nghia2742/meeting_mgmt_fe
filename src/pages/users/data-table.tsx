@@ -29,6 +29,7 @@ import { DeleteUserModal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 import { getColumns } from "./column";
 import { toast } from "@/components/ui/use-toast";
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface DataTableDemoProps {
   users: UserProfile[];
@@ -169,7 +170,11 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Loading...
+                  <ClipLoader>
+                    
+                  </ClipLoader>
+                  <p>Loading data...</p>
+              
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (

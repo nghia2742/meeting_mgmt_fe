@@ -11,6 +11,7 @@ import UserProfileForm from "./components/UserProfileForm";
 import useUserStore from "@/stores/userStore";
 import { toast } from "../ui/use-toast";
 import { Inter } from 'next/font/google';
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -30,6 +31,7 @@ const schema = z.object({
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [date, setDate] = useState<Date>();
+    const [loading, setLoading] = useState(false);
 
     const queryClient = useQueryClient();
 
@@ -70,32 +72,36 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             queryClient.invalidateQueries({ queryKey: ['userProfile'] });
             useUserStore.setState({ userProfile: data }); 
             onClose();
+            setLoading(false);
         }
     });
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        if (date && date.getTime() !== new Date(userProfile?.dateOfBirth || "").getTime()) {
-            data.dateOfBirth = new Date(date.toISOString());
-        }
+        setLoading(true);
+        try {
+            if (date && date.getTime() !== new Date(userProfile?.dateOfBirth || "").getTime()) {
+                data.dateOfBirth = new Date(date.toISOString());
+            }
 
-        if (avatarFile) {
-            try {
+            if (avatarFile) {
                 const avatarUrl = await uploadToCloudinary(avatarFile);
                 mutation.mutate({
                     ...data,
                     avatar: avatarUrl,
                 });
-            } catch (error) {
-                console.error("Error uploading image to Cloudinary:", error);
+            } else {
+                mutation.mutate(data);
+                toast({
+                    variant: "success",
+                    title: "Success",
+                    description: "User edited successfully.",
+                    duration: 1000,
+                });
             }
-        } else {
-            mutation.mutate(data);
-            toast({
-                variant: "success",
-                title: "Success",
-                description: "User edited successfully.",
-                duration: 1000,
-            });
+        } catch (error) {
+            console.error("Error uploading image to Cloudinary:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -128,6 +134,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             avatarFile={avatarFile}
                             onClose={handleClose}
                         />
+                        {loading && (
+                            <div className="flex justify-center mt-4">
+                                <ClipLoader size={30} color={"#000"} />
+                            </div>
+                        )}
                     </DialogContent>
                 </Dialog>
             </div>
