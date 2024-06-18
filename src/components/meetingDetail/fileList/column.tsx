@@ -12,6 +12,9 @@ import {
 import { MeetingFile } from "@/types/meeting.file.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
+import { format } from "date-fns"
+import { Separator } from "@/components/ui/separator"
+import { formatDateTime } from "@/utils/datetime.util"
 
 export const columns: (meetingId: string, refreshData: () => void, currentUserId: string) => ColumnDef<MeetingFile>[] = (meetingId, refreshData, currentUserId) => [
     {
@@ -43,6 +46,35 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
         },
     },
     {
+        accessorKey: "createdAt",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant='ghost'
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Start
+                    <ArrowUpDown className='ml-2 h-4 w-4' />
+                </Button>
+            );
+        },
+        cell: ({ row }) => {
+            const file = row.original;
+            const { formattedDate, formattedTime } = formatDateTime(file.createdAt.toString());
+
+            return (
+                <div className='flex'>
+                    {formattedDate}
+                    <Separator
+                        orientation='vertical'
+                        className='h-6 mx-2 border-l border-gray-300'
+                    />
+                    {formattedTime}
+                </div>
+            );
+        },
+    },
+    {
         accessorKey: "userCreateName",
         header: ({ column }) => {
             return (
@@ -64,9 +96,9 @@ export const columns: (meetingId: string, refreshData: () => void, currentUserId
             const onDeleteFile = async () => {
                 try {
                     let responseDelCloudinary = await apiClient.delete(`/cloudinary?publicId=${file.publicId}&type=${file.type}`);
-                    if(responseDelCloudinary && responseDelCloudinary.data.result === 'ok') {
+                    if (responseDelCloudinary && responseDelCloudinary.data.result === 'ok') {
                         let responseDelFile = await apiClient.delete(`/files/${file.id}`);
-                        if(responseDelFile) {
+                        if (responseDelFile) {
                             toast({
                                 title: "Successfully",
                                 description: "Delete file successfully",

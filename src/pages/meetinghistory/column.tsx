@@ -9,11 +9,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MeetingMinutes } from "@/types/meeting-minutes.type"
+import { MeetingMinutesRes } from "@/types/meeting-minutes.type"
 import apiClient from "@/lib/apiClient"
 import { toast } from "@/components/ui/use-toast"
 
-export const columns: (refreshData: () => void, currentUserId: string) => ColumnDef<MeetingMinutes>[] = (refreshData, currentUserId) => [
+export const columns: (refreshData: () => void, currentUserId: string) => ColumnDef<MeetingMinutesRes>[] = (refreshData, currentUserId) => [
     {
         accessorKey: "name",
         header: ({ column }) => {

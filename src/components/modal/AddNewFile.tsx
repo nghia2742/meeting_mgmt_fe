@@ -156,7 +156,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                         <div className="flex flex-wrap items-center">
                             {files.map((file, index) => (
                                 <div key={file.name} className="p-2 flex flex-col items-center relative">
-                                    {isImage(file) ? (
+                                    {isImage(file.name) ? (
                                         <img src={file.preview} alt={file.name} className="w-20 h-20 object-cover rounded-md" />
                                     ) : (
                                         <FileIcon width={72} height={72} className="text-gray-500 mb-2" />

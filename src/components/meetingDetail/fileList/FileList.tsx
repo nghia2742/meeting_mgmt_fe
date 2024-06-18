@@ -3,6 +3,8 @@ import { columns } from './column'
 import { DataTable } from './data-table'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import FileItem from './FileItem'
 
 interface Props {
     files: MeetingFile[],
@@ -40,11 +42,28 @@ const FileList = ({ files, meetingId, refreshData, currentUserId, isLoading }: P
                     </Button>
                 ))}
             </div>
-            <DataTable
-                isLoading={isLoading}
-                columns={columns(meetingId, refreshData, currentUserId || '')}
-                data={filteredFiles}
-            />
+            <Tabs defaultValue='table' className='w-full mt-9'>
+                <TabsList>
+                    <TabsTrigger value='table'>Table</TabsTrigger>
+                    <TabsTrigger value='files'>Files</TabsTrigger>
+                </TabsList>
+                <TabsContent value='table'>
+                    <DataTable
+                        isLoading={isLoading}
+                        columns={columns(meetingId, refreshData, currentUserId || '')}
+                        data={filteredFiles}
+                    />
+                </TabsContent>
+                <TabsContent value='files'>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8">
+                        {filteredFiles && filteredFiles.length > 0 && filteredFiles.map((file, index) => (
+                            <div key={index}>
+                                <FileItem refreshData={refreshData} currentUserId={currentUserId || ''} file={file} />
+                            </div>
+                        ))}
+                    </div>
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }

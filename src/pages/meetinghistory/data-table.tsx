@@ -25,6 +25,7 @@ import {
 import { useState } from "react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import ClipLoader from "react-spinners/ClipLoader"
+import { Input } from "@/components/ui/input"
 
 
 interface DataTableProps<TData, TValue> {
@@ -71,6 +72,16 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
+            <div className="flex items-center py-4">
+                <Input
+                    placeholder="Filter by name..."
+                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                    onChange={(event: { target: { value: any } }) =>
+                        table.getColumn("name")?.setFilterValue(event.target.value)
+                    }
+                    className="max-w-sm text-[13px]"
+                />
+            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
