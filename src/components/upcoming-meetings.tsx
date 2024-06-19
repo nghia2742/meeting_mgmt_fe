@@ -26,7 +26,7 @@ const UpcomingMeetings = ({ meetings }: { meetings: Meeting[] }) => {
               <div className='flex w-full justify-between items-start'>
                 <Video className='h-11 w-11' />
                 <span className='text-xs text-blurGray '>
-                  {format(new Date(meeting.startTime), "MMMM dd yyyy")}
+                  {format(new Date(meeting.startTime), "MMMM dd yyyy, HH:mm")}
                 </span>
               </div>
               <div className='line-clamp-1 text-sm'>{meeting.title}</div>
