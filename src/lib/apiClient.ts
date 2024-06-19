@@ -8,9 +8,11 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const { accessToken } = useAuthStore.getState();
+    const { accessToken, refreshToken } = useAuthStore.getState();
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
+    } else {
+      config.headers["Authorization"] = `Bearer ${refreshToken}`;
     }
     return config;
   },
@@ -21,9 +23,15 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    console.log("token expired", error);
+    if (
+      error.response &&
+      error.response.data.statusCode === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
-      const { refreshToken } = useAuthStore.getState();
+      const { refreshToken, setTokens, clearTokens } = useAuthStore.getState();
+
       if (refreshToken) {
         try {
           const response = await apiClient.post(
@@ -33,18 +41,24 @@ apiClient.interceptors.response.use(
           );
           const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             response.data;
-          useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
+          setTokens(newAccessToken, newRefreshToken);
+
           apiClient.defaults.headers[
             "Authorization"
           ] = `Bearer ${newAccessToken}`;
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
           return apiClient(originalRequest);
         } catch (e) {
-          useAuthStore.getState().clearTokens();
+          clearTokens();
           return Promise.reject(e);
         }
+      } else {
+        clearTokens();
+        return Promise.reject(error);
       }
     }
+
     return Promise.reject(error);
   }
 );
