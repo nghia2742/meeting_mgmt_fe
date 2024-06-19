@@ -25,7 +25,6 @@ const MeetingHistory = () => {
     const fetchCurrentMeetingMinutes = async () => {
         const res = await apiClient.get('/meetingminutes/current');
         if (res && res.data) {
-            console.log(res.data);
             return res.data;
         }
     }

@@ -71,7 +71,6 @@ export const columns: (refreshData: () => void, currentUserId: string) => Column
         id: "actions",
         cell: ({ row }) => {
             const meetingMinute = row.original;
-            console.log(meetingMinute.id);
 
             const onDeleteMeetingMinute = async () => {
                 try {
