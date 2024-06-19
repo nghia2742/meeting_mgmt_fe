@@ -37,7 +37,6 @@ interface MeetingDetailPageProps {
 const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeting, statusCode }) => {
 
     if (statusCode) {
-        console.log(statusCode);
         if (statusCode === 500) {
             return (
                 <MainLayout>

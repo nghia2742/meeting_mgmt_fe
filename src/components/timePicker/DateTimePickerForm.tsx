@@ -54,7 +54,6 @@ export function DateTimePickerForm({
                                     mode="single"
                                     selected={field.value}
                                     onSelect={(date) => {
-                                        console.log("Calendar date selected:", date);
                                         field.onChange(date);
                                         onChangeDate(date);
                                     }}
@@ -63,7 +62,6 @@ export function DateTimePickerForm({
                                 <div className="p-3 border-t border-border">
                                     <TimePicker
                                         setDate={(date) => {
-                                            console.log("TimePicker date selected:", date);
                                             field.onChange(date);
                                             onChangeDate(date);
                                         }}
