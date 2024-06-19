@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Home, Menu, Package, Package2, User, Video } from 'lucide-react';
+import { History, Home, Menu, Package, Package2, Video, User } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -88,6 +88,16 @@ function SidebarMobile() {
                     >
                         <Package2 className="h-5 w-5" />
                         Storage
+                    </Link>
+                    <Link
+                        href="/meetinghistory"
+                        className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${isActive('/meetinghistory')
+                                ? 'bg-slate-200 text-primary'
+                                : 'text-muted-foreground'
+                            }`}
+                    >
+                        <History className="h-4 w-4" />
+                        <span className="hidden mt-1 group-hover:inline pr-5">Meeting minutes</span>
                     </Link>
                     {ability.can('read', 'User') && (
                         <Link
