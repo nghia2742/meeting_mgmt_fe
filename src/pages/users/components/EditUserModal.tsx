@@ -18,20 +18,22 @@ interface EditUserModalProps {
     onClose: () => void;
     user: UserProfile | null;
     onSave: (updatedUser: UserProfile) => void;
-    loading: boolean;
-
 }
 
 const schema = z.object({
     fullName: z.string().nonempty("Full name is required").min(5, { message: "The fullname must be at least 5 characters" }),
     email: z.string().email("Invalid email format").nonempty("Email is required"),
     dateOfBirth: z.date().optional(),
+    address: z.string(),
+    gender: z.string(),
+    phoneNumber: z.string(),
+
 });
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, onSave }) => {
     const [date, setDate] = useState<Date>();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
-    const [loading, setLoading] = useState(false);
+
 
     const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<UserProfile>({
         resolver: zodResolver(schema),
@@ -56,25 +58,24 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
     }, [user, setValue]);
 
     const onSubmit: SubmitHandler<UserProfile> = async (data) => {
-        setLoading(true);
-        try {
-            if (date && user && date.getTime() !== new Date(user.dateOfBirth).getTime()) {
-                data.dateOfBirth = new Date(date.toISOString());
-            }
+        if (date && user && date.getTime() !== new Date(user.dateOfBirth).getTime()) {
+            data.dateOfBirth = new Date(date.toISOString());
+        }
 
-            if (avatarFile) {
+        if (avatarFile) {
+            try {
                 const avatarUrl = await uploadToCloudinary(avatarFile);
                 data.avatar = avatarUrl;
+            } catch (error) {
+                console.error("Error uploading image to Cloudinary:", error);
             }
-
-            onSave(data);
-            onClose();
-        } catch (error) {
-            console.error("Error updating user:", error);
-        } finally {
-            setLoading(false);
         }
+
+        onSave(data);
+        onClose();
     };
+
+    
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -94,7 +95,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, on
                     avatarFile={avatarFile}
                     onClose={onClose}
                 />
-               
             </DialogContent>
         </Dialog>
     );
