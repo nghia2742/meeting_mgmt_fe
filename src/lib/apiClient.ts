@@ -23,11 +23,15 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log("token expired", error);
     if (
       error.response &&
-      error.response.data.statusCode === 401
+      error.response.data.statusCode === 401 &&
+      !originalRequest._retry
     ) {
+      originalRequest._retry = true;
       const { refreshToken, setTokens, clearTokens } = useAuthStore.getState();
+
       if (refreshToken) {
         try {
           const response = await apiClient.post(
@@ -38,7 +42,12 @@ apiClient.interceptors.response.use(
           const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             response.data;
           setTokens(newAccessToken, newRefreshToken);
+
+          apiClient.defaults.headers[
+            "Authorization"
+          ] = `Bearer ${newAccessToken}`;
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
           return apiClient(originalRequest);
         } catch (e) {
           clearTokens();
