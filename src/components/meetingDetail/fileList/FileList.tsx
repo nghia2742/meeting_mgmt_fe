@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import FileItem from './FileItem'
+import { Grid, List } from 'lucide-react'
 
 interface Props {
     files: MeetingFile[],
@@ -44,8 +45,8 @@ const FileList = ({ files, meetingId, refreshData, currentUserId, isLoading }: P
             </div>
             <Tabs defaultValue='table' className='w-full mt-9'>
                 <TabsList>
-                    <TabsTrigger value='table'>Table</TabsTrigger>
-                    <TabsTrigger value='files'>Files</TabsTrigger>
+                    <TabsTrigger value='table'><List className='w-4 h-4'/></TabsTrigger>
+                    <TabsTrigger value='files'><Grid className='w-4 h-4'/></TabsTrigger>
                 </TabsList>
                 <TabsContent value='table'>
                     <DataTable

@@ -10,7 +10,7 @@ import {
 import apiClient from '@/lib/apiClient';
 import { MeetingMinutesRes } from '@/types/meeting-minutes.type';
 import { useQuery } from '@tanstack/react-query';
-import { Slash } from 'lucide-react';
+import { Grid, List, Slash } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { DataTable } from './data-table';
@@ -25,7 +25,6 @@ const MeetingHistory = () => {
     const fetchCurrentMeetingMinutes = async () => {
         const res = await apiClient.get('/meetingminutes/current');
         if (res && res.data) {
-            console.log(res.data);
             return res.data;
         }
     }
@@ -79,8 +78,8 @@ const MeetingHistory = () => {
             </div>
             <Tabs defaultValue='table' className='w-full mt-9'>
                 <TabsList>
-                    <TabsTrigger value='table'>Table</TabsTrigger>
-                    <TabsTrigger value='files'>Files</TabsTrigger>
+                    <TabsTrigger value='table'><List className='w-4 h-4'/></TabsTrigger>
+                    <TabsTrigger value='files'><Grid className='w-4 h-4'/></TabsTrigger>
                 </TabsList>
                 <TabsContent value='table'>
                     <DataTable

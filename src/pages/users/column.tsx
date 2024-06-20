@@ -10,6 +10,7 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
     {
         accessorKey: "fullName",
         header: "Full Name",
+        enableSorting: true, // Enable sorting for this column
     },
     {
         accessorKey: "email",
@@ -43,7 +44,6 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
                 <AvatarImage src={row.getValue("avatar") || "/images/logoCLT.png" }/>
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-               
         ),
     },
     {

@@ -278,10 +278,8 @@ export default function AddMeetingForm() {
                     });
 
                     // Redirect to meeting detail page
-                    setTimeout(() => {
-                        push(`/meeting/${meetingId}`);
-                    }, 1500);
-                    return;
+                    push(`/meeting/${meetingId}`);
+                    
                 })
                 .catch((error) => {
                     setIsOpenForm();

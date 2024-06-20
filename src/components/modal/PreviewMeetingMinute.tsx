@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Meeting } from '@/types/meeting.type'
@@ -347,7 +346,6 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                                         selected={field.value}
                                                         onSelect={(date) => {
                                                             if (date) {
-                                                                console.log("Calendar date selected:", date);
                                                                 field.onChange(date);
                                                                 onChangeDate(date, "end");
                                                             }
@@ -358,7 +356,6 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                                         <TimePicker
                                                             setDate={(date) => {
                                                                 if (date) {
-                                                                    console.log("TimePicker date selected:", date);
                                                                     field.onChange(date);
                                                                     onChangeDate(date, "end");
                                                                 }
