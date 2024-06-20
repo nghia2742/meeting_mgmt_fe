@@ -28,7 +28,7 @@ function SidebarMobile() {
                     size="icon"
                     className="shrink-0 lg:hidden"
                 >
-                    <Menu className="h-5 w-5" />
+                    <Menu className="h-4 w-4" />
                     <span className="sr-only">Toggle navigation menu</span>
                 </Button>
             </SheetTrigger>
@@ -56,18 +56,8 @@ function SidebarMobile() {
                                 : 'text-muted-foreground'
                             }`}
                     >
-                        <Home className="h-5 w-5" />
+                        <Home className="h-4 w-4" />
                         Dashboard
-                    </Link>
-                    <Link
-                        href="/project"
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/project')
-                                ? 'bg-muted text-primary'
-                                : 'text-muted-foreground'
-                            }`}
-                    >
-                        <Package className="h-5 w-5" />
-                        Project
                     </Link>
                     <Link
                         href="/meeting"
@@ -76,7 +66,7 @@ function SidebarMobile() {
                                 : 'text-muted-foreground'
                             }`}
                     >
-                        <Video className="h-5 w-5" />
+                        <Video className="h-4 w-4" />
                         Meeting
                     </Link>
                     <Link
@@ -86,23 +76,23 @@ function SidebarMobile() {
                                 : 'text-muted-foreground'
                             }`}
                     >
-                        <Package2 className="h-5 w-5" />
+                        <Package2 className="h-4 w-4" />
                         Storage
                     </Link>
                     <Link
                         href="/meetinghistory"
-                        className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${isActive('/meetinghistory')
-                                ? 'bg-slate-200 text-primary'
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/meetinghistory')
+                                ? 'bg-muted text-primary'
                                 : 'text-muted-foreground'
                             }`}
                     >
                         <History className="h-4 w-4" />
-                        <span className="hidden mt-1 group-hover:inline pr-5">Meeting minutes</span>
+                        Meeting minutes
                     </Link>
                     {ability.can('read', 'User') && (
                         <Link
                             href="/users"
-                            className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${isActive('/users')
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/users')
                                     ? 'bg-slate-200 text-primary'
                                     : 'text-muted-foreground'
                                 }`}

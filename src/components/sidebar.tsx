@@ -30,17 +30,6 @@ function Sidebar() {
                 <span className="hidden mt-1 group-hover:inline pr-5">Dashboard</span>
             </Link>
             <Link
-                href="/project"
-                className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
-                    isActive('/project')
-                        ? 'bg-slate-200 text-primary'
-                        : 'text-muted-foreground'
-                }`}
-            >
-                <Package className="h-4 w-4" />
-                <span className="hidden mt-1 group-hover:inline pr-5">Project</span>
-            </Link>
-            <Link
                 href="/meeting"
                 className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                     isActive('/meeting')
