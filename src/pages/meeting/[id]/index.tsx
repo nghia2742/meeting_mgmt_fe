@@ -28,6 +28,7 @@ import useCreatedBy from '@/hooks/useCreatedBy'
 import Head from 'next/head';
 import { useQuery } from '@tanstack/react-query'
 import { Separator } from '@/components/ui/separator'
+import EditMeeting from '@/components/modal/EditMeeting'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -166,12 +167,18 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                             <div className="space-y-4">
                                 <div className="space-x-0 space-y-10 lg:space-y-0 lg:flex lg:space-x-20">
                                     <div className="space-y-4 text-sm w-[100%] lg:w-[50%]">
-                                        <div className="flex items-center space-x-2">
+                                        <div className="relative flex items-center space-x-2">
                                             <Video className="h-5 w-5" />
                                             <p className='font-bold text-xl'>{meeting.title}</p>
                                             {meeting.tag.split(', ').map((tagItem: string, index: number) => (
                                                 <div key={index} className='px-3 py-0.5 rounded-full text-[10px] text-black border border-black'>#{tagItem}</div>
                                             ))}
+                                            {user?.id === meeting.createdBy ? 
+                                            <div className='absolute top-0 right-0'>
+                                                <EditMeeting meeting={meeting}/>
+                                            </div>
+                                            : ''}
+                                            
                                         </div>
                                         <div className="flex text-sm items-center space-x-3">
                                             <p className='font-bold'>Date: {formattedDate}</p>

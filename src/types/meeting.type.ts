@@ -1,5 +1,3 @@
-import { MeetingCategory } from "./enums/meeting.enum";
-
 export type Meeting = {
   id: string;
   title: string;
