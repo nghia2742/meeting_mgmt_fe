@@ -41,7 +41,7 @@ export const getColumns = (handleEditClick: (user: UserProfile) => void, handleD
         header: "Avatar",
         cell: ({ row }) => (
             <Avatar className="w-8 h-8">
-                <AvatarImage src={row.getValue("avatar") || "/images/logoCLT.png" }/>
+                <AvatarImage className="w-8 h-8 rounded-full object-cover" src={row.getValue("avatar") || "/images/logoCLT.png" }/>
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
         ),
