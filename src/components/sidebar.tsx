@@ -40,7 +40,7 @@ function Sidebar() {
                 <Video className="h-4 w-4" />
                 <span className="hidden mt-1 group-hover:inline pr-5">Meeting</span>
             </Link>
-            <Link
+            {/* <Link
                 href="/storage"
                 className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${
                     isActive('/storage')
@@ -50,7 +50,7 @@ function Sidebar() {
             >
                 <Package2 className="h-4 w-4" />
                 <span className="hidden mt-1 group-hover:inline pr-5">Storage</span>
-            </Link>
+            </Link> */}
             <Link
                 href="/meetinghistory"
                 className={`min-h-[40px] flex items-center gap-3 rounded-lg py-2 px-3 hover:text-primary ${

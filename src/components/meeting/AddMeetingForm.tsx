@@ -58,7 +58,7 @@ const formSchema = z.object({
     description: z.string().optional(),
     startTime: z.date(),
     endTime: z.date(),
-    location: z.string(),
+    location: z.string().min(1, 'Location is required'),
     note: z.string().optional(),
     attendees: z.array(z.string()).optional(),
 });

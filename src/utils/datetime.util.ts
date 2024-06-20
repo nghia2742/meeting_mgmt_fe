@@ -44,9 +44,8 @@ export const invalidateDateTime = (startTime: Date, endTime: Date) => {
 
 export const compareDate = (startTime: string) => {
     const now = new Date()
-    const { formattedDate: date } = formatDateTime(now.toString());
+    const date = now.toISOString();
     const dateComparison = differenceInMilliseconds(startTime, date);
-    if (dateComparison > 0) return 1;
-    if (dateComparison === 0) return 0;
+    if (dateComparison >= 0) return 1;
     return -1;
 };
