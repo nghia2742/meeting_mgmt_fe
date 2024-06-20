@@ -27,8 +27,8 @@ const inter = Inter({ subsets: ["latin"] });
 const schema = z.object({
   fullName: z.string().nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
-  phoneNumber: z.string().min(5).optional(),
-  address: z.string().min(5).optional(),
+  phoneNumber: z.string().optional(),
+  address: z.string().optional(),
   gender: z.enum(["male", "female", "other"], {
     errorMap: () => ({ message: "Invalid gender" }),
   }),

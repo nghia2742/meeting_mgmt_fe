@@ -27,8 +27,8 @@ const schema = z.object({
     .min(5, { message: "The fullname must be at least 5 characters" }),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
   dateOfBirth: z.date().optional(),
-  phoneNumber: z.string().min(5).optional(),
-  address: z.string().min(5).optional(),
+  phoneNumber: z.string().optional(),
+  address: z.string().optional(),
   gender: z.string(),
 });
 
