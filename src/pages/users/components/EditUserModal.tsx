@@ -21,16 +21,26 @@ interface EditUserModalProps {
 }
 
 const schema = z.object({
-  fullName: z
-    .string()
-    .nonempty("Full name is required")
-    .min(5, { message: "The fullname must be at least 5 characters" }),
+  fullName: z.string().nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
-  dateOfBirth: z.date().optional(),
-  phoneNumber: z.string().optional(),
-  address: z.string().optional(),
-  gender: z.string(),
+  phoneNumber: z.string()
+    .optional()
+    .nullable()
+    .refine((val) => val === null || val === undefined || val.length > 5, {
+      message: "Phone number must be more than 5 characters if provided",
+    }),
+  address: z.string()
+    .optional()
+    .nullable()
+    .refine((val) => val === null || val === undefined || val.length > 5, {
+      message: "Address must be more than 5 characters if provided",
+    }),
+  gender: z.enum(["male", "female", "other"], {
+    errorMap: () => ({ message: "Invalid gender" }),
+  }).optional().nullable(),
+  dateOfBirth: z.date().optional().nullable(),
 });
+
 
 const EditUserModal: React.FC<EditUserModalProps> = ({
   isOpen,

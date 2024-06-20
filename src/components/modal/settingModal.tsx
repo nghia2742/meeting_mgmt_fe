@@ -27,13 +27,24 @@ const inter = Inter({ subsets: ["latin"] });
 const schema = z.object({
   fullName: z.string().nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
-  phoneNumber: z.string().optional(),
-  address: z.string().optional(),
+  phoneNumber: z.string()
+    .optional()
+    .nullable()
+    .refine((val) => val === null || val === undefined || val.length > 5, {
+      message: "Phone number must be more than 5 characters if provided",
+    }),
+  address: z.string()
+    .optional()
+    .nullable()
+    .refine((val) => val === null || val === undefined || val.length > 5, {
+      message: "Address must be more than 5 characters if provided",
+    }),
   gender: z.enum(["male", "female", "other"], {
     errorMap: () => ({ message: "Invalid gender" }),
-  }),
-  dateOfBirth: z.date().optional(),
+  }).optional().nullable(),
+  dateOfBirth: z.date().optional().nullable(),
 });
+
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [date, setDate] = useState<Date>();
