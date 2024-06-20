@@ -1,7 +1,10 @@
-import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import {
-  SortingState,
+  ColumnDef,
   ColumnFiltersState,
+  SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -9,12 +12,8 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  HeaderGroup,
-  Header,
-  Row,
-  Cell,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
+
 import {
   Table,
   TableBody,
@@ -23,13 +22,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useState, useMemo, useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import { UserProfile } from "@/types/userProfile.type";
 import { getUser, softDeleteUser, updateUserProfile } from "@/lib/apiUser";
 import { DeleteUserModal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 import { getColumns } from "./column";
 import { toast } from "@/components/ui/use-toast";
-import ClipLoader from "react-spinners/ClipLoader";
 
 interface DataTableDemoProps {
   users: UserProfile[];
@@ -37,22 +37,17 @@ interface DataTableDemoProps {
 }
 
 export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
-  const [loading, setLoading] = React.useState<boolean>(false); // 1. Add loading state
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState<UserProfile[]>([]);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  const [selectedUser, setSelectedUser] = React.useState<UserProfile | null>(
-    null
-  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState<UserProfile[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
 
-  React.useEffect(() => {
-    setLoading(users.length === 0); // 2. Update loading state based on users
+  useEffect(() => {
+    setLoading(users.length === 0);
   }, [users]);
 
   const handleDeleteClick = (user: UserProfile) => {
@@ -113,7 +108,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
     }
   };
 
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => getColumns(handleEditClick, handleDeleteClick),
     [handleEditClick, handleDeleteClick]
   );
@@ -138,67 +133,55 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
   });
 
   return (
-    <div className="w-full">
-      <div className="rounded-md border">
+    <div>
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
-            {table
-              .getHeaderGroups()
-              .map((headerGroup: HeaderGroup<UserProfile>) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map(
-                    (header: Header<UserProfile, unknown>) => {
-                      return (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      );
-                    }
-                  )}
-                </TableRow>
-              ))}
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="cursor-pointer"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
           </TableHeader>
           <TableBody>
-            {loading ? ( // 3. Conditionally render loading state
+            {loading ? (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  <ClipLoader>
-                    
-                  </ClipLoader>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <ClipLoader color="#000000" />
                   <p>Loading data...</p>
-              
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row: Row) => (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell: Cell) => (
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -206,15 +189,11 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-center space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<<"}
-        </Button>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
         <Button
           variant="outline"
           size="sm"
@@ -231,48 +210,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
         >
           Next
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {">>"}
-        </Button>
-        <span className="text-sm">
-          Page{" "}
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </strong>{" "}
-        </span>
-        <span className="text-sm">
-          | Go to page:{" "}
-          <input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              table.setPageIndex(page);
-            }}
-            className="w-16 p-1 border rounded"
-          />
-        </span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => {
-            table.setPageSize(Number(e.target.value));
-          }}
-          className="w-32 p-1 border rounded"
-        >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
       </div>
-
       <DeleteUserModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -288,5 +226,6 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
         />
       )}
     </div>
+
   );
 }
