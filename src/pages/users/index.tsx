@@ -1,7 +1,7 @@
 import MainLayout from "@/components/main.layout";
 import React, { useState, useEffect } from "react";
 import { DataTableDemo } from "./data-table";
-import { Search as SearchIcon, Slash } from "lucide-react";
+import { Plus, Search as SearchIcon, Slash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateUserModal from "./components/CreateUserModal";
 import { getUser, searchUsersByEmail } from "@/lib/apiUser";
@@ -90,7 +90,7 @@ function User() {
                 />
               </div>
             </form>
-            <Button onClick={openModal}>Create User</Button>
+            <Button onClick={openModal}><Plus className='h-4- w-4 md:mr-2'/> Create User</Button>
           </div>
           <div className="rounded-md ">
             <DataTableDemo users={users} setUsers={setUsers} />
