@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   ColumnDef,
@@ -32,6 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ClipLoader from "react-spinners/ClipLoader";
+import { ListFilter } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -99,7 +100,9 @@ export function DashboardDataTable<TData, TValue>({
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild className='mr-2'>
-              <Button variant='outline'>Filter</Button>
+              <Button variant='outline'>
+                <ListFilter className='mr-1' /> <span>Filter</span>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='center'>
               <DropdownMenuCheckboxItem
@@ -111,7 +114,7 @@ export function DashboardDataTable<TData, TValue>({
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>
                 Columns
@@ -136,7 +139,7 @@ export function DashboardDataTable<TData, TValue>({
                   );
                 })}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </div>
       <div className='rounded-md border'>

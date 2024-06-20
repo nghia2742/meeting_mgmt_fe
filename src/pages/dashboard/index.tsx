@@ -11,6 +11,12 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import apiClient from "@/lib/apiClient";
 import Head from "next/head";
+import { CalendarDays, Table } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const fetchMeetings = async () => {
   const response = await apiClient.get("/usermeetings/meetings/attend");
@@ -85,8 +91,26 @@ function Dashboard() {
           )}
           <Tabs defaultValue='table' className='w-full mt-9'>
             <TabsList>
-              <TabsTrigger value='table'>Table</TabsTrigger>
-              <TabsTrigger value='calendar'>Calendar</TabsTrigger>
+              <TabsTrigger value='table'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Table />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Table</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TabsTrigger>
+              <TabsTrigger value='calendar'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <CalendarDays />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Calendar</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TabsTrigger>
             </TabsList>
             <TabsContent value='table'>
               <DashboardDataTable
