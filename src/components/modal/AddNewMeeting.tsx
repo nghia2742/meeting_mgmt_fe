@@ -12,7 +12,7 @@ function AddNewMeeting() {
     return (
         <Dialog open={isOpenAddForm} onOpenChange={setIsOpenForm}>
             <DialogTrigger asChild>
-                <Button><Plus className='h-4- w-4 mr-2'/> Add new meeting</Button>
+                <Button><Plus className='h-4- w-4 md:mr-2'/> <span className="hidden md:block">Add new meeting</span></Button>
             </DialogTrigger>
             <DialogContent className='pr-0 md:w-lg max-h-[90vh] min-w-[50vw] overflow-y-auto'>
                 <DialogHeader>

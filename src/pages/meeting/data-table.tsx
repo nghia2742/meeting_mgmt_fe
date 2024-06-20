@@ -122,10 +122,12 @@ export function DataTable<TData, TValue>({
                         variant={isOpenCollapse ? 'default' : 'outline'}
                         onClick={() => setIsOpenCollapse(!isOpenCollapse)}
                     >
-                        <FilterIcon className="h-4 w-4 mr-2" /> Advanced
+                        <FilterIcon className="h-4 w-4 md:mr-2" />{' '}
+                        <span className="hidden md:block">Advanced</span>
                     </Button>
                     <Button variant={'outline'} onClick={() => resetTable()}>
-                        <RefreshCw className="h-4 w-4 mr-2" /> Reset
+                        <RefreshCw className="h-4 w-4 md:mr-2" />{' '}
+                        <span className="hidden md:block">Reset</span>
                     </Button>
                 </div>
                 <AddNewMeeting />
@@ -144,7 +146,7 @@ export function DataTable<TData, TValue>({
                                 .getColumn('tag')
                                 ?.setFilterValue(event.target.value)
                         }
-                        className="max-w-48"
+                        className="w-[100px] md:max-w-48"
                     />
                     <DateTimePicker
                         setDate={setStartTime}
@@ -153,7 +155,7 @@ export function DataTable<TData, TValue>({
                         placeholder="Date start"
                     />
                     <Select value={status} onValueChange={handleStatusChange}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[100px] md:w-[150px]">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -162,12 +164,6 @@ export function DataTable<TData, TValue>({
                                 className="text-green-500 hover:text-green-500"
                             >
                                 Upcoming
-                            </SelectItem>
-                            <SelectItem
-                                value="0"
-                                className="text-sky-500 hover:text-sky-500"
-                            >
-                                Today
                             </SelectItem>
                             <SelectItem
                                 value="-1"
@@ -189,7 +185,7 @@ export function DataTable<TData, TValue>({
                                 .getColumn('location')
                                 ?.setFilterValue(event.target.value)
                         }
-                        className="w-48"
+                        className="w-[200px]"
                     />
                 </CollapsibleContent>
             </Collapsible>

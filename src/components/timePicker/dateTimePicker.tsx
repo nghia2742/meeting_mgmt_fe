@@ -45,7 +45,7 @@ export function DateTimePicker({ date, setDate, isTime, placeholder }: Props) {
         <Button
           variant={"outline"}
           className={cn(
-            "w-[280px] justify-start text-left font-normal",
+            "w-full max-w-[200px] justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
         >

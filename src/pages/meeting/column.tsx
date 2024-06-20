@@ -78,22 +78,17 @@ export const columns: ColumnDef<Meeting>[] = [
         accessorKey: 'status',
         header: 'Status',
         cell: ({ row }) => {
-            const { formattedDate } = formatDateTime(row.getValue('startTime'));
-            const dateComparison = compareDate(formattedDate);
-            
+            const dateComparison = compareDate(row.getValue('startTime'));
             switch (dateComparison) {
                 case -1:
                     return <div className='border border-destructive p-1 rounded-lg text-center text-destructive'>Close</div>
-                case 0:
-                    return <div className='border border-sky-500 p-1 rounded-lg text-center text-sky-500'>Today</div>
                 case 1:
                     return <div className='border border-green-500 p-1 rounded-lg text-center text-green-500'>Upcoming</div>
             }
             
         },
         filterFn: (row, columnId, filterValue) => {
-            const { formattedDate } = formatDateTime(row.getValue('startTime'));
-            const dateComparison = compareDate(formattedDate);
+            const dateComparison = compareDate(row.getValue('startTime'));
             return dateComparison.toString() === filterValue;
         }
     },

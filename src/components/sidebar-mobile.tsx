@@ -69,7 +69,7 @@ function SidebarMobile() {
                         <Video className="h-4 w-4" />
                         Meeting
                     </Link>
-                    <Link
+                    {/* <Link
                         href="/storage"
                         className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/storage')
                                 ? 'bg-muted text-primary'
@@ -78,7 +78,7 @@ function SidebarMobile() {
                     >
                         <Package2 className="h-4 w-4" />
                         Storage
-                    </Link>
+                    </Link> */}
                     <Link
                         href="/meetinghistory"
                         className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${isActive('/meetinghistory')
