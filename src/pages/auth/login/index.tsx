@@ -121,7 +121,9 @@ function LoginPage() {
                   )}
                 />
                 {isLoginError && (
-                  <p className='text-destructive'>{loginError.message}</p>
+                  <p className='text-destructive'>
+                    {loginError.response.data.message}
+                  </p>
                 )}
                 <Button className='w-full' type='submit' disabled={isLoggingIn}>
                   {isLoggingIn && (
