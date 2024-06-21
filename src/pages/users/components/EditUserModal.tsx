@@ -12,6 +12,9 @@ import { UserProfile } from "@/types/userProfile.type";
 import { uploadToCloudinary } from "@/lib/apiUser";
 import AvatarSection from "../../../components/modal/components/AvatarSection";
 import UserProfileForm from "../../../components/modal/components/UserProfileForm";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -108,7 +111,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
+      <DialogContent className={`sm:max-w-[425px] overflow-y-auto max-h-[90vh] ${inter.className}`}>
         <DialogHeader className="flex justify-center items-center h-full">
           <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
           {user && (

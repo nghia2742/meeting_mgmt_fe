@@ -44,8 +44,6 @@ const formSchema = z.object({
 
 type FormSchemaType = z.infer<typeof formSchema>;
 
-// const inter = Inter({ subsets: ['latin'] });
-
 export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
     const { setIsOpenEditForm } = useMeetingStore();
     const [isSubmit, setIsSubmit] = useState(false);
@@ -166,7 +164,6 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                     });
                 })
                 .catch((error) => {
-                    setIsOpenEditForm();
                     setIsSubmit(false);
                     return toast({
                         title: error.response.data.message,
