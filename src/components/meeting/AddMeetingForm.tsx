@@ -78,8 +78,8 @@ export default function AddMeetingForm() {
             title: '',
             tag: '',
             description: '',
-            startTime: new Date(),
-            endTime: new Date(),
+            startTime: undefined,
+            endTime: undefined,
             location: '',
             note: '',
             attendees: [],
@@ -310,7 +310,7 @@ export default function AddMeetingForm() {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Title
+                                    Title <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -376,7 +376,7 @@ export default function AddMeetingForm() {
                         render={({ field }) => (
                             <FormItem className="col-span-1">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Start time
+                                    Start time <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <Popover>
                                     <FormControl>
@@ -426,7 +426,7 @@ export default function AddMeetingForm() {
                         render={({ field }) => (
                             <FormItem className="col-span-1">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    End time
+                                    End time <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <Popover>
                                     <FormControl>
@@ -500,7 +500,7 @@ export default function AddMeetingForm() {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Location
+                                    Location <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input

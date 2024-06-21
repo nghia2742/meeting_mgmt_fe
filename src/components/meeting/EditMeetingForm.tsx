@@ -190,7 +190,7 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Title
+                                    Title  <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -256,7 +256,7 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                         render={({ field }) => (
                             <FormItem className="col-span-1">
                                 <FormLabel className="block text-sm font-bold mb-1">
-                                    Start time
+                                    Start time <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <Popover>
                                     <FormControl>
@@ -306,7 +306,7 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                         render={({ field }) => (
                             <FormItem className="col-span-1">
                                 <FormLabel className="block text-sm font-bold mb-1">
-                                    End time
+                                    End time <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <Popover>
                                     <FormControl>
@@ -359,7 +359,7 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Description
+                                    Description 
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
@@ -380,7 +380,7 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Location
+                                    Location <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input
