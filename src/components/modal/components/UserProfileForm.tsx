@@ -55,6 +55,8 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                     Email
                 </Label>
                 <Input
+                    disabled
+                    readOnly
                     id="email"
                     {...register("email", { required: "Email is required" })}
                     className="col-span-3"
