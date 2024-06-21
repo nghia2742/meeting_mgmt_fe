@@ -20,7 +20,6 @@ import AddNewAttendee from '@/components/modal/AddNewAttendee'
 import AddNewFile from '@/components/modal/AddNewFile'
 import PreviewMeetingMinute from '@/components/modal/PreviewMeetingMinute'
 import { MeetingMinutes } from '@/types/meeting-minutes.type'
-import ErrorMessage from '@/components/error/ErrorMessage'
 import useCurrentUser from '@/hooks/useCurrentUser'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import Head from 'next/head';
@@ -29,6 +28,7 @@ import EditMeeting from '@/components/modal/EditMeeting'
 import { useAllFiles } from '@/hooks/useFile'
 import { useAttendees } from '@/hooks/useAttendee'
 import { useAllUser } from '@/hooks/useUser'
+import ErrorMeetingDetail from '@/components/error/ErrorMeetingDetail'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -47,33 +47,8 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     const { user } = useCurrentUser();
     const { user: userCreated } = useCreatedBy(meeting ? meeting.createdBy : '');
 
-    if (statusCode) {
-        if (statusCode === 500) {
-            return (
-                <MainLayout>
-                    <ErrorMessage
-                        title="Not found this meeting"
-                        img="/images/notfound.png"
-                    />
-                </MainLayout>
-            )
-        }
-        if (statusCode === 403) {
-            return (
-                <MainLayout>
-                    <ErrorMessage
-                        title="You can't access this meeting"
-                        content="Please make sure you're assinged to this meeting"
-                        img="/images/restricted-area.png"
-                    />
-                </MainLayout>
-            )
-        }
-        return (
-            <MainLayout>
-                Error
-            </MainLayout>
-        )
+    if(statusCode) {
+        return <ErrorMeetingDetail statusCode={statusCode}/>
     }
 
     const { isLoading: isLoadingFiles, data: files, refetch: refreshFiles } = useAllFiles(meeting.id);
