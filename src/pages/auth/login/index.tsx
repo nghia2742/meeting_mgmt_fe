@@ -51,7 +51,7 @@ function LoginPage() {
       <Head>
         <title>Login</title>
       </Head>
-      <div className='w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-screen'>
+      <div className='w-full lg:grid lg:grid-cols-2 lg:min-h-screen'>
         <div className='hidden bg-[#94d0fd8c] lg:block p-20 relative'>
           <Link href='/' className='absolute top-0 left-0 m-2'>
             <Image
