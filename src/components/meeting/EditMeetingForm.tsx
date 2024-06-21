@@ -68,12 +68,22 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
         getValues,
         setValue,
         setError,
-        clearErrors,
+        clearErrors
     } = form;
 
+    const currentMeeting = {
+        title: meeting.title,
+        tag: meeting.tag,
+        description: meeting.description,
+        startTime: meeting.startTime,
+        endTime: meeting.endTime,
+        location: meeting.location,
+        note: meeting.note,
+    }
+
     // Tags
-    const tagToArray = meeting.tag.split(', ');
-    const [listTags, setListTags] = useState<string[]>(tagToArray);
+    const tagToArray = meeting.tag!==''?meeting.tag.split(', '):[];
+    const [listTags, setListTags] = useState(tagToArray);
     const [tagInput, setTagInput] = useState<string>('');
 
     // HANDLE TAGS
@@ -127,9 +137,25 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
             clearErrors('endTime');
         }
 
+        let commitData: Partial<Meeting> = {
+            title: data.title,
+            tag: data.tag,
+            description: data.description,
+            note: data.note,
+        }
+        if (currentMeeting.location !== getValues('location')) {
+            commitData['location'] = getValues('location')
+        }
+        if (currentMeeting.startTime.toString() !== getValues('startTime').toISOString()) {
+            commitData['startTime'] = new Date(getValues('startTime').toISOString())
+        }
+        if (currentMeeting.endTime.toString() !== getValues('endTime').toISOString()) {
+            commitData['endTime'] = new Date(getValues('endTime').toISOString())
+        }
+
         try {
             apiClient
-                .patch(`/meetings/${meeting.id}`, data)
+                .patch(`/meetings/${meeting.id}`, commitData)
                 .then(async (response) => {
                     setIsOpenEditForm();
                     setIsSubmit(false);
