@@ -73,9 +73,9 @@ function User() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="container mx-auto py-10">
+        <div className="w-full mx-auto py-10">
           <div className="flex items-center justify-between gap-2 py-4">
-            <form className="flex-grow w-full sm:w-auto" onSubmit={handleSearch}>
+            <form className="flex-grow w-full max-w-[200px] md:max-w-md" onSubmit={handleSearch}>
               <div className="relative flex items-center">
                 <button type="submit" className="absolute left-0 pl-3">
                   <SearchIcon />
@@ -90,7 +90,7 @@ function User() {
                 />
               </div>
             </form>
-            <Button onClick={openModal}><Plus className='h-4- w-4 md:mr-2'/> Create User</Button>
+            <Button onClick={openModal}><Plus className='h-4 w-4 md:mr-2'/> <span className="hidden md:block">Create User</span></Button>
           </div>
           <div className="rounded-md ">
             <DataTableDemo users={users} setUsers={setUsers} />

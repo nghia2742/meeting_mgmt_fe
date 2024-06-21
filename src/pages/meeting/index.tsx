@@ -40,7 +40,7 @@ const Meeting = () => {
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-                <div className="container mx-auto py-10">
+                <div className="w-full mx-auto py-10">
                     <DataTable columns={columns} data={meetings || []} />
                 </div>
             </MainLayout>
