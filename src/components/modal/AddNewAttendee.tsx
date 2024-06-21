@@ -26,6 +26,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
 
     const handleAttendeeChange = (selectedOption: Attendee | null) => {
         setIsEmptyAttendee(false);
+        console.log(attendeesAdd);
         if (selectedOption) {
             const duplicateAttendees = attendeesAdd.find((attendee) => attendee.id === selectedOption.id);
             if (duplicateAttendees) {
@@ -81,7 +82,6 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                     description: error.response.data.message,
                     variant: "destructive",
                 });
-                onCloseModal();
                 setIsAddingAttendees(false);
             }
         }
