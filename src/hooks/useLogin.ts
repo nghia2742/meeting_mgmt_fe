@@ -13,7 +13,7 @@ const fetchLogin = async (credentials: LoginRequest) => {
   return response.data;
 };
 
-const useLogin = () => {
+const useLogin = (handleLoginError: (error: any) => void) => {
   const setTokens = useAuthStore((state) => state.setTokens);
 
   const router = useRouter();
@@ -28,6 +28,7 @@ const useLogin = () => {
       fetchUserProfile();
       router.replace("/dashboard");
     },
+    onError: (error) => handleLoginError(error),
   });
 };
 
