@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,6 +27,8 @@ const loginSchema = z.object({
 });
 
 function LoginPage() {
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -35,12 +37,26 @@ function LoginPage() {
     },
   });
 
+  const { watch, control, handleSubmit } = form;
+
+  const handleLoginError = (error: any) => {
+    setLoginError(error.response.data.message);
+  };
+
   const {
     mutate: handleLogin,
     isPending: isLoggingIn,
     isError: isLoginError,
-    error: loginError,
-  } = useLogin();
+  } = useLogin(handleLoginError);
+
+  useEffect(() => {
+    const subscription = watch(() => {
+      if (loginError) {
+        setLoginError(null);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, loginError]);
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     handleLogin(values);
@@ -82,12 +98,9 @@ function LoginPage() {
               </p>
             </div>
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className='grid gap-4'
-              >
+              <form onSubmit={handleSubmit(onSubmit)} className='grid gap-4'>
                 <FormField
-                  control={form.control}
+                  control={control}
                   name='email'
                   render={({ field }) => (
                     <FormItem className='grid gap-2 mb-2'>
@@ -104,7 +117,7 @@ function LoginPage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={control}
                   name='password'
                   render={({ field }) => (
                     <FormItem className='grid gap-2 mb-2'>
@@ -120,10 +133,8 @@ function LoginPage() {
                     </FormItem>
                   )}
                 />
-                {isLoginError && (
-                  <p className='text-destructive'>
-                    {loginError.response.data.message}
-                  </p>
+                {isLoginError && loginError && (
+                  <p className='text-destructive'>{loginError}</p>
                 )}
                 <Button className='w-full' type='submit' disabled={isLoggingIn}>
                   {isLoggingIn && (

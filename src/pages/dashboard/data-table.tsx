@@ -95,13 +95,18 @@ export function DashboardDataTable<TData, TValue>({
           className='max-w-sm'
         />
         <div className='flex ml-auto'>
-          <Button className='mx-2' variant='outline' onClick={onSetAllMeetings}>
-            All Meetings
+          <Button
+            className='mx-2 text-sm line-clamp-1'
+            variant='outline'
+            onClick={onSetAllMeetings}
+          >
+            Display All Meetings
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild className='mr-2'>
               <Button variant='outline'>
-                <Filter className='mr-2 h-4 w-4' /> <span>Filter</span>
+                <Filter className='mr-2 h-4 w-4' />
+                <span className='hidden sm:block'>Filter</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='center'>
@@ -205,8 +210,8 @@ export function DashboardDataTable<TData, TValue>({
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>
         <div className='flex-1 text-sm text-muted-foreground'>
-          {table.getFilteredSelectedRowModel()?.rows.length} of{" "}
-          {table.getFilteredRowModel()?.rows.length} row(s) selected.
+          Page {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount()}.
         </div>
         <div className='space-x-2'>
           <Button
