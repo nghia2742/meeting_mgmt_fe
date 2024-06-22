@@ -10,24 +10,25 @@ import {
 import apiClient from '@/lib/apiClient'
 import { Meeting } from '@/types/meeting.type'
 import { calcMinutes, formatDateTime } from '@/utils/datetime.util'
-import { Eye, FilePlus2, Slash, UserRoundPlus, History, SeparatorVertical, Video } from 'lucide-react'
+import { Eye, FilePlus2, Slash, UserRoundPlus, History, Video } from 'lucide-react'
 import Link from 'next/link'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AttendeeList } from '@/components/meetingDetail/attendeelist/AttendeeList'
 import FileList from '@/components/meetingDetail/fileList/FileList'
 import AddNewAttendee from '@/components/modal/AddNewAttendee'
 import AddNewFile from '@/components/modal/AddNewFile'
 import PreviewMeetingMinute from '@/components/modal/PreviewMeetingMinute'
-import { Attendee } from '@/types/attendee.type'
-import { MeetingFile } from '@/types/meeting.file.type'
 import { MeetingMinutes } from '@/types/meeting-minutes.type'
-import ErrorMessage from '@/components/error/ErrorMessage'
 import useCurrentUser from '@/hooks/useCurrentUser'
 import useCreatedBy from '@/hooks/useCreatedBy'
 import Head from 'next/head';
-import { useQuery } from '@tanstack/react-query'
 import { Separator } from '@/components/ui/separator'
+import EditMeeting from '@/components/modal/EditMeeting'
+import { useAllFiles } from '@/hooks/useFile'
+import { useAttendees } from '@/hooks/useAttendee'
+import { useAllUser } from '@/hooks/useUser'
+import ErrorMeetingDetail from '@/components/error/ErrorMeetingDetail'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -36,71 +37,23 @@ interface MeetingDetailPageProps {
 
 const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeting, statusCode }) => {
 
-    if (statusCode) {
-        if (statusCode === 500) {
-            return (
-                <MainLayout>
-                    <ErrorMessage
-                        title="Not found this meeting"
-                        img="/images/notfound.png"
-                    />
-                </MainLayout>
-            )
-        }
-        if (statusCode === 403) {
-            return (
-                <MainLayout>
-                    <ErrorMessage
-                        title="You can't access this meeting"
-                        content="Please make sure you're assinged to this meeting"
-                        img="/images/restricted-area.png"
-                    />
-                </MainLayout>
-            )
-        }
-        return (
-            <MainLayout>
-                Error
-            </MainLayout>
-        )
-    }
-
-    const [meeting, setMeeeting] = useState(initialMeeting);
-    const { formattedDate, formattedTime } = formatDateTime(meeting.startTime.toString());
-    const minutes = calcMinutes(meeting.startTime.toString(), meeting.endTime.toString());
+    const [meeting, setMeeeting] = useState(initialMeeting || {});
+    const { formattedDate, formattedTime } = formatDateTime(meeting ? meeting?.startTime?.toString() : '');
+    const minutes = calcMinutes(meeting && meeting?.startTime?.toString(), meeting && meeting?.endTime?.toString());
     const [isOpenModalAddAttendee, setIsOpenModalAddAttendee] = useState(false);
     const [isOpenModalAddFile, setIsOpenModalAddFile] = useState(false);
     const [isOpenPreviewMeeetingMinute, setIsOpenPreviewMeeetingMinute] = useState(false);
-    // const [files, setFiles] = useState<MeetingFile[]>();
-    const [users, setUsers] = useState<Attendee[]>();
     const [latestMeetingMinutes, setLatestMeetingMinutes] = useState<MeetingMinutes>();
     const { user } = useCurrentUser();
-    const { user: userCreated } = useCreatedBy(meeting.createdBy);
+    const { user: userCreated } = useCreatedBy(meeting ? meeting.createdBy : '');
 
+    if(statusCode) {
+        return <ErrorMeetingDetail statusCode={statusCode}/>
+    }
 
-    const fetchFiles = async () => {
-        const res = await apiClient.get(`/files/${meeting.id}`);
-        if (res && res.data) {
-            return res.data;
-        }
-    };
-
-    const fetchAttendees = async () => {
-        const res = await apiClient.get(`/usermeetings/attendees/${meeting.id}`);
-        if (res && res.data) {
-            return res.data;
-        }
-    };
-
-    const { isLoading: isLoadingFiles, data: files, refetch: refreshFiles } = useQuery<MeetingFile[]>({
-        queryKey: ["meeting-details-files"],
-        queryFn: fetchFiles,
-    })
-
-    const { isLoading: isLoadingAttendees, data: attendees, refetch: refreshAttendees } = useQuery<Attendee[]>({
-        queryKey: ["meeting-details-attendees"],
-        queryFn: fetchAttendees,
-    })
+    const { isLoading: isLoadingFiles, data: files, refetch: refreshFiles } = useAllFiles(meeting.id);
+    const { isLoading: isLoadingAttendees, data: attendees, refetch: refreshAttendees } = useAttendees(meeting.id);
+    const { data: users } = useAllUser();
 
     const fetchMeeting = async () => {
         let response = await apiClient.get(`/meetings/${initialMeeting.id}`);
@@ -109,25 +62,16 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
         }
     }
 
-    const fetchAllUser = useCallback(async () => {
-        const res = await apiClient.get(`/users`);
-        if (res && res.data) {
-            setUsers(res.data);
-        }
-    }, []);
-
-    const fetchLatestMeetingMinutes = useCallback(async () => {
+    const fetchLatestMeetingMinutes = async() => {
         const res = await apiClient.get(`/meetingminutes/latest/${meeting.id}`);
         if (res && res.data) {
             setLatestMeetingMinutes(res.data);
         } else {
             setLatestMeetingMinutes(undefined);
         }
-    }, []);
+    };
 
     useEffect(() => {
-        fetchAttendees();
-        fetchAllUser();
         fetchLatestMeetingMinutes();
     }, []);
 
@@ -166,12 +110,18 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                             <div className="space-y-4">
                                 <div className="space-x-0 space-y-10 lg:space-y-0 lg:flex lg:space-x-20">
                                     <div className="space-y-4 text-sm w-[100%] lg:w-[50%]">
-                                        <div className="flex items-center space-x-2">
+                                        <div className="relative flex items-center space-x-2">
                                             <Video className="h-5 w-5" />
                                             <p className='font-bold text-xl'>{meeting.title}</p>
                                             {meeting.tag.split(', ').map((tagItem: string, index: number) => (
                                                 <div key={index} className='px-3 py-0.5 rounded-full text-[10px] text-black border border-black'>#{tagItem}</div>
                                             ))}
+                                            {user?.id === meeting.createdBy ?
+                                                <div className='absolute top-0 right-0'>
+                                                    <EditMeeting meeting={meeting} />
+                                                </div>
+                                                : ''}
+
                                         </div>
                                         <div className="flex text-sm items-center space-x-3">
                                             <p className='font-bold'>Date: {formattedDate}</p>
@@ -234,7 +184,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                             }
                                         </div>
                                         <AttendeeList
-                                            attendees={attendees || []}
+                                            attendees={attendees}
                                             meetingId={meeting.id}
                                             refreshData={refreshAttendees}
                                             canHaveActions={user?.id === meeting.createdBy}

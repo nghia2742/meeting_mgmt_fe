@@ -6,6 +6,13 @@ const fetchFilteredUsers = async (email: string) => {
     return response.data;
 };
 
+const fetchAllUser = async() => {
+    const res = await apiClient.get(`/users`);
+    if (res && res.data) {
+        return res.data;
+    }
+};
+
 export const useFilteredUsers = (email: string)  => {
     return useQuery({
         queryKey: ['filteredUsers', email],
@@ -13,3 +20,10 @@ export const useFilteredUsers = (email: string)  => {
         enabled: !!email
     });
 };
+
+export const useAllUser = ()  => {
+    return useQuery({
+        queryKey: ['allUser'],
+        queryFn: () => fetchAllUser()
+    });
+}

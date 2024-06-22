@@ -32,7 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ClipLoader from "react-spinners/ClipLoader";
-import { ListFilter } from "lucide-react";
+import { Filter, ListFilter } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -101,7 +101,7 @@ export function DashboardDataTable<TData, TValue>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild className='mr-2'>
               <Button variant='outline'>
-                <ListFilter className='mr-1' /> <span>Filter</span>
+                <Filter className='mr-2 h-4 w-4' /> <span>Filter</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='center'>

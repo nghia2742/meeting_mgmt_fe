@@ -94,7 +94,7 @@ function Dashboard() {
               <TabsTrigger value='table'>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Table />
+                    <Table className="h-4 w-4" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Table</p>
@@ -104,7 +104,7 @@ function Dashboard() {
               <TabsTrigger value='calendar'>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <CalendarDays />
+                    <CalendarDays className="h-4 w-4" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Calendar</p>
