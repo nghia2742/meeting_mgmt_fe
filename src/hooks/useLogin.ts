@@ -14,9 +14,9 @@ const fetchLogin = async (credentials: LoginRequest) => {
     return response.data;
 };
 
-const useLogin = () => {
-    const setTokens = useAuthStore((state) => state.setTokens);
 
+const useLogin = (handleLoginError: (error: any) => void) => {
+    const setTokens = useAuthStore((state) => state.setTokens);
     const router = useRouter();
     const fetchUserProfile = useUserStore((state) => state.fetchUserProfile);
 
@@ -31,6 +31,7 @@ const useLogin = () => {
             router.replace("/dashboard");
         },
     });
+
 };
 
 export default useLogin;

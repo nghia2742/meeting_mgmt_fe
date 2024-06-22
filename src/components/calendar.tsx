@@ -1,4 +1,11 @@
-import { Calendar, momentLocalizer, Event, View } from "react-big-calendar";
+import { useState } from "react";
+import {
+  Calendar,
+  momentLocalizer,
+  Event,
+  View,
+  ToolbarProps,
+} from "react-big-calendar";
 import moment from "moment-timezone";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
@@ -6,7 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 moment.tz.setDefault("UTC");
 const localizer = momentLocalizer(moment);
@@ -15,6 +22,102 @@ interface CalendarProps {
   meetings: Event[];
   onDateClick: (date: string) => void;
 }
+
+const CustomizedToolbar = (props: ToolbarProps) => {
+  const goToBack = () => {
+    props.onNavigate("PREV");
+  };
+
+  const goToNext = () => {
+    props.onNavigate("NEXT");
+  };
+
+  const goToCurrent = () => {
+    props.onNavigate("TODAY");
+  };
+
+  const goToPreviousYear = () => {
+    const date = moment(props.date).subtract(1, "year").toDate();
+    props.onNavigate("DATE", date);
+  };
+
+  const goToNextYear = () => {
+    const date = moment(props.date).add(1, "year").toDate();
+    props.onNavigate("DATE", date);
+  };
+
+  const label = () => {
+    const date = moment(props.date);
+    return (
+      <span className='text-lg font-bold'>
+        {date.format("MMMM")} {date.format("YYYY")}
+      </span>
+    );
+  };
+
+  const handleViewChange = (view: View) => {
+    props.onView(view);
+  };
+
+  return (
+    <div className='flex flex-col md:flex-row justify-between items-center mb-4 '>
+      <div>
+        <Button
+          variant='outline'
+          onClick={goToBack}
+          className='rounded-r-none hover:bg-customGray '
+        >
+          Back
+        </Button>
+        <Button
+          variant='outline'
+          onClick={goToCurrent}
+          className='rounded-none hover:bg-customGray '
+        >
+          Today
+        </Button>
+        <Button
+          variant='outline'
+          onClick={goToNext}
+          className='rounded-l-none hover:bg-customGray'
+        >
+          Next
+        </Button>
+      </div>
+      <div className='text-center my-2 md:my-0'>
+        <button
+          onClick={goToPreviousYear}
+          className='hover:font-bold transition-colors'
+        >
+          {"<<"}
+        </button>
+        <span className='mx-4'>{label()}</span>
+        <button
+          onClick={goToNextYear}
+          className='hover:font-bold transition-colors'
+        >
+          {">>"}
+        </button>
+      </div>
+      <div className='flex'>
+        {["month", "week", "day", "agenda"].map((viewToolbar) => (
+          <Button
+            key={viewToolbar}
+            variant='outline'
+            onClick={() => handleViewChange(viewToolbar as View)}
+            className={`rounded-none first:rounded-l last:rounded-r hover:bg-customGray ${
+              props.view === viewToolbar
+                ? "bg-customGray shadow-inset-custom"
+                : ""
+            }`}
+          >
+            {viewToolbar.charAt(0).toUpperCase() + viewToolbar.slice(1)}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
   const [view, setView] = useState<View>("month");
@@ -78,6 +181,7 @@ const CustomizedCalendar = ({ meetings, onDateClick }: CalendarProps) => {
         dayPropGetter={dayPropGetter}
         components={{
           eventWrapper: EventWrapper,
+          toolbar: CustomizedToolbar,
         }}
         view={view}
         date={date}

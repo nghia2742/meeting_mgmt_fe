@@ -20,6 +20,8 @@ const config = {
     extend: {
       colors: {
         customGreen: "#0B8043",
+        borderGray: "#adadad",
+        customGray: "#e6e6e6",
         blurGray: "#828282",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -54,6 +56,9 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      boxShadow: {
+        'inset-custom': 'inset 0 3px 5px rgba(0, 0, 0, 0.125)',
       },
       borderRadius: {
         lg: "var(--radius)",
