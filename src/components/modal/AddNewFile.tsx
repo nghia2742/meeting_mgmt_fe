@@ -58,6 +58,31 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
     }, []);
 
     const createFile = async (acceptedFiles: File[]) => {
+        const MAX_TOTAL_SIZE = 100 * 1024 * 1024; //100MB
+        const MAX_FILE_SIZE = 20 * 1024 * 1024; //20MB
+        for(let acceptedFile of acceptedFiles) {
+            if(acceptedFile.size > MAX_FILE_SIZE) {
+                toast({
+                    title: "Error",
+                    description: "File size exceeds 20MB. Please upload smaller files.",
+                    variant: "destructive",
+                });
+                setIsCreatingFiles(false);
+                return ;
+            }
+        }
+        const totalSize = acceptedFiles.reduce((acc, file) => acc + file.size, 0);
+    
+        if (totalSize > MAX_TOTAL_SIZE) {
+            toast({
+                title: "Error",
+                description: "Total file size exceeds 100MB. Please upload smaller files.",
+                variant: "destructive",
+            });
+            setIsCreatingFiles(false);
+            return;
+        }
+    
         let countCreateFile = 0;
         for (let acceptedFile of acceptedFiles) {
             const formData = new FormData();
@@ -80,6 +105,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                 }
             }
         }
+    
         if (countCreateFile === acceptedFiles.length) {
             toast({
                 title: "Successfully",
@@ -91,6 +117,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
             onCloseModal();
         }
     };
+    
 
     const onDeleteImg = (index: number) => {
         const newFiles = [...files];
@@ -114,13 +141,11 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
             try {
                 await createFile(acceptedFiles);
             } catch (error: any) {
-                console.error('Error uploading file:', error.response.data.message);
                 toast({
                     title: "Uh oh! Something went wrong",
                     description: error.response.data.message,
                     variant: "destructive",
                 });
-                onCloseModal();
                 setIsCreatingFiles(false);
             }
         }
@@ -140,6 +165,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     <Input multiple {...getInputProps()} />
                     <FileIcon size={40} className="text-gray-500 mb-2" />
                     <p className="text-gray-500">Drag or drop file here</p>
+                    <p className='text-gray-500 text-[13px]'>Files up to 20MB</p>
                 </div>
                 {isEmptyFile && (
                     <p className="text-red-500 text-sm">Please upload at least one file</p>

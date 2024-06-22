@@ -29,6 +29,7 @@ import { useAllFiles } from '@/hooks/useFile'
 import { useAttendees } from '@/hooks/useAttendee'
 import { useAllUser } from '@/hooks/useUser'
 import ErrorMeetingDetail from '@/components/error/ErrorMeetingDetail'
+import { getCookieValue } from '@/utils/cookie.util'
 
 interface MeetingDetailPageProps {
     meeting: Meeting;
@@ -36,7 +37,7 @@ interface MeetingDetailPageProps {
 }
 
 const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeting, statusCode }) => {
-
+    
     const [meeting, setMeeeting] = useState(initialMeeting || {});
     const { formattedDate, formattedTime } = formatDateTime(meeting ? meeting?.startTime?.toString() : '');
     const minutes = calcMinutes(meeting && meeting?.startTime?.toString(), meeting && meeting?.endTime?.toString());
@@ -244,9 +245,14 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
 export async function getServerSideProps({ req, params }: any) {
     try {
         const { id } = params;
+        if (!id) {
+            throw new Error("ID is missing or undefined");
+        }
+        const { cookie } = req.headers;
+        const accessToken = getCookieValue(cookie, "accessToken");
         let response = await apiClient.get(`/meetings/${id}`, {
             headers: {
-                Cookie: req.headers.cookie
+                Authorization: `Bearer ${accessToken}`
             }
         });
         return {
