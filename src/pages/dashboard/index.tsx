@@ -7,9 +7,7 @@ import CustomizedCalendar from "@/components/calendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isFutureDate } from "@/utils/time-picker.util";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
-import apiClient from "@/lib/apiClient";
 import Head from "next/head";
 import { CalendarDays, Table } from "lucide-react";
 import {
@@ -17,29 +15,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-const fetchMeetings = async () => {
-  const response = await apiClient.get("/usermeetings/meetings/attend");
-  return response?.data?.map((meeting: Meeting) => ({
-    ...meeting,
-    startTime: new Date(meeting.startTime),
-    endTime: new Date(meeting.endTime),
-  }));
-};
+import { useAllMeeting } from "@/hooks/useMeeting";
 
 function Dashboard() {
   const [filteredMeetings, setFilteredMeetings] = useState<Meeting[]>([]);
   const [selectedDate, setSelectedDate] = useState("");
 
-  const {
-    isLoading,
-    isError,
-    error,
-    data: meetings,
-  } = useQuery<Meeting[]>({
-    queryKey: ["dashboard-meetings"],
-    queryFn: fetchMeetings,
-  });
+  const { isLoading, isError, error, data: meetings } = useAllMeeting();
 
   useEffect(() => {
     if (meetings) {
@@ -84,34 +66,46 @@ function Dashboard() {
             <UpcomingMeetings
               meetings={
                 meetings?.filter((meeting) =>
-                  isFutureDate(meeting.startTime)
+                  isFutureDate(new Date(meeting.startTime))
                 ) ?? []
               }
             />
           )}
-          <Tabs defaultValue='table' className='w-full mt-9'>
+          <Tabs defaultValue='calendar' className='w-full mt-9'>
             <TabsList>
-              <TabsTrigger value='table'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Table className="h-4 w-4" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Table</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TabsTrigger>
               <TabsTrigger value='calendar'>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <CalendarDays className="h-4 w-4" />
+                    <CalendarDays className='h-4 w-4' />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Calendar</p>
                   </TooltipContent>
                 </Tooltip>
               </TabsTrigger>
+              <TabsTrigger value='table'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Table className='h-4 w-4' />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Table</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TabsTrigger>
             </TabsList>
+            <TabsContent value='calendar'>
+              <CustomizedCalendar
+                meetings={
+                  meetings?.map((meeting) => ({
+                    title: meeting.title,
+                    start: new Date(meeting.startTime),
+                    end: new Date(meeting.endTime),
+                  })) ?? []
+                }
+                onDateClick={handleDateClick}
+              />
+            </TabsContent>
             <TabsContent value='table'>
               <DashboardDataTable
                 columns={dashboardColumns}
@@ -119,18 +113,6 @@ function Dashboard() {
                 selectedDate={selectedDate}
                 isLoading={isLoading}
                 onSetAllMeetings={handleSetAllMeetings}
-              />
-            </TabsContent>
-            <TabsContent value='calendar'>
-              <CustomizedCalendar
-                meetings={
-                  meetings?.map((meeting) => ({
-                    title: meeting.title,
-                    start: meeting.startTime,
-                    end: meeting.endTime,
-                  })) ?? []
-                }
-                onDateClick={handleDateClick}
               />
             </TabsContent>
           </Tabs>

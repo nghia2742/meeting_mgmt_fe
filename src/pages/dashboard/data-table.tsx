@@ -147,7 +147,7 @@ export function DashboardDataTable<TData, TValue>({
           </DropdownMenu> */}
         </div>
       </div>
-      <div className='rounded-md border'>
+      <div className='rounded-md border shrink-0 overflow-auto md:shrink'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
