@@ -37,7 +37,7 @@ interface MeetingDetailPageProps {
 }
 
 const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeting, statusCode }) => {
-    
+
     const [meeting, setMeeeting] = useState(initialMeeting || {});
     const { formattedDate, formattedTime } = formatDateTime(meeting ? meeting?.startTime?.toString() : '');
     const minutes = calcMinutes(meeting && meeting?.startTime?.toString(), meeting && meeting?.endTime?.toString());
@@ -48,8 +48,8 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
     const { user } = useCurrentUser();
     const { user: userCreated } = useCreatedBy(meeting ? meeting.createdBy : '');
 
-    if(statusCode) {
-        return <ErrorMeetingDetail statusCode={statusCode}/>
+    if (statusCode) {
+        return <ErrorMeetingDetail statusCode={statusCode} />
     }
 
     const { isLoading: isLoadingFiles, data: files, refetch: refreshFiles } = useAllFiles(meeting.id);
@@ -63,7 +63,7 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
         }
     }
 
-    const fetchLatestMeetingMinutes = async() => {
+    const fetchLatestMeetingMinutes = async () => {
         const res = await apiClient.get(`/meetingminutes/latest/${meeting.id}`);
         if (res && res.data) {
             setLatestMeetingMinutes(res.data);
@@ -145,6 +145,12 @@ const MeetingDetail: React.FC<MeetingDetailPageProps> = ({ meeting: initialMeeti
                                             <p>Organised by: {userCreated?.fullName}</p>
                                         </div>
                                         <p className="text-gray-700 text-[13px]">{meeting.description}</p>
+                                        {meeting.note &&
+                                            <div className="text-gray-700 text-[13px] flex items-center space-x-1">
+                                                <p className='text-red-500'>*</p>
+                                                <p>Notes: {meeting.note}</p>
+                                            </div>
+                                        }
                                         <div className="lg:flex lg:space-x-4 space-y-4 lg:space-y-0">
                                             {latestMeetingMinutes &&
                                                 <Button className='text-[13px] w-full lg-w-auto p-0' variant={"secondary"}>
