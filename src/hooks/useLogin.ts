@@ -30,6 +30,7 @@ const useLogin = (handleLoginError: (error: any) => void) => {
             fetchUserProfile();
             router.replace("/dashboard");
         },
+        onError: (error) => handleLoginError(error),
     });
 
 };
