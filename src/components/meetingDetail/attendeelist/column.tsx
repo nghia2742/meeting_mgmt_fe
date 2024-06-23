@@ -47,6 +47,22 @@ export const columns: (meetingId: string, refreshData: () => void, canHaveAction
         header: "Avatar",
     },
     {
+        accessorKey: "attendStatus",
+        header: 'Attend Status',
+        cell: ({ row }) => {
+            const user = row.original;
+            let { attendStatus } = user;
+            return (
+                <div>
+                    {attendStatus === '1' ? <div className="text-center p-2 rounded-lg border border-green-500 text-green-500">Approved</div> : 
+                        attendStatus === '0' ? <div className="text-center p-2 rounded-lg border border-yellow-500 text-yellow-500">Pending</div> : 
+                        attendStatus === '2'? <div className="text-center p-2 rounded-lg border border-destructive text-destructive">Rejected</div> : null
+                    }
+                </div>
+            )
+        }
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
             const user = row.original;
