@@ -12,10 +12,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createUser } from "@/lib/apiUser";
 import { Lock, Mail, UserCheck } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import ClipLoader from "react-spinners/ClipLoader";
+import { createUser } from "@/hooks/useUser";
 
 const CreateUserSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),

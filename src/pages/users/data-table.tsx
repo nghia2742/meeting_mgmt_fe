@@ -25,11 +25,11 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { UserProfile } from "@/types/userProfile.type";
-import { getUser, softDeleteUser, updateUserProfile } from "@/lib/apiUser";
 import { DeleteUserModal } from "./components/DeleteUserModal";
 import EditUserModal from "./components/EditUserModal";
 import { getColumns } from "./column";
 import { toast } from "@/components/ui/use-toast";
+import { getUser, softDeleteUser, updateUserProfile } from "@/hooks/useUser";
 
 interface DataTableDemoProps {
   users: UserProfile[];

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { UserProfile } from "@/types/userProfile.type";
-import { fetchUserProfile as apiFetchUserProfile } from "@/lib/apiUser";
+import { fetchUserProfile as apiFetchUserProfile } from "@/hooks/useUser";
 
 interface UserState {
   userProfile: UserProfile | null;
