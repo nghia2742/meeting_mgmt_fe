@@ -165,7 +165,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     <Input multiple {...getInputProps()} />
                     <FileIcon size={40} className="text-gray-500 mb-2" />
                     <p className="text-gray-500">Drag or drop file here</p>
-                    <p className='text-gray-500 text-[13px]'>Files up to 20MB</p>
+                    <p className='text-gray-500 text-[13px]'>Files up to 100MB</p>
                 </div>
                 {isEmptyFile && (
                     <p className="text-red-500 text-sm">Please upload at least one file</p>
