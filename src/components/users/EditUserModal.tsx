@@ -9,8 +9,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UserProfile } from "@/types/userProfile.type";
-import AvatarSection from "../../../components/modal/components/AvatarSection";
-import UserProfileForm from "../../../components/modal/components/UserProfileForm";
+import AvatarSection from "../userProfile/AvatarSection";
+import UserProfileForm from "../userProfile/UserProfileForm";
 import { Inter } from 'next/font/google';
 import { uploadToCloudinary } from "@/hooks/useUser";
 
