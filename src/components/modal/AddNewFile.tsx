@@ -208,6 +208,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                     <div className="flex space-x-4 justify-end">
                         <Button
                             onClick={onAddNewFile}
+                            disabled={isCreatingFiles}
                         >
                             {isCreatingFiles && (
                                 <ClipLoader

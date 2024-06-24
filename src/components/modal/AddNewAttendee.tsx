@@ -107,6 +107,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                     <div className="flex space-x-4 justify-end">
                         <Button
                             onClick={handleAddAttendees}
+                            disabled={isAddingAttendees}
                         >
                             {isAddingAttendees && (
                                 <ClipLoader
