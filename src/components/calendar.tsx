@@ -48,11 +48,23 @@ const CustomizedToolbar = (props: ToolbarProps) => {
 
   const label = () => {
     const date = moment(props.date);
-    return (
-      <span className='text-lg font-bold'>
-        {date.format("MMMM")} {date.format("YYYY")}
-      </span>
-    );
+    switch (props.view) {
+      case "month":
+      case "week":
+        return (
+          <span className='text-lg font-bold'>{date.format("MMMM YYYY")}</span>
+        );
+      case "day":
+        return (
+          <span className='text-lg font-bold'>
+            {date.format("MMMM DD, YYYY")}
+          </span>
+        );
+      default:
+        return (
+          <span className='text-lg font-bold'>{date.format("MMMM YYYY")}</span>
+        );
+    }
   };
 
   const handleViewChange = (view: View) => {
