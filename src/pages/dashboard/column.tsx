@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { isFutureDate } from "@/utils/time-picker.util";
+import { compareDate } from "@/utils/datetime.util";
 
 export const dashboardColumns: ColumnDef<Meeting>[] = [
   // {
@@ -53,6 +54,46 @@ export const dashboardColumns: ColumnDef<Meeting>[] = [
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       );
+    },
+  },
+  {
+    accessorKey: "tag",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tag
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const startTime = row.original.startTime;
+      const dateComparison = compareDate(new Date(startTime).toISOString());
+      switch (dateComparison) {
+        case -1:
+          return (
+            <div className='border border-destructive p-1 rounded-lg text-center text-destructive'>
+              Close
+            </div>
+          );
+        case 1:
+          return (
+            <div className='border border-green-500 p-1 rounded-lg text-center text-green-500'>
+              Upcoming
+            </div>
+          );
+      }
+    },
+    filterFn: (row, columnId, filterValue) => {
+      const dateComparison = compareDate(row.getValue("start"));
+      return dateComparison.toString() === filterValue;
     },
   },
   {
