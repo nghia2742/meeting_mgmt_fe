@@ -25,8 +25,8 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { UserProfile } from "@/types/userProfile.type";
-import { DeleteUserModal } from "./components/DeleteUserModal";
-import EditUserModal from "./components/EditUserModal";
+import { DeleteUserModal } from "../../components/users/DeleteUserModal";
+import EditUserModal from "../../components/users/EditUserModal";
 import { getColumns } from "./column";
 import { toast } from "@/components/ui/use-toast";
 import { getUser, softDeleteUser, updateUserProfile } from "@/hooks/useUser";

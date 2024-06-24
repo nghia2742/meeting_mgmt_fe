@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { DataTableDemo } from "./data-table";
 import { Plus, Search as SearchIcon, Slash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CreateUserModal from "./components/CreateUserModal";
+import CreateUserModal from "../../components/users/CreateUserModal";
 import { UserProfile } from "@/types/userProfile.type";
 import {
   Breadcrumb,

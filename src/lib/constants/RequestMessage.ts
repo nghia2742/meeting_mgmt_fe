@@ -1,13 +1,14 @@
 export const USER_RESPONSE_MESSAGE = {
     CREATE: {
         SUCCESS: 'Create User Successfully !!!',
-        SERVER_ERROR: 'Some thing went wrong, try again.',
     },
     EDIT: {
         SUCCESS: 'Edit User Successfully !!!',
-        SERVER_ERROR: 'Some thing went wrong, try again.',
 
     },
+    DELETE: {
+        SUCCESS: 'Delete User Successfully !!!',
+    }
 }
 
 export const AUTH_RESPONSE_MESSAGE = {
@@ -21,30 +22,39 @@ export const AUTH_RESPONSE_MESSAGE = {
 export const MEETING_RESPONSE_MESSAGE = {
     CREATE: {
         SUCCESS: 'Create Meeting Successfully !!!',
-        SERVER_ERROR: 'Some thing went wrong, try again.',
+    },
+    DELETE: {
+        SUCCESS: 'Delete Meeting Successfully !!!',
     }
 }
 
 export const FILE_RESPONSE_MESSAGE = {
     CREATE: {
         SUCCESS: 'Create File Successfully !!!',
-        SERVER_ERROR: 'Some thing went wrong, try again.',
+    },
+    DELETE: {
+        SUCCESS: 'Delete File Successfully !!!',
     }
 }
 
 export const MEETING_MINUTES_RESPONSE_MESSAGE = {
     CREATE: {
         SUCCESS: 'Create Meeting Minutes Successfully !!!',
-        SERVER_ERROR: 'Some thing went wrong, try again.',
     },
     EDIT: {
         SUCCESS: 'Edit Meeting Minutes Successfully !!!',
-        SERVER_ERROR: 'Some thing went wrong, try again.',
+    },
+    DELETE: {
+        SUCCESS: 'Delete Meeting Minutes Successfully !!!',
     }
 }
 
 
 export const SERVER_MESSAGE = {
     NOT_STARTED: 'Server is not starting now.'
+    ,
+    ERROR: {
+        SERVER_ERROR: 'Some thing went wrong, try again.',
+    }
 }
 
