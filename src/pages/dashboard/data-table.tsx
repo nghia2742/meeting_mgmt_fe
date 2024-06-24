@@ -53,7 +53,7 @@ export function DashboardDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [filterUpcoming, setFilterUpcoming] = useState(false);
+  const [isFilterUpcoming, setIsFilterUpcoming] = useState(false);
 
   const table = useReactTable({
     data,
@@ -75,12 +75,18 @@ export function DashboardDataTable<TData, TValue>({
   });
 
   const handleFilterUpcomingChange = (checked: boolean) => {
-    setFilterUpcoming(checked);
+    setIsFilterUpcoming(checked);
     if (checked) {
       table.getColumn("start")?.setFilterValue(true);
     } else {
       table.getColumn("start")?.setFilterValue(undefined);
     }
+  };
+
+  const handleSetAllMeetings = () => {
+    setIsFilterUpcoming(false);
+    table.getColumn("start")?.setFilterValue(undefined);
+    onSetAllMeetings();
   };
 
   return (
@@ -98,7 +104,7 @@ export function DashboardDataTable<TData, TValue>({
           <Button
             className='mx-2 text-sm line-clamp-1'
             variant='outline'
-            onClick={onSetAllMeetings}
+            onClick={handleSetAllMeetings}
           >
             Display All Meetings
           </Button>
@@ -112,7 +118,7 @@ export function DashboardDataTable<TData, TValue>({
             <DropdownMenuContent align='center'>
               <DropdownMenuCheckboxItem
                 className='capitalize'
-                checked={filterUpcoming}
+                checked={isFilterUpcoming}
                 onCheckedChange={handleFilterUpcomingChange}
               >
                 Upcoming Meetings
