@@ -209,5 +209,6 @@ export function display12HourValue(hours: number) {
  */
 export function isFutureDate(date: Date): boolean {
   const now = new Date();
-  return date ? date.getTime() > now.getTime() : false;
+  const inputDate = new Date(date);
+  return inputDate ? inputDate.getTime() > now.getTime() : false;
 }
