@@ -4,7 +4,6 @@ import { DataTableDemo } from "./data-table";
 import { Plus, Search as SearchIcon, Slash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateUserModal from "./components/CreateUserModal";
-import { getUser, searchUsersByEmail } from "@/lib/apiUser";
 import { UserProfile } from "@/types/userProfile.type";
 import {
   Breadcrumb,
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import Head from "next/head";
+import { getUser, searchUsersByEmail } from "@/hooks/useUser";
 
 function User() {
   const [isModalOpen, setIsModalOpen] = useState(false);
