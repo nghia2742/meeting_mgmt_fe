@@ -43,12 +43,13 @@ function Dashboard() {
   };
 
   const handleDateClick = (date: string) => {
-    console.log("Selected date:", date);
     if (meetings) {
       setSelectedDate(date);
       setFilteredMeetings(
         meetings.filter((meeting) => {
-          const meetingDate = meeting.startTime.toISOString().split("T")[0];
+          const meetingDate = new Date(meeting.startTime)
+            .toISOString()
+            .split("T")[0];
           return meetingDate === date;
         })
       );

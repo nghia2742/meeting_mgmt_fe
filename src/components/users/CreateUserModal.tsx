@@ -12,10 +12,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createUser } from "@/lib/apiUser";
 import { Lock, Mail, UserCheck } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import ClipLoader from "react-spinners/ClipLoader";
+import { createUser } from "@/hooks/useUser";
+import { USER_RESPONSE_MESSAGE } from "@/lib/constants/RequestMessage";
 
 const CreateUserSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -53,7 +54,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       toast({
         variant: "success",
         title: "Success",
-        description: "User created successfully.",
+        description: USER_RESPONSE_MESSAGE.CREATE.SUCCESS,
         duration: 1000,
       });
       form.reset();
@@ -63,10 +64,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to create user.",
+        description: USER_RESPONSE_MESSAGE.CREATE.FAILURE,
         duration: 1000,
       });
-      console.error("Error creating user:", error);
     } finally {
       setLoading(false);
     }
