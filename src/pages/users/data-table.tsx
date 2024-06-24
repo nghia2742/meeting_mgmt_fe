@@ -30,6 +30,8 @@ import EditUserModal from "../../components/users/EditUserModal";
 import { getColumns } from "./column";
 import { toast } from "@/components/ui/use-toast";
 import { getUser, softDeleteUser, updateUserProfile } from "@/hooks/useUser";
+import { USER_RESPONSE_MESSAGE } from '@/lib/constants/RequestMessage'
+
 
 interface DataTableDemoProps {
   users: UserProfile[];
@@ -61,7 +63,8 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
         await softDeleteUser(selectedUser.id);
         toast({
           variant: "success",
-          description: "User deleted successfully",
+          title: "Success",
+          description: USER_RESPONSE_MESSAGE.DELETE.SUCCESS,
           duration: 1000,
         });
         setUsers((prevUsers) =>
@@ -70,10 +73,10 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
       } catch (error) {
         toast({
           variant: "destructive",
-          description: "Failure deleting user",
+          title: "Error",
+          description: USER_RESPONSE_MESSAGE.DELETE.FAILURE,
           duration: 1000,
         });
-        console.error("Error deleting user:", error);
       } finally {
         setIsDeleteModalOpen(false);
         setSelectedUser(null);
@@ -93,7 +96,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
       toast({
         variant: "success",
         title: "Success",
-        description: "User edited successfully.",
+        description: USER_RESPONSE_MESSAGE.EDIT.SUCCESS,
         duration: 1000,
       });
       setUsers(updatedUserData);
@@ -102,7 +105,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to edit user.",
+        description: USER_RESPONSE_MESSAGE.EDIT.FAILURE,
         duration: 1000,
       });
     }
