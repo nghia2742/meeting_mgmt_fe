@@ -40,7 +40,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="fullName" className="text-right">
-                    Full Name
+                    Full Name <span className='text-destructive ml-1'>*</span>
                 </Label>
                 <Input
                     id="fullName"
@@ -52,7 +52,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
 
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
-                    Email
+                    Email <span className='text-destructive ml-1'>*</span>
                 </Label>
                 <Input
                     disabled
@@ -79,7 +79,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
             <DateOfBirthPicker date={date} setDate={setDate} error={errors.dateOfBirth?.message} />
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="address" className="text-right">
-                    Address
+                    Address 
                 </Label>
                 <Input
                     id="address"

@@ -16,6 +16,7 @@ import useUserStore from "@/stores/userStore";
 import { toast } from "../ui/use-toast";
 import { Inter } from "next/font/google";
 import { updateUserProfile, uploadToCloudinary } from "@/hooks/useUser";
+import { USER_RESPONSE_MESSAGE } from "@/lib/constants/RequestMessage";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -128,7 +129,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         toast({
           variant: "success",
           title: "Success",
-          description: "User edited successfully.",
+          description: USER_RESPONSE_MESSAGE.EDIT.SUCCESS,
           duration: 1000,
         });
       }
