@@ -433,7 +433,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                             </div>
                             <div className="flex space-x-4 col-span-full justify-end">
                                 <Button variant="outline" onClick={(e) => { e.preventDefault(); setShowPreview(true) }}>Preview</Button>
-                                <Button type='submit'>
+                                <Button type='submit' disabled={isCreating}>
                                     {isCreating && (
                                         <ClipLoader
                                             className="mr-2"
