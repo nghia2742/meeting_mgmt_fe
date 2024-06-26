@@ -95,6 +95,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     <div className="flex items-center">
                       <Mail className="w-4 h-4 mr-2" />
                       Email
+                      <p className="text-red-500 mx-1">*</p>
                     </div>
                   </FormLabel>
                   <FormControl>
@@ -117,6 +118,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     <div className="flex items-center">
                       <Lock className="w-4 h-4 mr-2" />
                       Password
+                      <p className="text-red-500 mx-1">*</p>
                     </div>
                   </FormLabel>
                   <FormControl>
@@ -139,6 +141,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     <div className="flex items-center">
                       <UserCheck className="w-4 h-4 mr-2" />
                       Full Name
+                      <p className="text-red-500 mx-1">*</p>
                     </div>
                   </FormLabel>
                   <FormControl>

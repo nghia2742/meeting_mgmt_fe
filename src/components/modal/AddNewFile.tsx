@@ -15,6 +15,7 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui/tooltip';
+import { FILE_RESPONSE_MESSAGE } from '@/lib/constants/RequestMessage';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -64,7 +65,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
             if(acceptedFile.size > MAX_FILE_SIZE) {
                 toast({
                     title: "Error",
-                    description: "File size exceeds 20MB. Please upload smaller files.",
+                    description: FILE_RESPONSE_MESSAGE.UPLOAD.ERROR.LIMIT_FILE_SIZE,
                     variant: "destructive",
                 });
                 setIsCreatingFiles(false);
@@ -76,7 +77,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
         if (totalSize > MAX_TOTAL_SIZE) {
             toast({
                 title: "Error",
-                description: "Total file size exceeds 100MB. Please upload smaller files.",
+                description: FILE_RESPONSE_MESSAGE.UPLOAD.ERROR.LIMIT_TOTAL_FIZE_SIZE,
                 variant: "destructive",
             });
             setIsCreatingFiles(false);
@@ -109,7 +110,7 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
         if (countCreateFile === acceptedFiles.length) {
             toast({
                 title: "Successfully",
-                description: "Create files successfully",
+                description: FILE_RESPONSE_MESSAGE.CREATE.SUCCESS,
                 variant: "success",
             });
             setIsCreatingFiles(false);
@@ -164,8 +165,8 @@ const AddNewFile = ({ isOpen, onClose, meetingId, onAddFile }: Props) => {
                 >
                     <Input multiple {...getInputProps()} />
                     <FileIcon size={40} className="text-gray-500 mb-2" />
-                    <p className="text-gray-500">Drag or drop file here</p>
-                    <p className='text-gray-500 text-[13px]'>Files up to 100MB</p>
+                    <p className="text-gray-500 text-sm">Drag or drop file here</p>
+                    <p className='text-gray-500 text-[13px]'>Files up to 100MB, each file up to 20MB</p>
                 </div>
                 {isEmptyFile && (
                     <p className="text-red-500 text-sm">Please upload at least one file</p>
