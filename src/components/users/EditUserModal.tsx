@@ -23,29 +23,27 @@ interface EditUserModalProps {
   onSave: (updatedUser: UserProfile) => void;
 }
 
+
 const schema = z.object({
   fullName: z.string().nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
-  phoneNumber: z.string().optional().refine(
-    (val) => !val || /^(\+84|0)\d{9}$/.test(val),
-    {
-      message: 'Invalid phone number format',
-    }
-  ),
+  phoneNumber: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((val) => val === null || /^(\+84|0)\d{9}$/.test(val), {
+      message: "Invalid phone number format",
+    }),
   address: z
     .string()
     .optional()
-    .refine(
-      (val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val),
-      { message: 'Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)' }
-    )
+    .refine((val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val), {
+      message:
+        "Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)",
+    })
     .nullable(),
-  gender: z.enum(["male", "female", "other"], {
-    errorMap: () => ({ message: "Invalid gender" }),
-  })
-    .optional() // Can be left empty
-    .nullable(), // Can be null
-  dateOfBirth: z.date().optional().nullable(), // Optional date (can be left empty or null)
+  gender: z.enum(["male", "female", "other"]).nullable(),
+  dateOfBirth: z.date().optional().nullable(),
 });
 
 

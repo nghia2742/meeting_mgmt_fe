@@ -19,7 +19,7 @@ const GenderSelect: React.FC<GenderSelectProps> = ({ control, error }) => {
                 name="gender"
                 render={({ field }) => (
                     <>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Select gender">
                                     {field.value && field.value.charAt(0).toUpperCase() + field.value.slice(1)}

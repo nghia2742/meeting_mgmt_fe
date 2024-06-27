@@ -2,7 +2,7 @@ import React, { useState, Dispatch, FormEvent, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Controller, UseFormRegister, Control, FieldErrors } from "react-hook-form";
+import { UseFormRegister, Control, FieldErrors } from "react-hook-form";
 import { UserProfile } from "@/types/userProfile.type";
 import GenderSelect from "./GenderSelect";
 import DateOfBirthPicker from "./DateOfBirthPicker";
@@ -69,7 +69,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 </Label>
                 <Input
                     id="phone"
-                    {...register("phoneNumber", { required: "Phone number is required" })}
+                    {...register("phoneNumber")}
                     className="col-span-3"
                 />
                 {errors.phoneNumber && <p className="col-span-3 col-start-2 text-red-500">{errors.phoneNumber.message}</p>}
@@ -83,7 +83,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
                 </Label>
                 <Input
                     id="address"
-                    {...register("address", { required: "Address is required" })}
+                    {...register("address")}
                     className="col-span-3"
                 />
                 {errors.address && <p className="col-span-3 col-start-2 text-red-500">{errors.address.message}</p>}

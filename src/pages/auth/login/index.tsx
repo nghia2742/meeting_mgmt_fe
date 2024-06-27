@@ -75,8 +75,6 @@ function LoginPage() {
               alt='Image'
               width={0}
               height={0}
-              sizes='100px'
-              className='w-[100px] h-auto'
               priority
             />
           </Link>
