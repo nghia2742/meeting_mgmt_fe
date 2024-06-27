@@ -45,6 +45,7 @@ import { useAllMeeting } from '@/hooks/useMeeting';
 import { useRouter } from 'next/router';
 import { invalidateDateTime } from '@/utils/datetime.util';
 import { useDebounce } from '@/hooks/useDebounce';
+import { FILE_RESPONSE_MESSAGE } from '@/lib/constants/RequestMessage';
 
 export interface FilePreview {
     preview: string;
@@ -214,11 +215,36 @@ export default function AddMeetingForm() {
         if (files.length === 0 || acceptedFiles.length === 0) {
             alert('Please upload at least one file!');
         } else {
+            const MAX_TOTAL_SIZE = 100 * 1024 * 1024; //100MB
+            const MAX_FILE_SIZE = 20 * 1024 * 1024; //20MB
+            for (let acceptedFile of acceptedFiles) {
+                if (acceptedFile.size > MAX_FILE_SIZE) {
+                    toast({
+                        title: "Error",
+                        description: FILE_RESPONSE_MESSAGE.UPLOAD.ERROR.LIMIT_FILE_SIZE,
+                        variant: "destructive",
+                    });
+                    setIsSubmit(false);
+                    return;
+                }
+            }
+            const totalSize = acceptedFiles.reduce((acc, file) => acc + file.size, 0);
+
+            if (totalSize > MAX_TOTAL_SIZE) {
+                toast({
+                    title: "Error",
+                    description: FILE_RESPONSE_MESSAGE.UPLOAD.ERROR.LIMIT_TOTAL_FIZE_SIZE,
+                    variant: "destructive",
+                });
+                setIsSubmit(false);
+                return;
+            }
             setIsOpen(!isOpen);
         }
     };
 
     const createFile = async (acceptedFiles: File[], meetingId: string) => {
+
         for (let acceptedFile of acceptedFiles) {
             const formData = new FormData();
             formData.append('file', acceptedFile);
@@ -279,7 +305,7 @@ export default function AddMeetingForm() {
 
                     // Redirect to meeting detail page
                     push(`/meeting/${meetingId}`);
-                    
+
                 })
                 .catch((error) => {
                     setIsOpenForm();
@@ -386,7 +412,7 @@ export default function AddMeetingForm() {
                                                 className={cn(
                                                     'w-[280px] justify-start text-left font-normal',
                                                     !field.value &&
-                                                        'text-muted-foreground'
+                                                    'text-muted-foreground'
                                                 )}
                                             >
                                                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -436,7 +462,7 @@ export default function AddMeetingForm() {
                                                 className={cn(
                                                     'w-[280px] justify-start text-left font-normal',
                                                     !field.value &&
-                                                        'text-muted-foreground'
+                                                    'text-muted-foreground'
                                                 )}
                                             >
                                                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -711,6 +737,7 @@ export default function AddMeetingForm() {
                                     <p className="text-gray-500">
                                         Drag or drop file here
                                     </p>
+                                    <p className='text-gray-500 text-[13px]'>Files up to 100MB, each file up to 20MB</p>
                                 </div>
                                 {uploading === true ? (
                                     <p>Loading...</p>
