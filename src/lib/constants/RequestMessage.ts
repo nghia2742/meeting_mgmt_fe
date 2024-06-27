@@ -33,6 +33,12 @@ export const MEETING_RESPONSE_MESSAGE = {
 };
 
 export const FILE_RESPONSE_MESSAGE = {
+  UPLOAD: {
+    ERROR: {
+      LIMIT_TOTAL_FIZE_SIZE: 'Total file size exceeds 100MB. Please upload smaller files.',
+      LIMIT_FILE_SIZE: 'File size exceeds 20MB. Please upload smaller files.',
+    }
+  },
   CREATE: {
     SUCCESS: "Create File Successfully !!!",
     FAILURE: "Failed To Create File",
