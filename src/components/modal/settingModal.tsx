@@ -16,6 +16,7 @@ import useUserStore from "@/stores/userStore";
 import { toast } from "../ui/use-toast";
 import { Inter } from "next/font/google";
 import { updateUserProfile, uploadToCloudinary } from "@/hooks/useUser";
+import { USER_RESPONSE_MESSAGE } from "@/lib/constants/RequestMessage";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -27,28 +28,25 @@ const inter = Inter({ subsets: ["latin"] });
 const schema = z.object({
   fullName: z.string().nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
-  phoneNumber: z.string().optional().refine(
-    (val) => !val || /^(\+84|0)\d{9}$/.test(val),
-    {
-      message: 'Invalid phone number format',
-    }
-  ),
+  phoneNumber: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((val) => !val || /^(\+84|0)\d{9}$/.test(val), {
+      message: "Invalid phone number format",
+    }),
   address: z
     .string()
     .optional()
-    .refine(
-      (val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val),
-      { message: 'Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)' }
-    )
+    .nullable()
+    .refine((val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val), {
+      message:
+        "Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)",
+    })
     .nullable(),
-  gender: z.enum(["male", "female", "other"], {
-    errorMap: () => ({ message: "Invalid gender" }),
-  })
-    .optional() // Can be left empty
-    .nullable(), // Can be null
-  dateOfBirth: z.date().optional().nullable(), // Optional date (can be left empty or null)
+  gender: z.enum(["male", "female", "other"]).nullable(),
+  dateOfBirth: z.date().optional().nullable(),
 });
-
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [date, setDate] = useState<Date>();
@@ -96,6 +94,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     }
   }, [userProfile, setValue]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      clearErrors();
+    }
+  }, [isOpen, clearErrors]);
+
   const mutation = useMutation({
     mutationFn: (updatedUser: UserProfile) =>
       updateUserProfile(updatedUser.email, updatedUser),
@@ -128,7 +132,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         toast({
           variant: "success",
           title: "Success",
-          description: "User edited successfully.",
+          description: USER_RESPONSE_MESSAGE.EDIT.SUCCESS,
           duration: 1000,
         });
       }
