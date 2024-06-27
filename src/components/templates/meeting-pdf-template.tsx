@@ -85,7 +85,7 @@ interface Props {
     duration: string;
     location: string;
     files: MeetingFile[],
-    createdBy: User | undefined
+    createdBy: User | undefined,
 }
 
 const MeetingPDF = ({ title, description, note, date, startTime, duration, attendees, location, files, createdBy }: Props) => (
@@ -122,6 +122,9 @@ const MeetingPDF = ({ title, description, note, date, startTime, duration, atten
                         <View style={styles.tableColHeader}>
                             <Text style={styles.tableCellHeader}>Role</Text>
                         </View>
+                        <View style={styles.tableColHeader}>
+                            <Text style={styles.tableCellHeader}>Attend status</Text>
+                        </View>
                     </View>
                     {attendees.map((attendee, index) => (
                         <View style={styles.tableRow} key={index}>
@@ -133,6 +136,10 @@ const MeetingPDF = ({ title, description, note, date, startTime, duration, atten
                             </View>
                             <View style={styles.tableCol}>
                                 <Text style={styles.tableCell}>{createdBy?.id === attendee.id ? 'Organizer' : 'Attendee'}</Text>
+                            </View>
+                            <View style={styles.tableCol}>
+                                <Text style={styles.tableCell}>{attendee.attendStatus === '1' ? 'Attend'
+                                : attendee.attendStatus === '0' ? 'Wait for response' : 'Absent'}</Text>
                             </View>
                         </View>
                     ))}

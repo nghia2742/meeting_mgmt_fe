@@ -223,8 +223,9 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                 name="title"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="block text-sm font-bold mb-2">
+                                        <FormLabel className="text-sm font-bold mb-2 flex">
                                             Title
+                                            <p className="text-red-500 mx-1">*</p>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -242,8 +243,9 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                 name="location"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="block text-sm font-bold mb-2">
+                                        <FormLabel className="flex text-sm font-bold mb-2">
                                             Location
+                                            <p className="text-red-500 mx-1">*</p>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -262,7 +264,10 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                     name="startTime"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel htmlFor="startTime" className="text-left">Start time</FormLabel>
+                                            <FormLabel htmlFor="startTime" className="flex text-left">
+                                                Start time
+                                                <p className="text-red-500 mx-1">*</p>
+                                            </FormLabel>
                                             <Popover>
                                                 <FormControl className="w-full">
                                                     <PopoverTrigger asChild>
@@ -317,7 +322,10 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                     name="endTime"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel htmlFor="endTime" className="text-left">End time</FormLabel>
+                                            <FormLabel htmlFor="endTime" className="text-left flex">
+                                                End time
+                                                <p className="text-red-500 mx-1">*</p>
+                                            </FormLabel>
                                             <Popover>
                                                 <FormControl className="w-full">
                                                     <PopoverTrigger asChild>
@@ -376,8 +384,9 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                                     name="description"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="block text-sm font-bold mb-2">
+                                            <FormLabel className="text-sm font-bold mb-2 flex">
                                                 Description
+                                                <p className="text-red-500 mx-1">*</p>
                                             </FormLabel>
                                             <FormControl>
                                                 <Textarea
@@ -433,7 +442,7 @@ const PreviewMeetingMinute = ({ isOpen, onClose, meeting, attendees, files, refr
                             </div>
                             <div className="flex space-x-4 col-span-full justify-end">
                                 <Button variant="outline" onClick={(e) => { e.preventDefault(); setShowPreview(true) }}>Preview</Button>
-                                <Button type='submit'>
+                                <Button type='submit' disabled={isCreating}>
                                     {isCreating && (
                                         <ClipLoader
                                             className="mr-2"

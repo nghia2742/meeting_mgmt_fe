@@ -68,7 +68,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                 if (countAdd === attendeesAdd.length) {
                     toast({
                         title: "Successfully",
-                        description: "Add new attendee successfully",
+                        description: "Add new attendee successfully. Please wait for response",
                         variant: "success",
                     });
                     setIsAddingAttendees(false);
@@ -107,6 +107,7 @@ const AddNewAttendee = ({ isOpen, onClose, onAddAttendees, attendees, meetingId 
                     <div className="flex space-x-4 justify-end">
                         <Button
                             onClick={handleAddAttendees}
+                            disabled={isAddingAttendees}
                         >
                             {isAddingAttendees && (
                                 <ClipLoader
