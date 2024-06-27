@@ -31,12 +31,13 @@ const schema = z.object({
     .string()
     .optional()
     .nullable()
-    .refine((val) => val === null || /^(\+84|0)\d{9}$/.test(val), {
+    .refine((val) => !val || /^(\+84|0)\d{9}$/.test(val), {
       message: "Invalid phone number format",
     }),
   address: z
     .string()
     .optional()
+    .nullable()
     .refine((val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val), {
       message:
         "Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)",
@@ -62,6 +63,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     handleSubmit,
     control,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<UserProfile>({
     resolver: zodResolver(schema),
@@ -84,6 +86,12 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       }
     }
   }, [user, setValue]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      clearErrors();
+    }
+  }, [isOpen, clearErrors]);
 
   const onSubmit: SubmitHandler<UserProfile> = async (data) => {
     if (

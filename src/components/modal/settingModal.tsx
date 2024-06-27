@@ -32,12 +32,13 @@ const schema = z.object({
     .string()
     .optional()
     .nullable()
-    .refine((val) => val === null || /^(\+84|0)\d{9}$/.test(val), {
+    .refine((val) => !val || /^(\+84|0)\d{9}$/.test(val), {
       message: "Invalid phone number format",
     }),
   address: z
     .string()
     .optional()
+    .nullable()
     .refine((val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val), {
       message:
         "Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)",
@@ -92,6 +93,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       setValue("phoneNumber", userProfile.phoneNumber);
     }
   }, [userProfile, setValue]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      clearErrors();
+    }
+  }, [isOpen, clearErrors]);
 
   const mutation = useMutation({
     mutationFn: (updatedUser: UserProfile) =>
