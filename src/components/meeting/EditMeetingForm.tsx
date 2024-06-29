@@ -35,7 +35,7 @@ import { useRouter } from 'next/router';
 const formSchema = z.object({
     title: z.string().min(1, 'Title is required'),
     tag: z.string().optional(),
-    description: z.string().optional(),
+    description: z.string().min(5, "Description is required"),
     startTime: z.date(),
     endTime: z.date(),
     location: z.string().min(1, 'Location is required'),
@@ -359,7 +359,7 @@ export default function EditMeetingForm({ meeting }: { meeting: Meeting }) {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Description 
+                                    Description <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
