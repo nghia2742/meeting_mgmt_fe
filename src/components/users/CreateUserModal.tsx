@@ -19,11 +19,18 @@ import { createUser } from "@/hooks/useUser";
 import { USER_RESPONSE_MESSAGE } from "@/lib/constants/RequestMessage";
 
 const CreateUserSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z
+    .string()
+    .min(10, { message: "Email is too short" })
+    .max(50, { message: "Email is too long" })
+    .email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters long" }),
-  fullName: z.string().min(4, { message: "Full Name is required" }),
+  fullName: z
+    .string()
+    .min(4, { message: "Full Name is required" })
+    .max(50, { message: "Full Name is too long" }),
 });
 
 interface CreateUserModalProps {
@@ -60,11 +67,11 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       form.reset();
       onClose();
       onUserCreated();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: USER_RESPONSE_MESSAGE.CREATE.FAILURE,
+        description: error.toString(),
         duration: 1000,
       });
     } finally {
@@ -94,8 +101,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   <FormLabel>
                     <div className="flex items-center">
                       <Mail className="w-4 h-4 mr-2" />
-                      Email
-                      <p className="text-red-500 mx-1">*</p>
+                      Email <span className="text-destructive ml-1">*</span>
                     </div>
                   </FormLabel>
                   <FormControl>
@@ -117,8 +123,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   <FormLabel>
                     <div className="flex items-center">
                       <Lock className="w-4 h-4 mr-2" />
-                      Password
-                      <p className="text-red-500 mx-1">*</p>
+                      Password <span className="text-destructive ml-1">*</span>
                     </div>
                   </FormLabel>
                   <FormControl>
@@ -140,8 +145,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   <FormLabel>
                     <div className="flex items-center">
                       <UserCheck className="w-4 h-4 mr-2" />
-                      Full Name
-                      <p className="text-red-500 mx-1">*</p>
+                      Full Name <span className="text-destructive ml-1">*</span>
                     </div>
                   </FormLabel>
                   <FormControl>

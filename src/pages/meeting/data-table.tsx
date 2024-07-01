@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({
     };
 
     return (
-        <div>
+        <div className='min-w-[1200px]'>
             <div className="flex items-center justify-between gap-2 py-2">
                 <div className="flex gap-2">
                     <Input
@@ -127,7 +127,7 @@ export function DataTable<TData, TValue>({
                     </Button>
                     <Button variant={'outline'} onClick={() => resetTable()}>
                         <RefreshCw className="h-4 w-4 md:mr-2" />{' '}
-                        <span className="hidden md:block">Reset</span>
+                        <span className="hidden md:block">Refresh</span>
                     </Button>
                 </div>
                 <AddNewMeeting />

@@ -102,8 +102,8 @@ export function DataTable<TData, TValue>({
                                         if (cell.column.id === 'avatar') {
                                             return (
                                                 <TableCell key={cell.id}>
-                                                    <Avatar className="w-[30px] h-[30px]">
-                                                        <AvatarImage src={cell.getValue() as string || "/images/logoCLT.png"} alt="@shadcn" />
+                                                    <Avatar className="w-8 h-8">
+                                                        <AvatarImage className="w-8 h-8 rounded-full object-cover" src={cell.getValue() as string || "/images/logoCLT.png"} alt="@shadcn" />
                                                         <AvatarFallback>CN</AvatarFallback>
                                                     </Avatar>
                                                 </TableCell>

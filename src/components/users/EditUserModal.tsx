@@ -11,10 +11,10 @@ import { z } from "zod";
 import { UserProfile } from "@/types/userProfile.type";
 import AvatarSection from "../userProfile/AvatarSection";
 import UserProfileForm from "../userProfile/UserProfileForm";
-import { Inter } from 'next/font/google';
+import { Inter } from "next/font/google";
 import { uploadToCloudinary } from "@/hooks/useUser";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -24,31 +24,31 @@ interface EditUserModalProps {
 }
 
 const schema = z.object({
-  fullName: z.string().nonempty("Full name is required"),
+  fullName: z
+    .string()
+    .min(5, { message: "Full name is too short" })
+    .max(50, { message: "Full name is too long" })
+    .nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
-  phoneNumber: z.string().optional().refine(
-    (val) => !val || /^(\+84|0)\d{9}$/.test(val),
-    {
-      message: 'Invalid phone number format',
-    }
-  ),
+  phoneNumber: z
+    .string()
+    .optional()
+    .nullable()
+    .refine((val) => !val || /^(\+84|0)\d{9}$/.test(val), {
+      message: "Invalid phone number format",
+    }),
   address: z
     .string()
     .optional()
-    .refine(
-      (val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val),
-      { message: 'Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)' }
-    )
+    .nullable()
+    .refine((val) => !val || /^[a-zA-Z0-9\s\,\-\.]+$/.test(val), {
+      message:
+        "Invalid address format (letters, numbers, spaces, commas, hyphens, and periods allowed)",
+    })
     .nullable(),
-  gender: z.enum(["male", "female", "other"], {
-    errorMap: () => ({ message: "Invalid gender" }),
-  })
-    .optional() // Can be left empty
-    .nullable(), // Can be null
-  dateOfBirth: z.date().optional().nullable(), // Optional date (can be left empty or null)
+  gender: z.enum(["male", "female", "other"]).nullable(),
+  dateOfBirth: z.date().optional().nullable(),
 });
-
-
 
 const EditUserModal: React.FC<EditUserModalProps> = ({
   isOpen,
@@ -64,6 +64,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     handleSubmit,
     control,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<UserProfile>({
     resolver: zodResolver(schema),
@@ -86,6 +87,12 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       }
     }
   }, [user, setValue]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      clearErrors();
+    }
+  }, [isOpen, clearErrors]);
 
   const onSubmit: SubmitHandler<UserProfile> = async (data) => {
     if (
@@ -111,7 +118,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-[425px] overflow-y-auto max-h-[90vh] ${inter.className}`}>
+      <DialogContent
+        className={`sm:max-w-[425px] overflow-y-auto max-h-[90vh] ${inter.className}`}
+      >
         <DialogHeader className="flex justify-center items-center h-full">
           <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
           {user && (

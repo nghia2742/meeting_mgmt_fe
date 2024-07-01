@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { FileIcon, Loader, Plus, X } from 'lucide-react';
+import { FileIcon, Loader, LucideReceiptPoundSterling, Plus, X } from 'lucide-react';
 import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -45,6 +45,7 @@ import { useAllMeeting } from '@/hooks/useMeeting';
 import { useRouter } from 'next/router';
 import { invalidateDateTime } from '@/utils/datetime.util';
 import { useDebounce } from '@/hooks/useDebounce';
+import { FILE_RESPONSE_MESSAGE } from '@/lib/constants/RequestMessage';
 
 export interface FilePreview {
     preview: string;
@@ -53,12 +54,12 @@ export interface FilePreview {
 }
 
 const formSchema = z.object({
-    title: z.string().min(1, 'Title is required'),
-    tag: z.string().optional(),
-    description: z.string().optional(),
+    title: z.string().min(1, 'Title is required').max(255, 'Title is a maximum 255 characters'),
+    tag: z.string().max(10, 'Tag is a maximum 10 characters').optional(),
+    description: z.string().min(1, "Description is required"),
     startTime: z.date(),
     endTime: z.date(),
-    location: z.string().min(1, 'Location is required'),
+    location: z.string().min(1, 'Location is required').max(50, 'Location is a maximum 50 characters'),
     note: z.string().optional(),
     attendees: z.array(z.string()).optional(),
 });
@@ -132,6 +133,9 @@ export default function AddMeetingForm() {
             (tag) => tag.toLowerCase() === tagInput.toLowerCase()
         );
         if (isDuplicated) return setError('tag', { message: 'Duplicated tag' });
+
+        // Check length of tag input
+        if (newTag.length > 10) return setError('tag', { message: 'Tag is a maximum 10 characters' });
 
         // Pass and save the new tag
         setListTags((prevTags) => [...prevTags, newTag]);
@@ -214,11 +218,36 @@ export default function AddMeetingForm() {
         if (files.length === 0 || acceptedFiles.length === 0) {
             alert('Please upload at least one file!');
         } else {
+            const MAX_TOTAL_SIZE = 100 * 1024 * 1024; //100MB
+            const MAX_FILE_SIZE = 20 * 1024 * 1024; //20MB
+            for (let acceptedFile of acceptedFiles) {
+                if (acceptedFile.size > MAX_FILE_SIZE) {
+                    toast({
+                        title: "Error",
+                        description: FILE_RESPONSE_MESSAGE.UPLOAD.ERROR.LIMIT_FILE_SIZE,
+                        variant: "destructive",
+                    });
+                    setIsSubmit(false);
+                    return;
+                }
+            }
+            const totalSize = acceptedFiles.reduce((acc, file) => acc + file.size, 0);
+
+            if (totalSize > MAX_TOTAL_SIZE) {
+                toast({
+                    title: "Error",
+                    description: FILE_RESPONSE_MESSAGE.UPLOAD.ERROR.LIMIT_TOTAL_FIZE_SIZE,
+                    variant: "destructive",
+                });
+                setIsSubmit(false);
+                return;
+            }
             setIsOpen(!isOpen);
         }
     };
 
     const createFile = async (acceptedFiles: File[], meetingId: string) => {
+
         for (let acceptedFile of acceptedFiles) {
             const formData = new FormData();
             formData.append('file', acceptedFile);
@@ -262,6 +291,11 @@ export default function AddMeetingForm() {
             clearErrors('endTime');
         }
 
+        if (tagInput.length !== 0) {
+            setIsSubmit(false);
+            return setError('tag', { message: 'Please hit "Add a tag"' });
+        }
+
         try {
             apiClient
                 .post('/meetings', data)
@@ -279,7 +313,7 @@ export default function AddMeetingForm() {
 
                     // Redirect to meeting detail page
                     push(`/meeting/${meetingId}`);
-                    
+
                 })
                 .catch((error) => {
                     setIsOpenForm();
@@ -386,7 +420,7 @@ export default function AddMeetingForm() {
                                                 className={cn(
                                                     'w-[280px] justify-start text-left font-normal',
                                                     !field.value &&
-                                                        'text-muted-foreground'
+                                                    'text-muted-foreground'
                                                 )}
                                             >
                                                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -436,7 +470,7 @@ export default function AddMeetingForm() {
                                                 className={cn(
                                                     'w-[280px] justify-start text-left font-normal',
                                                     !field.value &&
-                                                        'text-muted-foreground'
+                                                    'text-muted-foreground'
                                                 )}
                                             >
                                                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -479,7 +513,7 @@ export default function AddMeetingForm() {
                         render={({ field }) => (
                             <FormItem className="col-span-2">
                                 <FormLabel className="block text-sm font-bold mb-2">
-                                    Description
+                                    Description <span className='text-destructive ml-1'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
@@ -711,6 +745,7 @@ export default function AddMeetingForm() {
                                     <p className="text-gray-500">
                                         Drag or drop file here
                                     </p>
+                                    <p className='text-gray-500 text-[13px]'>Files up to 100MB, each file up to 20MB</p>
                                 </div>
                                 {uploading === true ? (
                                     <p>Loading...</p>

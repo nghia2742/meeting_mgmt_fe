@@ -32,7 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ClipLoader from "react-spinners/ClipLoader";
-import { Filter, ListFilter } from "lucide-react";
+import { Filter, ListFilter, RefreshCw } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -100,19 +100,12 @@ export function DashboardDataTable<TData, TValue>({
           }
           className='max-w-sm'
         />
-        <div className='flex ml-auto'>
-          <Button
-            className='mx-2 text-sm line-clamp-1'
-            variant='outline'
-            onClick={handleSetAllMeetings}
-          >
-            Display All Meetings
-          </Button>
+        <div className='flex ml-auto gap-2'>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild className='mr-2'>
+            <DropdownMenuTrigger asChild>
               <Button variant='outline'>
-                <Filter className='mr-2 h-4 w-4' />
-                <span className='hidden sm:block'>Filter</span>
+                <Filter className='md:mr-2 h-4 w-4' />
+                <span className='hidden md:block'>Filter</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='center'>
@@ -125,32 +118,10 @@ export function DashboardDataTable<TData, TValue>({
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='ml-auto'>
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className='capitalize'
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu> */}
+          <Button variant={'outline'} onClick={() => handleSetAllMeetings()}>
+                        <RefreshCw className="h-4 w-4 md:mr-2" />{' '}
+                        <span className="hidden md:block">Refresh</span>
+                    </Button>
         </div>
       </div>
       <div className='rounded-md border shrink-0 overflow-auto md:shrink'>
@@ -214,28 +185,74 @@ export function DashboardDataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className='flex items-center justify-end space-x-2 py-4'>
-        <div className='flex-1 text-sm text-muted-foreground'>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}.
-        </div>
-        <div className='space-x-2'>
+      <div className="md:flex items-center justify-center space-x-2 py-4 gap-2">
+        <div className="flex justify-center gap-1 mb-2 md:mb-0">
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<<"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
           <Button
-            variant='outline'
-            size='sm'
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             Next
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {">>"}
+          </Button>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-sm">
+            Page{" "}
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </strong>{" "}
+          </span>
+          <span className="text-sm">
+            | Go to:{" "}
+            <input
+              type="number"
+              defaultValue={table.getState().pagination.pageIndex + 1}
+              onChange={(e) => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.setPageIndex(page);
+              }}
+              className="w-16 p-1 border rounded"
+            />
+          </span>
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            className="lg:w-32 p-1 border rounded"
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>

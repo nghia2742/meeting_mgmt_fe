@@ -68,8 +68,8 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
         fullName,
       });
       return response.data;
-    } catch (error) {
-      throw new Error("Error creating user");
+    } catch (error: any) {
+      throw new Error(error.response.data.message);
     }
   };
   
