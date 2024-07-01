@@ -36,7 +36,7 @@ export const columns: (meetingId: string, refreshData: () => void, canHaveAction
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Fullname
+                    Full name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )

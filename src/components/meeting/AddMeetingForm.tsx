@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { FileIcon, Loader, Plus, X } from 'lucide-react';
+import { FileIcon, Loader, LucideReceiptPoundSterling, Plus, X } from 'lucide-react';
 import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -54,12 +54,12 @@ export interface FilePreview {
 }
 
 const formSchema = z.object({
-    title: z.string().min(1, 'Title is required'),
-    tag: z.string().optional(),
-    description: z.string().min(5, "Description is required"),
+    title: z.string().min(1, 'Title is required').max(255, 'Title is a maximum 255 characters'),
+    tag: z.string().max(10, 'Tag is a maximum 10 characters').optional(),
+    description: z.string().min(1, "Description is required"),
     startTime: z.date(),
     endTime: z.date(),
-    location: z.string().min(1, 'Location is required'),
+    location: z.string().min(1, 'Location is required').max(50, 'Location is a maximum 50 characters'),
     note: z.string().optional(),
     attendees: z.array(z.string()).optional(),
 });
@@ -133,6 +133,9 @@ export default function AddMeetingForm() {
             (tag) => tag.toLowerCase() === tagInput.toLowerCase()
         );
         if (isDuplicated) return setError('tag', { message: 'Duplicated tag' });
+
+        // Check length of tag input
+        if (newTag.length > 10) return setError('tag', { message: 'Tag is a maximum 10 characters' });
 
         // Pass and save the new tag
         setListTags((prevTags) => [...prevTags, newTag]);
@@ -286,6 +289,11 @@ export default function AddMeetingForm() {
         } else {
             clearErrors('startTime');
             clearErrors('endTime');
+        }
+
+        if (tagInput.length !== 0) {
+            setIsSubmit(false);
+            return setError('tag', { message: 'Please hit "Add a tag"' });
         }
 
         try {

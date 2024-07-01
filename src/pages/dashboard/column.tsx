@@ -20,28 +20,15 @@ import { isFutureDate } from "@/utils/time-picker.util";
 import { compareDate } from "@/utils/datetime.util";
 
 export const dashboardColumns: ColumnDef<Meeting>[] = [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && "indeterminate")
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label='Select all'
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label='Select row'
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
+  {
+    id: 'order',
+    header: ({ column }) => {
+        return <div>#</div>;
+    },
+    cell: ({ row }) => (
+        <span className="text-center">{Number(row.id) + 1}</span>
+    ),
+},
   {
     accessorKey: "title",
     header: ({ column }) => {
