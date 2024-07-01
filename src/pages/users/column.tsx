@@ -66,10 +66,13 @@ export const getColumns = (
         accessorKey: 'dateOfBirth',
         header: 'Date of Birth',
         cell: ({ row }) => {
-            const { formattedDate } = formatDateTime(
-                row.getValue('dateOfBirth')
-            );
-            return formattedDate;
+            const dateOfBirth = row.getValue('dateOfBirth') as string
+            if (dateOfBirth) {
+                const { formattedDate } = formatDateTime(
+                    dateOfBirth
+                );
+                return formattedDate;
+            }
         },
     },
     {
