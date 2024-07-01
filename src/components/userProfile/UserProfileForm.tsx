@@ -52,7 +52,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSubmit, register, c
 
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
-                    Email <span className='text-destructive ml-1'>*</span>
+                    Email
                 </Label>
                 <Input
                     disabled
