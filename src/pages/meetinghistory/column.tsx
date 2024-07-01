@@ -17,6 +17,15 @@ import { Separator } from "@/components/ui/separator"
 
 export const columns: (refreshData: () => void, currentUserId: string) => ColumnDef<MeetingMinutesRes>[] = (refreshData, currentUserId) => [
     {
+        id: 'order',
+        header: ({ column }) => {
+            return <div>#</div>;
+        },
+        cell: ({ row }) => (
+            <span className="text-center">{Number(row.id) + 1}</span>
+        ),
+    },
+    {
         accessorKey: "name",
         header: ({ column }) => {
             return (

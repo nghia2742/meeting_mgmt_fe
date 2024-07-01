@@ -145,8 +145,6 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
                   return (
                     <TableHead
                       key={header.id}
-                      className="cursor-pointer"
-                      onClick={header.column.getToggleSortingHandler()}
                     >
                       {header.isPlaceholder
                         ? null
