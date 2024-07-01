@@ -163,7 +163,7 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center "
                 >
                   <ClipLoader color="#000000" />
                   <p>Loading data...</p>
@@ -176,11 +176,12 @@ export function DataTableDemo({ users, setUsers }: DataTableDemoProps) {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="truncate max-w-[150px]">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
+                  
                     </TableCell>
                   ))}
                 </TableRow>

@@ -11,10 +11,10 @@ import { z } from "zod";
 import { UserProfile } from "@/types/userProfile.type";
 import AvatarSection from "../userProfile/AvatarSection";
 import UserProfileForm from "../userProfile/UserProfileForm";
-import { Inter } from 'next/font/google';
+import { Inter } from "next/font/google";
 import { uploadToCloudinary } from "@/hooks/useUser";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 interface EditUserModalProps {
   isOpen: boolean;
@@ -23,9 +23,12 @@ interface EditUserModalProps {
   onSave: (updatedUser: UserProfile) => void;
 }
 
-
 const schema = z.object({
-  fullName: z.string().nonempty("Full name is required"),
+  fullName: z
+    .string()
+    .min(5, { message: "Full name is too short" })
+    .max(50, { message: "Full name is too long" })
+    .nonempty("Full name is required"),
   email: z.string().email("Invalid email format").nonempty("Email is required"),
   phoneNumber: z
     .string()
@@ -46,8 +49,6 @@ const schema = z.object({
   gender: z.enum(["male", "female", "other"]).nullable(),
   dateOfBirth: z.date().optional().nullable(),
 });
-
-
 
 const EditUserModal: React.FC<EditUserModalProps> = ({
   isOpen,
@@ -117,7 +118,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-[425px] overflow-y-auto max-h-[90vh] ${inter.className}`}>
+      <DialogContent
+        className={`sm:max-w-[425px] overflow-y-auto max-h-[90vh] ${inter.className}`}
+      >
         <DialogHeader className="flex justify-center items-center h-full">
           <DialogTitle className="mb-2">Edit User Profile</DialogTitle>
           {user && (
