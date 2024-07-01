@@ -26,8 +26,17 @@ interface SettingsModalProps {
 const inter = Inter({ subsets: ["latin"] });
 
 const schema = z.object({
-  fullName: z.string().nonempty("Full name is required"),
-  email: z.string().email("Invalid email format").nonempty("Email is required"),
+  fullName: z
+    .string()
+    .min(5, { message: "Full name is too short" })
+    .max(50, { message: "Full name is too long" })
+    .nonempty("Full name is required"),
+  email: z
+    .string()
+    .min(10, { message: "Email is too short" })
+    .max(50, { message: "Email is too long" })
+    .email("Invalid email format")
+    .nonempty("Email is required"),
   phoneNumber: z
     .string()
     .optional()
